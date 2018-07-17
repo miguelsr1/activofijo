@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Filtro tipo de bienes</title>
+        <style type="text/css">
+            .col1{
+                height:auto;vertical-align: top; width: 100px;
+            }
+            .col2{
+                height:auto; vertical-align: middle; width: 300px;
+            }
+        </style>
+        <link href="#{request.contextPath}/resources/css/principal.css" rel="stylesheet" type="text/css" />
+        <link href="#{request.contextPath}/resources/css/iconos-1.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="#{request.contextPath}/resources/js/funciones-1.js"></script>
+    </h:head>
+
+    <h:body>
+        <h:form id="frmDialog">
+         <p:panel  header="buscar">
+         <h:panelGrid columns="3">
+         <p:outputLabel value="Tipo Bien"/>
+         <p:inputText id="inv" value="#{bienesCEController.valor}" styleClass="textMayuscula" onkeyup="return cUpper(this);"/>
+         <p:commandButton value="buscar" ajax="true" action="#{bienesCEController.tipoBienes}" update="pnlBienes tBienes"/> 
+        </h:panelGrid>
+       </p:panel>    
+               <p:panel id="pnlBienes">
+                   <p:dataTable id="tBienes" value="#{bienesCEController.lstTipoBienes}" var="bien" selection="#{bienesCEController.tb}" selectionMode="single" rowKey="#{bien.idTipoBien}"
+                                rows="10" paginator="true">
+                       <p:ajax event="rowSelect"  listener="#{bienesCEController.onRowSelect}" />
+                       <p:column headerText="Código" width="30px">
+                           <h:outputText value="#{bien.codigoTipoBien}"/>
+                       </p:column>
+                       <p:column headerText="Tipo Bien">
+                           <h:outputText value="#{bien.nombreTipoBien}"/>
+                       </p:column>
+                       <p:column headerText="Categor&iacute;a">
+                           <h:outputText value="#{bien.idCatBien.descripcionCatBien}"/>
+                       </p:column>
+                   </p:dataTable>
+               </p:panel>
+            
+          </h:form>
+    </h:body>
+</html>
+      
+
+

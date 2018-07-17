@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Busqueda de Empleados</title>
+        <link href="#{request.contextPath}/resources/css/principal.css" rel="stylesheet" type="text/css" />
+        <link href="#{request.contextPath}/resources/css/side-menu.css" rel="stylesheet" type="text/css" />
+        <link href="#{request.contextPath}/resources/css/spark-1.css" rel="stylesheet" type="text/css" />
+    </h:head>
+    <h:body style="background-color: white !important;">
+        <h:form>
+            <p:growl id="growl" showDetail="true" sticky="true" >
+                        <p:autoUpdate/>
+                    </p:growl>
+            <p:panel>
+                <h:panelGrid columns="4" style="margin-right: 10px !important" >
+                    <p:outputLabel value="Nombre" for="nombreEmpleado" />
+                    <p:inputText id="nombreEmpleado" value="#{empleadoController.nombre}"/>
+                    <p:outputLabel value="Apellidos" for="apeEmpleado" />
+                    <p:inputText id="apeEmpleado" value="#{empleadoController.apellido}"/>
+                    <p:outputLabel value="Codigo Empleado" for="codigoEmpleado" />
+                    <p:inputText id="codigoEmpleado" value="#{empleadoController.codEmp}"/>
+                    <p:commandButton value="buscar" ajax="true"  action="#{empleadoController.datosEmpleado}" update="tblEmpleados"/>
+                    <p:outputLabel  style=" color:#e33b06" value="* Ingresar nombres y apellidos sin tildes"/>
+                    <p:spacer width="20"/>   
+                </h:panelGrid>
+
+                <p:dataTable id="tblEmpleados" value="#{empleadoController.lstEmp}" var="empleado" selection="#{empleadoController.empleado}" selectionMode="single" rowKey="#{empleado.idEmpleado}"
+                             scrollable="true" scrollHeight="220" >
+                    <p:column headerText="Codigo" width="100">
+                        <p:outputLabel value="#{empleado.codigoEmpleado}"/>
+                    </p:column>
+                    <p:column headerText="Nombre">
+                        <p:outputLabel value="#{empleado.nombreEmpleado} #{empleado.apellidoEmpleado}"/>
+                    </p:column>
+                </p:dataTable>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Aceptar" action="#{empleadoController.guardarOpcMenuApp}" icon="fa fa-check-circle" />
+                    <p:commandButton value="Cancelar" action="#{empleadoController.cerrarFiltroOpcMenuApp}" icon="fa fa-times-circle" />
+                </f:facet>
+            </p:panel>
+        </h:form>
+    </h:body>
+</html>
+

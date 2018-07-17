@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+        <ui:define name="content">
+            <p:menubar> 
+                <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
+                <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
+                <p:menuitem value="Guardar" icon="fa fa-save" disabled="true" />
+                <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/principal.mined"/>
+                <f:facet  name="options">  
+                    <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{loginController.logout}"/>
+                </f:facet>  
+            </p:menubar>
+
+            <p:panel id="pnlEdicion">
+                <f:facet name="header" >
+                    <i class="fa fa-table blue" style="font-size: 16px;"></i>
+                    <p:spacer width="10"/>
+                    <h:outputText value="Filtro"/>
+                </f:facet>
+                <h:panelGrid columns="2">
+                    <h:outputText value="Aplicación:" />
+                    <p:selectOneMenu value="#{gruposController.aplicacion}" converter="genericConverter">
+                        <f:selectItem  itemLabel="---" itemValue=""/>
+                        <f:selectItems value="#{aplicacionController.lstAplicacion}"/>
+                        <p:ajax update="cboGrupoApp" listener="#{gruposController.updGrupoApp}"/>
+                    </p:selectOneMenu>
+                    <h:outputText value="Grupo:" />
+                    <p:selectOneMenu id="cboGrupoApp" value="#{gruposController.grupoAplicacion}" converter="genericConverter">
+                        <f:selectItem  itemLabel="---" itemValue=""/>
+                        <f:selectItems value="#{gruposController.lstGrupoAplicacion}"/>
+                        <p:ajax update="pnlGrupo" />
+                    </p:selectOneMenu>
+                </h:panelGrid>
+            </p:panel>
+
+            <p:panel id="pnlGrupo" >
+                <f:facet name="header" >
+                    <i class="fa fa-list-ol blue" style="font-size: 16px;"></i>
+                    <p:spacer width="10"/>
+                    <h:outputText value="Listado de Opciones por Grupo"/>
+                </f:facet>
+
+                <p:treeTable value="#{gruposController.root}" var="opcMenu" selectionMode="checkbox" selection="#{gruposController.selectedOpcion}" >
+                    <f:facet name="header">
+                        <p:commandButton icon="fa fa-plus" value="Opción" actionListener="#{gruposController.opcionesMenu}" disabled="#{gruposController.grupoAplicacion.idGrupoApp eq null}">
+                            <p:ajax event="dialogReturn" listener="#{gruposController.addOpcionMenuApp}" update="pnlGrupo"/>
+                        </p:commandButton>
+                        <p:commandButton icon="fa fa-trash-o" value="Opción" actionListener="#{gruposController.guardarAppOpcMenu}" disabled="#{gruposController.grupoAplicacion.idGrupoApp eq null}"/>
+                    </f:facet>
+                    <p:column headerText="Nombre Opción">
+                        <p:outputLabel value="#{opcMenu.nombreOpcion}"/>
+                    </p:column>
+                    <p:column headerText="Url">
+                        <p:outputLabel value="#{opcMenu.url}"/>
+                    </p:column>
+                    <p:column headerText="Orden" width="110" style="text-align: center;">
+                        <p:outputLabel value="#{opcMenu.orden}"/>
+                    </p:column>
+                </p:treeTable>
+            </p:panel>
+        </ui:define>
+    </ui:composition>
+</html>

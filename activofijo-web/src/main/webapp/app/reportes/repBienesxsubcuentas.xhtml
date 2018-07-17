@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+        <ui:define name="content">
+            <p:menubar id="barBtns" > 
+                <p:menuitem value="Buscar" icon="fa fa-search" action="#{bienesController.buscarDatosxCat}" update="pnlBienes" />
+                <p:menuitem value="Reporte" icon="fa fa-file-excel-o" ajax="false" action="#{bienesController.generarXls_reporteBienesxsubcuentas}" />
+                <p:menuitem id="btnImp" value="Imprimir" icon="fa fa-print" ajax="false" action="#{bienesController.imprimirBienesxsubcuentas}"/>
+                <p:menuitem value="Salir" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+            </p:menubar>
+            <p:panel  header="Descargo de Bienes">
+                <h:panelGrid>
+                    <p:row>
+                        <p:column> <h:outputLabel  value="Tipo Unidad:      "/> </p:column> 
+                        <p:column>
+                            <h:selectOneMenu id="tipUni" value="#{bienesController.tipoUnidad}">
+                                <p:ajax update="uadm" listener="#{bienesController.filtrarUnidadesAdm}" process="@this,tipUni"/>
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItem itemLabel="Unidad Administrativa" itemValue="UA"/>
+                                <f:selectItem itemLabel="Centro Escolar" itemValue="CE"/>
+                            </h:selectOneMenu> 
+                        </p:column> 
+                    </p:row>  
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Unidad Activo Fijo:       " />
+                            <h:selectOneMenu id="uaf" value="#{bienesController.unidadAF}" >
+                                <p:ajax update="uadm" listener="#{bienesController.filtrarUnidadesAdm}" process="@this,tipUni"/>
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{bienesController.lstUnidadAF}" var="uAF" itemLabel="#{uAF.unidadActivoFijo} - #{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel value="Unidad Administrativa:     " />
+                            <h:selectOneMenu  id="uadm" value="#{bienesController.unidadAdm}" >
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{bienesController.lstUnidadAdm}" var="uadm" itemLabel="#{uadm.afUnidadesAdministrativasPK.codigoUnidad} - #{uadm.nombreUnidad}" itemValue="#{uadm.afUnidadesAdministrativasPK.codigoUnidad}"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                    </p:row>
+                       <p:row>
+                        <p:column><h:outputLabel value="Fuente de Financiamiento:"/>
+                            <h:selectOneMenu  id="fuente" value="#{bienesController.fuente}" >
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{bienesController.lstFuente}" var="fte" itemLabel="#{fte.nombre}" itemValue="#{fte.idFuente}"/> 
+                            </h:selectOneMenu> 
+                        </p:column>  
+                       </p:row>     
+                    <p:row>
+                         <p:column><h:outputLabel value="Proyecto:     "/>
+                            <h:selectOneMenu  id="proy" value="#{bienesController.proyecto}" >
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{bienesController.lstProyecto}" var="proy" itemLabel="#{proy.codigoProyecto} - #{proy.nombreProyecto}" itemValue="#{proy.idProyecto}"/> 
+                            </h:selectOneMenu> 
+                        </p:column>  
+                          <p:column>
+                            <h:outputLabel value="Categoria:      "/>
+                            <h:selectOneMenu id="catbien" value="#{bienesController.cat}">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{bienesController.lstCatBien}" var="cat" itemLabel="#{cat.idCatBien} - #{cat.descripcionCatBien}" itemValue="#{cat.idCatBien}"/>
+                            </h:selectOneMenu> 
+                        </p:column>  
+                        
+                    </p:row>    
+                    <p:row >
+                        <p:column><h:outputLabel value="Fecha Adquisición    Desde:"/>
+                            <p:calendar id="fechacrea1" value="#{bienesController.fecAdq1}" pattern="dd/MM/yyyy"/></p:column>
+                        <p:column><h:outputLabel value="Hasta :     "/>
+                            <p:calendar id="fechacrea2" value="#{bienesController.fecAdq2}" pattern="dd/MM/yyyy"/></p:column> 
+                    </p:row>
+                
+                 
+                </h:panelGrid>                        
+            </p:panel>   
+            <p:panel id="pnlBienes">
+                <p:dataTable id="tBienes" value="#{bienesController.lstDatos}" var="des" rowKey="#{des.categoria}" >
+                    <p:column headerText="CATEGORIA"  >
+                        <h:outputText value="#{des.categoria}"/>
+                    </p:column>
+                     <p:column headerText="PRECIO" >
+                         <h:outputText value="#{des.precio}" >
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText>    
+                    </p:column>
+                   <p:column headerText="VALOR RESIDUAL " >
+                       <h:outputText value="#{des.valorRes}" >
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText>    
+                    </p:column>
+                    <p:column headerText="DEPRECIACION ACUMULADA"  >
+                        <h:outputText value="#{des.depreAcumulada}" >
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText>    
+                    </p:column>
+                    <p:column headerText="PENDIENTE DE DEPRECIAR"  style="width: 100px">
+                        <h:outputText value="#{des.pendienteDepre}" >
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText>    
+                    </p:column>
+                    
+                </p:dataTable>
+            </p:panel>
+        </ui:define>
+    </ui:composition>
+
+</html>
+

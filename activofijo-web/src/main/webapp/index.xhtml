@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:body>
+        <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaLogin.xhtml">
+            <ui:define name="content" >
+                <h:form id="frmLogin">
+                    <p:focus context="pnlCredenciales"/>  
+                    <p:panel id="pnlCredenciales" header="" style="width: 300px; top: 20px; " styleClass="panelGridCenter centradoTotal">
+                        <f:facet name="header">
+                            <h:panelGrid columns="2" columnClasses="colAjax1,colAjax2" >
+                                <p:outputLabel value="Iniciar sesión"/>
+                                <p:ajaxStatus >
+                                    <f:facet name="start">
+                                        <i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size: 16px;" aria-hidden="true"></i> 
+                                    </f:facet>
+
+                                    <f:facet name="complete">
+                                        <h:outputText value="" />
+                                    </f:facet>
+                                </p:ajaxStatus>
+                            </h:panelGrid>
+                        </f:facet>
+                        <h:panelGrid columns="1" style="text-align: center; width: 100%">
+                            <p:spacer height="20"/>
+                            <p:graphicImage value="#{pageContext.servletContext.contextPath}/resources/images/lock.png" rendered="false"/>
+                            <i class="fa fa-unlock-alt blue" style="font-size: 5em;"></i>
+                            <h:panelGrid columns="1" style="text-align: center; width: 100%">
+                                <p:spacer height="20"/>
+                                <p:inputText id="txtUsuario" styleClass="textMayuscula" onkeyup="return cUpper(this);" value="#{loginController.usuario.login}" style="text-align: center;width: 85%;" placeholder="Usuario" />
+                                <p:password id="txtPassword" value="#{loginController.usuario.claveAcceso}" style="text-align: center;width: 85%;" placeholder="Clave de acceso"/>
+                                <p:spacer height="10"/>
+                                <p:commandButton style="width: 89%;" value="Ingresar" action="#{loginController.validarUsuario}" update="frmLogin"/>
+                                <p:spacer height="10"/>
+                                <p:link value="He olvidado mi clave de acceso" href="#{pageContext.servletContext.contextPath}/resetearContrasena.mined"/>
+                            </h:panelGrid>
+                        </h:panelGrid>
+                        <p:messages id="growl" showDetail="true" escape="false" closable="true"  >
+                            <p:autoUpdate/>
+                        </p:messages>  
+                    </p:panel>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

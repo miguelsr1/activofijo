@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Opciones de menu</title>
+        <link href="#{request.contextPath}/resources/css/principal.css" rel="stylesheet" type="text/css" />
+        <link href="#{request.contextPath}/resources/css/side-menu.css" rel="stylesheet" type="text/css" />
+        <link href="#{request.contextPath}/resources/css/spark-1.css" rel="stylesheet" type="text/css" />
+    </h:head>
+    <h:body style="background-color: white !important;">
+        <h:form>
+            <p:growl id="growl" showDetail="true" sticky="true" >
+                        <p:autoUpdate/>
+                    </p:growl>
+            <p:panel>
+                <p:dataTable value="#{opcionMenuController.lstOpcionMenu}" var="opcion" rowKey="#{opcion.idOpcMenu}" 
+                             selectionMode="single" selection="#{opcionMenuController.opcionMenu}" scrollable="true" scrollHeight="290">
+
+                    <p:column headerText="Id" style="width: 35px; text-align: center;">
+                        <h:outputText value="#{opcion.idOpcMenu}"/>
+                    </p:column>
+                    <p:column headerText="Id Padre" style="width: 150px;">
+                        <h:outputText value="#{opcion.idOpcMenuPadre}"/>
+                    </p:column>
+                    <p:column headerText="Nombre" style="width: 200px;">
+                        <h:outputText value="#{opcion.nombreOpcion}"/>
+                    </p:column>
+                    <p:column headerText="Enlace">
+                        <h:outputText value="#{opcion.url}"/>
+                    </p:column>
+                    <p:column headerText="Icono" style="width: 80px;">
+                        <h:outputText value="#{opcion.icono}"/>
+                    </p:column>
+                    <p:column headerText="Orden" style="width: 35px; text-align: center;">
+                        <h:outputText value="#{opcion.orden}"/>
+                    </p:column>
+                </p:dataTable>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Aceptar" action="#{opcionMenuController.guardarOpcMenuApp}" icon="fa fa-check-circle" />
+                    <p:commandButton value="Cancelar" action="#{opcionMenuController.cerrarFiltroOpcMenuApp}" icon="fa fa-times-circle" />
+                </f:facet>
+            </p:panel>
+        </h:form>
+    </h:body>
+</html>
+

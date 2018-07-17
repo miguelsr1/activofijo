@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+        <ui:define name="content">
+            <p:menubar> 
+                <p:menuitem value="Nuevo" icon="fa fa-file-o" action="#{gruposController.prepareCreate}" update="pnlEdicion"/>
+                <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
+                <p:menuitem value="Guardar" icon="fa fa-save" action="#{gruposController.guardarGrupo}" update="pnlGrupo"/>
+                <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/principal.mined"/>
+                <f:facet  name="options" >  
+                    <p:commandButton icon="fa fa-sign-out" value="Salir" />
+                </f:facet>  
+            </p:menubar>
+
+            <p:panel id="pnlEdicion">
+                <f:facet name="header" >
+                    <i class="fa fa-table blue" style="font-size: 16px;"></i>
+                    <p:spacer width="10"/>
+                    <h:outputText value="Datos del Grupo"/>
+                </f:facet>
+                <h:panelGrid columns="2">
+                    <h:outputText value="Id:" style="text-align: right;"/>
+                    <p:inputText size="5" disabled="true" value="#{gruposController.grupo.idGrupo}"/>
+                    <h:outputText value="Nombre:"/>
+                    <p:inputText value="#{gruposController.grupo.nombreGrupo}" disabled="#{gruposController.deshabilitar}"/>
+                </h:panelGrid>
+            </p:panel>
+
+            <p:panel id="pnlGrupo" >
+                <f:facet name="header" >
+                    <i class="fa fa-list-ol blue" style="font-size: 16px;"></i>
+                    <p:spacer width="10"/>
+                    <h:outputText value="Listado Grupos Registrados"/>
+                </f:facet>
+                <p:dataTable value="#{gruposController.lstGrupo}" var="grupo" rowKey="#{grupo.idGrupo}"
+                             selectionMode="single" selection="#{gruposController.grupo}" style="width: 350px;">
+                    <p:ajax event="rowSelect" listener="#{gruposController.editarGrupo}" update="pnlEdicion"/>
+
+                    <p:column headerText="Id" style="text-align: center;" width="30">
+                        <h:outputText value="#{grupo.idGrupo}"/>
+                    </p:column>
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{grupo.nombreGrupo}"/>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+        </ui:define>
+    </ui:composition>
+</html>

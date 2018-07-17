@@ -1,0 +1,286 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+        <ui:define name="content">
+            <p:menubar id="barBtns" > 
+                <p:menuitem value="Buscar" icon="fa fa-search" action="#{bienesController.buscarBien}" update=" barBtns pnlBienes" />
+                <p:menuitem value="Nuevo" icon="fa fa-file-o" action="#{bienesController.nuevoBien}"/>
+                <p:menuitem value="Limpiar" icon="fa fa-trash-o" action="#{bienesController.limpiarFiltro}" update="pnlFiltros pnlBienes"/>
+                <p:menuitem id="btnSol" value="Solvencia" icon="fa fa-file-pdf-o" ajax="true" onclick="PF('dlgSolvencia').show();" disabled="#{bienesController.activo}"/>
+                <p:menuitem id="btnImp" value="Imprimir" icon="fa fa-print" ajax="true" onclick="PF('dlgImprimir').show();" disabled="#{bienesController.activo}" />
+                <p:menuitem id="btnSol2" value="Constancia" icon="fa fa-file-pdf-o" ajax="true" onclick="PF('dlgConstancia').show();" disabled="#{bienesController.activo}"/>
+                
+                <p:menuitem value="Salir" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+            </p:menubar>
+            <p:panel id="pnlFiltros" header="Bienes Depreciables">
+                <h:panelGrid columns="2">
+                    <p:row>
+                        <p:column> <h:outputLabel  value="Tipo Unidad:      "/> </p:column> 
+                        <p:column>
+                            <h:selectOneMenu id="tipUni" value="#{bienesController.tipoUnidad}">
+                                <p:ajax update="uadm" listener="#{bienesController.filtrarUnidadesAdm}" process="@this,tipUni"/>
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItem itemLabel="Unidad Administrativa" itemValue="UA"/>
+                                <f:selectItem itemLabel="Centro Escolar" itemValue="CE"/>
+                            </h:selectOneMenu> 
+                        </p:column> 
+                    </p:row>  
+                    <p:row>  
+                        <p:column> <h:outputLabel for="est" value="Activo fijo? :"  />
+                            <h:selectOneRadio id="est" value="#{bienesController.actFijo}" label="Activo fijo? :" >
+                                <f:selectItem itemLabel="Si" itemValue="S" />
+                                <f:selectItem   itemLabel="No" itemValue="N" />
+                            </h:selectOneRadio>   
+                        </p:column>    
+                    </p:row>
+                    <p:row>
+                        <p:column><h:outputLabel value="C&oacute;digo Inventario:           "/></p:column>
+                        <p:column><h:inputText id="inv" value="#{bienesController.codigoInventario}"/></p:column>   
+                    </p:row>
+                    <p:row>
+                        <p:column><h:outputLabel value="Estado:         "/>
+                            <h:selectOneMenu value="#{bienesController.estatus}">
+                                <f:selectItem itemLabel="--Seleccione--" itemValue="0"/>
+                                <f:selectItems value="#{bienesController.estatuBien}" var="est" itemLabel="#{est.nombreEstatusBien}" itemValue="#{est.idEstatusBien}"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column><h:outputLabel value="Calidad:     "/>
+                            <h:selectOneMenu value="#{bienesController.calidad}" >
+                                <f:selectItem itemLabel="--Seleccione--" itemValue="0"/>
+                                <f:selectItems value="#{bienesController.calidadBien}" var="cal" itemLabel="#{cal.nombreCalidadBien}" itemValue="#{cal.codigoCalidadBien}"/>
+                            </h:selectOneMenu> 
+                        </p:column> 
+                    </p:row>
+                    <p:row>
+                        <p:column> <h:outputLabel value="Secci&oacute;n:                 "/>
+                            <h:selectOneMenu value="#{bienesController.section}" > 
+                                <f:selectItem itemLabel="--Seleccione--" itemValue="0"/>
+                                <f:selectItems value="#{bienesController.lstSeccion}" var="sec" itemLabel="#{sec.nombreSeccion}" itemValue="#{sec.idSeccion}"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Unidad Activo Fijo:       " />
+                            <h:selectOneMenu id="uaf" value="#{bienesController.unidadAF}" disabled="#{bienesController.esAdm}">
+                                <p:ajax update="uadm" listener="#{bienesController.filtrarUnidadesAdm}" process="@this,tipUni"/>
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{bienesController.lstUnidadAF}" var="uAF" itemLabel="#{uAF.unidadActivoFijo} - #{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Unidad Administrativa:     " />
+                            <h:selectOneMenu  id="uadm" value="#{bienesController.unidadAdm}">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{bienesController.lstUnidadAdm}" var="uadm" itemLabel="#{uadm.afUnidadesAdministrativasPK.codigoUnidad} - #{uadm.nombreUnidad}" itemValue="#{uadm.afUnidadesAdministrativasPK.codigoUnidad}"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Categoria:      "/>
+                            <h:selectOneMenu id="catbien" value="#{bienesController.cat}">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <p:ajax update="tBien" listener="#{bienesController.filtrarTipoBien}" process="@this"  />
+                                <f:selectItems value="#{bienesController.lstCatBien}" var="cat" itemLabel="#{cat.idCatBien} - #{cat.descripcionCatBien}" itemValue="#{cat.idCatBien}"/>
+                            </h:selectOneMenu> 
+                        </p:column>    
+                    </p:row>
+                    <p:row>
+                        <p:column><h:outputLabel value="Tipo Bien"/>
+                            <h:selectOneMenu id="tBien" value="#{bienesController.tipo}">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{bienesController.lstTipoBienes}" var="tipo" itemLabel="#{tipo.codigoTipoBien} - #{tipo.nombreTipoBien}" itemValue="#{tipo.idTipoBien}"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row rendered="#{bienesController.esAdm}">
+                        <p:column><h:outputLabel value="Valor Adquisici&oacute;n:     "/>
+                            <p:inputNumber value="#{bienesController.valorAdquisicion}"/></p:column>
+                    </p:row>
+                    <p:row rendered="#{bienesController.esAdm}">
+                        <p:column><h:outputLabel value="Asignado a:     "/>
+                            <p:inputText value="#{bienesController.asignadoA}" styleClass="textMayuscula" onkeyup="return cUpper(this);"/>
+                        </p:column>
+                    </p:row>  
+
+                    <p:row>
+                        <p:column><h:outputLabel value="Fecha Adquisici&oacute;n:     "/>
+                            <p:calendar id="fechaAdq1" value="#{bienesController.fecAdq1}" pattern="dd/MM/yyyy"/></p:column>
+                        <p:column>
+                            <h:outputLabel value="   a         "/>
+                            <p:calendar id="fechaAdq2" value="#{bienesController.fecAdq2}" pattern="dd/MM/yyyy"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:outputLabel value="Marca"/>
+                        <p:inputText value="#{bienesController.marca}" styleClass="textMayuscula" onkeyup="return cUpper(this);"/>
+                    </p:row>
+                    <p:row>   
+                        <p:column>  <h:outputLabel value="Modelo:    "/>
+                            <h:inputText value="#{bienesController.modelo}"/></p:column>
+                    </p:row>
+                    <p:row>   
+                        <p:column> <h:outputLabel value="No. Serie         :"/>
+                            <h:inputText value="#{bienesController.serie}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>  <h:outputLabel value="Fuente:"/>
+                            <h:selectOneMenu value="#{bienesController.fuente}"> 
+                                <f:selectItem itemLabel="--Seleccione--" itemValue=""/>
+                                <f:selectItems value="#{bienesController.lstFuente}" var="fuente" itemLabel="#{fuente.nombre}" itemValue="#{fuente.idFuente}"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column> 
+                            <h:outputLabel value="Proyecto:      "/>
+                            <h:selectOneMenu value="#{bienesController.proyecto}"> 
+                                <f:selectItem itemLabel="--Seleccione--" itemValue=""/>
+                                <f:selectItems value="#{bienesController.lstProyecto}" var="proy" itemLabel="#{proy.nombreProyecto}" itemValue="#{proy.idProyecto}"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Fecha Creaci&oacute;n:"/>
+                            <p:calendar id="fechacrea1" value="#{bienesController.fecCrea1}" pattern="dd/MM/yyyy"/>
+                        </p:column>
+                        <p:column><h:outputLabel value="   a        "/>
+                            <p:calendar id="fechaCrea2" value="#{bienesController.fecCrea2}" pattern="dd/MM/yyyy"/></p:column>
+                    </p:row>
+              
+                </h:panelGrid>                        
+            </p:panel>   
+            <p:dialog id="dlgImprimir" widgetVar="dlgImprimir" header="Reporte" modal="true" >
+                <p:panel>
+                    <p:outputLabel value="Fecha de generaci&oacute;n de reporte" escape="false"/>
+                    <h:panelGrid columns="2">
+                        <p:column> <h:outputLabel value="Fecha Reporte:"/> </p:column>
+                        <p:column><p:calendar id="fechaRep" value="#{bienesController.fecRep}" pattern="dd/MM/yyyy"/></p:column>
+
+                    </h:panelGrid>
+                </p:panel>
+                <f:facet name="footer">
+                    <p:commandButton value="Aceptar" onclick="this.form.target = '_blank';PF('dlgImprimir').hide();" ajax="false" action="#{bienesController.imprimirBienes}"/>
+                    <p:commandButton value="Cancelar" ajax="true" onclick="PF('dlgImprimir').hide();"/>
+                </f:facet>
+            </p:dialog>
+            <p:dialog id="dlgSolvencia" widgetVar="dlgSolvencia" header="Reporte" modal="true" >
+                <p:panel>
+                    <p:outputLabel value="Periodo de Constancia" escape="false"/>
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Periodo:"/> 
+                        <h:inputText id="periodo" value="#{bienesController.periodo2}" style="width:80px" maxlength="4"/>
+                    </h:panelGrid>
+                </p:panel>
+                <f:facet name="footer">
+                    <p:commandButton value="Aceptar"  ajax="false" onclick="this.form.target = '_blank';PF('dlgSolvencia').hide();" action="#{bienesController.imprimirSolvencia}"/>
+                    <p:commandButton value="Cancelar" ajax="true" onclick="PF('dlgSolvencia').hide();"/>
+                </f:facet>
+            </p:dialog>
+              <p:dialog id="dlgConstancia" widgetVar="dlgConstancia" header="Reporte" modal="true" >
+                <p:panel>
+                    <p:outputLabel value="Periodo de Constancia" escape="false"/>
+                    <h:panelGrid columns="2">
+                         <h:outputLabel value="Periodo:"/>
+                         <h:inputText  value="#{bienesController.periodo}" style="width:80px" maxlength="4"/> 
+                         <h:outputLabel value="responsable:"/>
+                         <h:inputText value="#{bienesController.responsable}" style="width:200px" styleClass="textMayuscula" onkeyup="return cUpper(this);"/> 
+                    </h:panelGrid>
+                </p:panel>
+                <f:facet name="footer">
+                    <p:commandButton value="Aceptar" ajax="false" onclick="this.form.target = '_blank';PF('dlgConstancia').hide();" action="#{bienesController.imprimirConstancia}"/>
+                    <p:commandButton value="Cancelar" ajax="true" onclick="PF('dlgConstancia').hide();"/>
+                </f:facet>
+            </p:dialog>
+            
+            
+            <p:panel id="pnlBienes">
+                <p:dataTable id="tBienes" value="#{bienesController.lstBienes}" selection="#{bienesController.lstBientmp}" var="bien" rowKey="#{bien.idBien}" disabledSelection="#{bien.desactivar}"
+                             paginator="true" rows="20"  paginatorPosition="top" scrollable="true"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                    <f:facet name="header">
+                         <p:commandButton  update="pnlBienes" icon="fa fa-eraser fa-lg" value="Eliminar" action="#{bienesController.abrirDialog}"/>
+                    </f:facet>
+                    <p:column selectionMode="multiple" style="width:16px;text-align:center"/>   
+                    <p:column style="width: 30px">
+                        <p:commandButton  action="#{bienesController.ingresoBien}" icon="fa fa-pencil" disabled="false">
+                            <f:setPropertyActionListener value="#{bien.idBien}" target="#{bienesController.idBien}" />
+                            <f:setPropertyActionListener value="#{plan}" target="#{bienesController.lstBienesDepreciable}"/>  
+                            <p:ajax event="dialogReturn" listener="#{bienesController.bienesId}"/>
+                        </p:commandButton>
+                        <p:panel visible="false">
+                            <p:commandButton id="btnmodMet" actionListener="#{bienesController.ingresaBienes}" value="mod" >
+                                <p:ajax event="dialogReturn" listener="#{bienesController.bienesId}"/>
+                            </p:commandButton>
+                        </p:panel>   
+                    </p:column> 
+                   
+                   <p:column style="width: 30px">
+                        <p:commandButton  update="pnlBienes" icon="fa fa-eraser fa-lg" action="#{bienesController.abrirDialog}" />
+                   </p:column>
+                     <p:column headerText="C&oacute;digo Inventario" style="width: 100px">
+                        <h:outputText value="#{bien.codigoInventario}"/>
+                    </p:column>
+                      <p:column headerText="Unidad Administrativa" style="width: 100px">
+                        <h:outputText value="#{bienesController.getNombreAdm(bien.codigoUnidad,bienesController.getTipoUnidad(bien.codigoUnidad))}"/>
+                    </p:column>
+                    <p:column headerText="Categor&iacute;a" style="width: 150px">
+                        <h:outputText value="#{bien.categoria}"/>
+                    </p:column>
+                    <p:column headerText="Descripci&oacute;n" style="width: 200px">
+                        <h:outputText value="#{bien.descripcionBien}"/>
+                    </p:column>
+                    <p:column headerText="Marca" style="width: 80px">
+                        <h:outputText value="#{bien.marca}"/>
+                    </p:column>
+                      <p:column headerText="Modelo" style="width: 90px">
+                        <h:outputText value="#{bien.modelo}"/>
+                    </p:column>
+                    <p:column headerText="Serie" style="width: 90px">
+                        <h:outputText value="#{bien.numeroSerie}"/>
+                    </p:column>
+                    <p:column headerText="Fecha Adquisici&oacute;n" style="width: 60px">
+                        <h:outputLabel value="#{bien.fechaAdquisicion}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputLabel>        
+                    </p:column>
+                    <p:column headerText="Valor Adquisici&oacute;n" style="width: 60px">
+                        <h:outputText value="#{bien.valorAdquisicion}" >
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText>    
+                    </p:column>
+                    <p:column headerText="Asignado a" style="width: 100px">
+                            <h:outputText value="#{bien.asignado}"/>
+                     </p:column>
+                    <p:column headerText="Fuente" style="width: 90px">
+                        <h:outputText value="#{bien.fuente}"/>
+                    </p:column>
+                    <p:column headerText="Proyecto" style="width: 90px">
+                        <h:outputText value="#{bien.nombreProyecto}"/>
+                    </p:column>
+                    
+                  
+                    
+                </p:dataTable>
+            </p:panel>
+            <p:dialog id="dlg1" header="Eliminar bien" widgetVar="dlg1" minHeight="40">
+                <h:outputText value="Esta seguro de Eliminar" />
+                <p:spacer width="8"/>
+                <p:commandButton value="Si" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" action="#{bienesController.eliminarBien}"/>
+                <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('dlg1').hide();"/> 
+            </p:dialog>
+        </ui:define>
+    </ui:composition>
+
+</html>
+

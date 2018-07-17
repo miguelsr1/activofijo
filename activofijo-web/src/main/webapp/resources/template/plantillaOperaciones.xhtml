@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="#{request.contextPath}/resources/images/favicon.png" rel="shortcut icon"/>
+        <title>Sistema de Control de Usuarios</title>
+        
+        <h:outputStylesheet name="principal.css" library="css"/>
+        <h:outputStylesheet name="spark-1.css" library="css"/>
+        <h:outputStylesheet name="side-menu.css" library="css"/>
+        <h:outputStylesheet name="iconos-1.css" library="css"/>
+        <h:outputScript name="funciones-1.js" library="js"/>
+        
+        <style>
+            .ui-widget-header {
+                background: rgba(0, 0, 0, 0) -moz-linear-gradient(center top , #f6f7f9 0px, #f6f7f9 100%) repeat scroll 0 0 !important;
+                border: 1px solid #d9d9d9;
+                color: #1b1d1f;
+            }
+            .ui-menubar .ui-menuitem-link {
+                padding: 0.45em 0.3em;
+                width: auto;
+            }
+            #fixed-thumbs {
+                height: 20px;
+            }
+        </style>
+    </h:head>
+
+    <h:body>
+        <p:idleMonitor onactive="PF('sessionTimeOutDialog').show();" 
+                       timeout="600000" >
+            <p:ajax event="active"/>
+        </p:idleMonitor>
+       <p:dialog header="Sesión caducada" id="sessionTimeOutDialog" 
+                  widgetVar="sessionTimeOutDialog" resizable="false" draggable="false"
+                  modal="true" closable="false" width="400" 
+                  visible="false">
+            <h:panelGrid columns="1" style="text-align: center;">
+                <h:panelGrid columns="2">
+                    <h:outputText value="La sesión a caducado por inactividad (10 min), por favor, pulse sobre el siguiente botón para volver a acceder a la aplicación" />
+                    <i class="fa fa-chain-broken" style="color: blue; font-size: 25px;" aria-hidden="true"></i>
+                </h:panelGrid>
+            </h:panelGrid>
+            <f:facet name="footer">
+                <p:commandButton id="confirmBackToLogin"  value="Iniciar sesión" action="#{loginController.logout}"  />
+            </f:facet>
+        </p:dialog>
+
+        <h:form id="frmPrincipal" prependId="false" >
+         <p:growl id="growl" showDetail="true" sticky="true" >
+                        <p:autoUpdate/>
+                    </p:growl>
+
+            <div id="layout-topbar" class="ShadowGray">
+                <div id="layout-topbar-indent">
+                    <div class="pageColumnRight">
+                        <p:graphicImage styleClass="img1" style="float: left;" value="#{pageContext.servletContext.contextPath}/resources/images/mined.png"/> 
+                    </div>
+                    <div class="pageColumnMid" style="text-align: left;">
+                        <br/><h:outputText style="font-size: 20px; color: black;" value="Ministerio de Educación"/>
+                        <br/><h:outputText style="font-size: 18px; color: black;" value="Sistema de Registro y Control de Bienes Muebles"/>
+                    </div>
+                    <ul id="layout-topbar-menu">
+                        <li>
+                            <a class="Animated05 CursPointer" tabindex="-1">
+                                <i class="fa fa-user"></i>
+                                #{loginController.usuario.nombres} #{loginController.usuario.apellidos}, #{loginController.usuario.login}
+                            </a>
+                        </li>
+                        <li class="fa fa-ellipsis-v menu-separator"></li>
+                        <li>
+                            <a class="Animated05 CursPointer" tabindex="-1">
+                                <p:ajaxStatus >
+                                    <f:facet name="start">
+                                        <i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size: 16px; font-weight: bold; color: blue;" aria-hidden="true"></i> 
+                                        <h:outputText value="Espere por favor"/>
+                                    </f:facet>
+
+                                    <f:facet name="complete">
+                                        <h:outputText value="" />
+                                    </f:facet>
+
+                                    <f:facet name="default">
+                                        <h:outputText value="" />
+                                    </f:facet>
+                                </p:ajaxStatus>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="fluid-banner">
+                <div id="layout-portlets-cover">
+                    <div class="layout-portlets-box">
+                        <div class="Container20 Responsive">
+                            <p:menu id="menuPrincipal" model="#{loginController.model}"/>
+                        </div>
+                        <div class="Container100 Responsive">
+                            <ui:insert name="content"></ui:insert>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="fixed-thumbs" style="text-align: center; margin-top: 5px;">
+                <h:outputText value="Todos los derechos reservados - activoFijo-web version 1.2.7" style="color: white; font-size: 12px; font-weight: bold;"/>
+            </div>
+        </h:form>
+    </h:body>
+</html>

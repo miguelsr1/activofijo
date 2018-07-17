@@ -1,0 +1,311 @@
+body {
+    font-size: 9px;
+    margin:0 auto;
+    background-color:#85B2D3;
+    background-position:50% 0;
+    background-repeat:repeat no-repeat;
+    color:gray;
+    font-family: "Verdana";
+}
+
+.ui-accordion .ui-accordion-header .ui-icon {
+    display: table-header-group;
+}
+
+.textMayuscula {
+    text-transform: uppercase;
+}
+
+.colorFondoLayout .ui-layout-unit-header{
+    background: white;
+}
+
+.col1Login{
+    height:auto;vertical-align: top; width: 212px;text-align: center;
+}
+.col2Login{
+    height:auto; vertical-align: middle; width: 600px; text-align: center;
+}
+.col3Login{
+    height:auto;vertical-align: top; width: 212px;text-align: center;
+}
+
+.faces-layout-fix {
+    border: none;
+    height: 100%;
+    width: 100%;
+}
+
+.panelGridCenter {
+    margin: 0 auto;
+}
+
+.companyHeaderGrid tr, .companyHeaderGrid td {
+    background: none !important;
+    border-style: none !important;
+}
+
+.colorFondoLayout .ui-layout-unit-header{
+    background: white;
+}
+
+.ui-layout, .ui-layout-doc, .ui-layout-unit, .ui-layout-wrap, .ui-layout-bd, .ui-layout-hd{
+    border: none;
+    -moz-border-radius:0px !important;
+    -webkit-border-radius:0px !important;
+    border-radius:0px !important;
+    padding: 1px
+}
+
+.ui-dialog.ui-widget-content .ui-dialog-content {
+    font-size: 11px;
+    padding: 15px;
+}
+
+.ui-dialog.ui-widget-content .ui-dialog-title {
+    font-size: 18px;
+}
+
+.ui-datatable thead th, .ui-datatable tbody td, .ui-datatable tfoot td {
+    white-space: normal !important;
+} 
+
+.ui-corner-all {
+    border-bottom-left-radius:1px;
+    border-bottom-right-radius:1px;
+    border-top-left-radius:1px;
+    border-top-right-radius:1px;
+}
+
+.ui-state-disabled, .ui-widget-content .ui-state-disabled, .ui-widget-header .ui-state-disabled {
+    background-color: #ffffff !important;
+    box-shadow: none;
+    cursor: default;
+    opacity: 0.65;
+}
+
+.ui-picklist .ui-picklist-list {
+    height: 300px;
+    list-style-type: none;
+    margin: 0;
+    overflow: auto;
+    padding: 0;
+    width: 300px;
+}
+
+.ui-menu.ui-menubar {
+    background-color: #fafafa;
+    background-image: linear-gradient(to bottom, #ffffff, #ffffff) !important;
+    background-repeat: repeat-x;
+    border: 1px solid #d4d4d4;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.067);
+    padding-left: 10px;
+    padding-right: 20px;
+}
+
+/**
+Barra de estado
+**/
+.barraEstado1{
+    height:auto;vertical-align: top; width: 200px;
+}
+.barraEstado2{
+    height:auto;vertical-align: top; width: 200px;
+}
+.barraEstado3{
+    height:auto;vertical-align: top; text-align: right;
+}
+
+/**
+Login Ajax icon
+**/
+.colAjax1{
+    height:auto; 
+    width: 140px; 
+    text-align: left;
+}
+.colAjax2{
+    height:auto; 
+    width: 140px;
+    text-align: right;
+}
+
+/**
+Escritorio con aplicaciones disponibles
+**/
+.colAppImagen{
+    height:auto; 
+    width: 100px; 
+    text-align: center;
+}
+.colAppDescripcion{
+    height:auto; 
+    width: 100px;
+    text-align: center;
+}
+
+/**
+Estilos para texto
+**/
+.negrita{
+    font-weight: bold;
+}
+.numero{
+    text-align: right;    
+}
+
+.filaEliminada {
+    background-color: #fe7878 !important;
+    background-image:none !important;
+    color:#000000 !important;
+}
+
+.celdaNumero{
+    text-align: right;
+}
+
+.celdaNumeroNegativo{
+    background: #fc6e2b !important;
+}
+
+.panelColumns td {
+    vertical-align: top; 
+}
+
+
+/**
+**/
+.blended_grid{
+    display : block;
+    max-width : 1024px;
+    overflow : auto;
+    margin : 100px auto 0 auto;
+}
+.pageColumnRight{
+    float : left;
+    clear : none;
+    text-align: center;
+    height: 82px;
+}
+.pageColumnMid{
+    float : left;
+    vertical-align: middle !important;
+    clear : none;
+    height: 82px;
+}
+.pageColumnLeft{
+    float : left;
+    text-align: center;
+    clear : none;
+    width: 25%;
+    height: 82px;
+}
+
+.Animated05 {
+    transition: all 0.5s ease 0s;
+}
+.CursPointer {
+    cursor: pointer;
+}
+.Container20 {
+    float: left;
+    width: 14%;
+}
+.Container20 .ContainerIndent {
+    display: block;
+    margin: 0 auto;
+    padding: 2% 4%;
+    width: 92%;
+}
+
+.Container30 {
+    float: left;
+    width: 30%;
+}
+
+.Container33 {
+    float: left;
+    width: 33%;
+}
+
+
+.Container80 {
+    float: left;
+    width: 80%;
+}
+.Container80 .ContainerIndent {
+    display: block;
+    margin: 0 auto;
+    padding: 0.5% 1.4%;
+    width: 97.2%;
+}
+.Container100 {
+    float: left;
+    width: 86%;
+}
+
+.ContainerIndent {
+    display: block;
+    margin: 0 auto;
+}
+.Container100 .ContainerIndent {
+    display: block;
+    margin: 0 auto;
+    padding: 0.1% 1%;
+    width: 98%;
+}
+
+
+/**
+
+**/
+
+
+@media (max-width: 899px) {
+    .ShowOnMobile {
+        display: inherit;
+        opacity: 1;
+    }
+    .ShowOnDesktop {
+        display: none;
+        opacity: 0;
+    }
+    .FloatNoneOnMobile {
+        float: none !important;
+    }
+    .Container20{
+        display: none;
+    }
+    .Container100{
+        float: left;
+        width: 100%;
+    }
+    .Container30 {
+        float: left;
+        width: 100%;
+    }
+    .Container33 {
+        float: left;
+        width: 100%;
+    }
+}
+
+@media (max-width: 639px){
+    .img1{
+        display:none;
+    }
+    .pageColumnMid {
+        text-align: center;
+        width: 100%;
+    }
+    #ajaxIcon{
+        display:none;
+    }
+    .pageColumnRight{
+        display: none;
+    }
+    .pageColumnLeft{
+        display: none;
+    }
+}

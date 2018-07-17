@@ -1,0 +1,173 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+        <ui:define name="content">
+            <p:menubar id="barBtns" > 
+                <p:menuitem value="Guardar" icon="fa fa-save" action="#{bienesAdmController.guardarBien}" update="cor" />
+                <p:menuitem value="atras" icon="fa fa-arrow-circle-left" action="buscarbienesAdm.mined" process="@this"/>
+                <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+            </p:menubar>
+            <p:panel header="Mantenimiento de Bienes Depreciables">
+                <p:growl id="growl" showDetail="true" sticky="true" >
+                        <p:autoUpdate/>
+                    </p:growl>
+                <h:panelGrid columns="4">
+                    <h:panelGroup><h:outputLabel value="*" style="font:bold;color:red;size:14px"/>
+                        <p:outputLabel value=" Tipo Bien"/>
+                    </h:panelGroup>
+                    <p:selectOneMenu id="tBien" value="#{bienesAdmController.tipo}" disabled="true" required="true" requiredMessage="Seleccione tipo de bien">
+                        <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                        <f:selectItems value="#{bienesAdmController.lstTipoBienes}" var="tipo" itemLabel="#{tipo.nombreTipoBien}" itemValue="#{tipo.idTipoBien}"/>
+                    </p:selectOneMenu>
+                    <p:commandButton value="..." actionListener="#{bienesAdmController.buscarTipoBien}" process="@this" disabled="#{bienesAdmController.modifica}" >
+                        <p:ajax event="dialogReturn" listener="#{bienesAdmController.onTipoSelect}"  update="tBien des cor inv pnlBM pnlVh"/>
+                    </p:commandButton>
+
+                    <p:spacer width="8"/>
+                    <p:outputLabel value="Secci&oacute;n:"/>
+                    <p:selectOneMenu value="#{bienesAdmController.bd.codigoSeccion}"> 
+                        <f:selectItems value="#{bienesAdmController.lstSeccion}" var="sec" itemLabel="#{sec.nombreSeccion}" itemValue="#{sec.idSeccion}"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel value="Correlativo:"/>
+                    <p:inputText id="cor" value="#{bienesAdmController.correlativo}" maxlength="4" disabled="#{bienesAdmController.modifica}">
+                        <p:ajax event="change" listener="#{bienesAdmController.existeCorre}" update="inv"/>
+                    </p:inputText> 
+                    <p:outputLabel value="Código Inventario:"/>
+                    <p:inputText id="inv" value="#{bienesAdmController.codigoInventario}" readonly="true"/>
+                </h:panelGrid>    
+            </p:panel>
+            <p:panel id="pDatos" header="DATOS GENERALES">
+                <h:panelGrid columns="4">
+                    <p:outputLabel value="Calidad:"/>
+                    <p:selectOneMenu value="#{bienesAdmController.calidad}" >
+                        <f:selectItems value="#{bienesAdmController.calidadBien}" var="cal" itemLabel="#{cal.nombreCalidadBien}" itemValue="#{cal.codigoCalidadBien}"/>
+                    </p:selectOneMenu> 
+                    <h:panelGroup><h:outputLabel value="*" style="font:bold;color:red;size:14px"/>
+                        <p:outputLabel value="  Asignado A:"/>
+                    </h:panelGroup>
+                    <p:inputText value="#{bienesAdmController.bd.asignadoA}" required="true" requiredMessage="Ingrese Asignado a"/>
+                    <p:outputLabel value="Descripci&oacute;n:"/>
+                    <p:inputTextarea id="des" value="#{bienesAdmController.desBien}" cols="50" rows="5"/>
+                    <p:outputLabel value="Observaciones:"/>
+                    <p:inputTextarea value="#{bienesAdmController.bd.observaciones}" cols="50" rows="5"/>
+                </h:panelGrid>
+            </p:panel>     
+            <p:panel  id="pnlBM" header="DATOS BIENES MUEBLES" visible="#{bienesAdmController.pnlMb}">
+                <h:panelGrid columns="4">
+                      <p:outputLabel value="Marca"/>
+                      <p:inputText value="#{bienesAdmController.marcaM}" styleClass="textMayuscula" onkeyup="return cUpper(this);"/>
+                    <p:outputLabel value="Modelo:"/>
+                    <p:inputText value="#{bienesAdmController.bd.modelo}"/>
+                    <p:outputLabel value="No. Serie:"/>
+                    <p:inputText value="#{bienesAdmController.bd.numeroSerie}"/>
+                </h:panelGrid>
+            </p:panel>   
+            <p:panel id="pnlVh" header="DATOS VEHICULOS" visible="#{bienesAdmController.pnlVh}">
+                <h:panelGrid columns="4">
+                    <p:outputLabel value="Marca"/>
+                    <p:inputText value="#{bienesAdmController.marcaV}" styleClass="textMayuscula" onkeyup="return cUpper(this);"/>
+                    <p:outputLabel value="No. Placa:"/>
+                    <p:inputText value="#{bienesAdmController.bd.numeroPlaca}"/>
+                    <p:outputLabel value="No. Motor:"/>
+                    <p:inputText value="#{bienesAdmController.bd.numeroMotor}"/>
+                    <p:outputLabel value="A&ntilde;o:"/>
+                    <p:inputText value="#{bienesAdmController.bd.anioVehiculo}"/>
+                    <p:outputLabel value="No. Chasis:"/>
+                    <p:inputText value="#{bienesAdmController.bd.numeroChasis}"/>
+                    <p:outputLabel value="No. Vin:"/>
+                    <p:inputText value="#{bienesAdmController.bd.numeroVin}"/>
+                    <p:outputLabel value="Tipo Combustible:"/>
+                    <p:inputText value="#{bienesAdmController.bd.tipoCombustible}"/>
+                    <p:outputLabel value="No. Asientos:"/>
+                    <p:inputText value="#{bienesAdmController.bd.numeroAsientos}"/>
+                    <p:outputLabel value="Color Carroceria:"/>
+                    <p:inputText value="#{bienesAdmController.bd.colorCarroceria}"/>
+                    <p:outputLabel value="Capacidad(Ton):"/>
+                    <p:inputText value="#{bienesAdmController.bd.capacidadToneladas}"/>
+                </h:panelGrid>
+            </p:panel>     
+            <p:panel header="DATOS FINANCIEROS">
+                <h:panelGrid columns="4">
+                    <p:outputLabel value="Forma Adquisici&oacute;n:"/>
+                    <p:selectOneMenu value="#{bienesAdmController.formaAdq}"> 
+                        <f:selectItem itemLabel="--Seleccione--" itemValue="0"/>
+                        <f:selectItems value="#{bienesAdmController.lstFormaAdq}" var="forma" itemLabel="#{forma.nombreFormaAdquisicion}" itemValue="#{forma.idFormaAdquisicion}"/>
+                    </p:selectOneMenu>
+                     <h:panelGroup><h:outputLabel value="*" style="font:bold;color:red;size:14px"/>
+                        <p:outputLabel value=" Fecha Adquisici&oacute;n:"/>
+                    </h:panelGroup>
+                    <p:calendar id="fechaAdq" value="#{bienesAdmController.bd.fechaAdquisicion}" pattern="dd/MM/yyyy" required="true" maxdate="#{bienesAdmController.fecLimit}" disabled="#{bienesAdmController.modifica}" requiredMessage="Ingrese Fecha de Adquisición"/>
+                    <p:outputLabel value="Documento Adquisici&oacute;n:"/>
+                    <p:inputText value="#{bienesAdmController.bd.documentoAdquisicion}"/>
+                    <h:panelGroup><h:outputLabel value="*" style="font:bold;color:red;size:14px"/>
+                         <p:outputLabel value="  Valor Adquisici&oacute;n:"/>
+                    </h:panelGroup>
+                     <p:inputNumber value="#{bienesAdmController.bd.valorAdquisicion}" required="true" disabled="#{bienesAdmController.modifica}" requiredMessage="Ingrese Valor de Adquisición">
+                         <p:ajax event="blur" listener="#{bienesAdmController.validarMonto}" update="msgs"/>
+                     </p:inputNumber>    
+                     <h:panelGroup><h:outputLabel value="*" style="font:bold;color:red;size:14px"/>
+                         <p:outputLabel value="  Es valor estimado:"/>
+                    </h:panelGroup>
+                    <p:selectOneRadio id="est" value="#{bienesAdmController.bd.esValorEstimado}" required="true" requiredMessage="Es valor estimado?">
+                        <f:selectItem itemLabel="Si" itemValue="1" />
+                        <f:selectItem itemLabel="No" itemValue="0" />
+                    </p:selectOneRadio>   
+                    <p:outputLabel value="Proveedor:"/>
+                    <p:inputText value="#{bienesAdmController.bd.proveedor}"/>
+                    <h:panelGroup><h:outputLabel value="*" style="font:bold;color:red;size:14px"/>
+                        <p:outputLabel value="Fuente:"/>
+                      </h:panelGroup>    
+                     <p:selectOneMenu value="#{bienesAdmController.fuente}" required="true" requiredMessage="Ingrese la fuente"> 
+                          <p:ajax update="proy" listener="#{bienesAdmController.filtrarProyectos}" process="@this,proy"/>
+                         <f:selectItems value="#{bienesAdmController.lstFuente}" var="fuente" itemLabel="#{fuente.nombre}" itemValue="#{fuente.idFuente}"/>
+                        </p:selectOneMenu>
+                   <p:outputLabel value="Proyecto:"/>
+                   <p:selectOneMenu id="proy" value="#{bienesAdmController.proyecto}" disabled="#{bienesAdmController.mostrarProy}"> 
+                       <p:ajax update="proy"  process="@this"/>
+                       <f:selectItem itemLabel="--Sin Proyecto--" itemValue="20"/>
+                       <f:selectItems value="#{bienesAdmController.lstProyecto}" var="proy" itemLabel="#{proy.nombreProyecto}" itemValue="#{proy.codigoProyecto}"/>
+                        </p:selectOneMenu>
+                </h:panelGrid>
+            </p:panel>    
+            <p:panel header="LOTE" visible="#{bienesAdmController.pnlLote}">
+                <h:panelGrid columns="4">
+                    <p:outputLabel for="lote" value="Lote:" />
+                    <p:selectOneRadio id="lote" value="#{bienesAdmController.lote}">
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                    </p:selectOneRadio>
+                    <p:outputLabel value="Cantidad:" />
+                    <p:inputText value="#{bienesAdmController.numLote}"/>
+                </h:panelGrid>
+            </p:panel>      
+            <p:panel header="DATOS SAE" visible="false">
+                <h:panelGrid columns="4">
+                    <p:outputLabel value="Id de CE:"/>
+                    <p:inputText value="#{bienesAdmController.bd.idBienCe}"/>
+                    <p:outputLabel value="Estado SAE:"/>
+                    <p:selectOneMenu id="estSae" value="#{bienesAdmController.bd.estadoRegistro}">
+                        <f:selectItem itemLabel="--Seleccione--" itemValue=""/>
+                        <f:selectItem itemLabel="Ingresado" itemValue="I"/>
+                        <f:selectItem itemLabel="Reportado" itemValue="R"/>
+                        <f:selectItem itemLabel="Observado" itemValue="O"/>
+                        <f:selectItem itemLabel="Revisado" itemValue="V"/>
+                        <f:selectItem itemLabel="Aprobado" itemValue="A"/>
+                        <f:selectItem itemLabel="Completado" itemValue="C"/>
+                    </p:selectOneMenu> 
+                    <p:outputLabel value="Fecha Recepci&oacute;n:"/>
+                    <p:calendar id="fechaFin" value="#{bienesAdmController.bd.fechaRecepcion}" pattern="dd/MM/yyyy"/>
+                    <p:outputLabel value="Observaciones SAE:"/>
+                    <p:inputTextarea value="#{bienesAdmController.bd.observacionDde}" cols="50" rows="5"/>
+                </h:panelGrid>
+            </p:panel> 
+            <p:outputLabel style="font:bold;color:red;size:14px" value="* valores requeridos"/>
+        </ui:define>
+    </ui:composition>
+
+</html>
+

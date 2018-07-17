@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+        <ui:define name="content">
+            <p:menubar id="barBtns" > 
+                <p:menuitem value="Buscar" icon="fa fa-search" action="#{bienesController.buscarDepreBien}" update="pnlBienes" />
+                <p:menuitem id="btnImp" value="Imprimir" icon="fa fa-print" ajax="false" action="#{bienesController.imprimirDepreciacionBien}"/>
+                <p:menuitem value="Salir" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+            </p:menubar>
+            <p:panel  header="Descargo de Bienes">
+                <h:panelGrid>
+                    <p:row>
+                        <p:column> <h:outputLabel value="Código Inventario:"/></p:column>
+                        <p:column><h:inputText id="inv" value="#{bienesController.codigoInventario}" required="true" requiredMessage="Ingrese código de inventario"/></p:column>
+                    </p:row>    
+                </h:panelGrid>                        
+            </p:panel>   
+            <p:panel id="pnlBienes">
+                <p:dataTable id="tBienes" value="#{bienesController.lstDepre}" var="des" rowKey="#{des.idBien}" >
+                    <p:column headerText="anio"  >
+                        <h:outputText value="#{des.anio}"/>
+                    </p:column>
+                    <p:column headerText="mes"  >
+                        <h:outputText value="#{des.mes}"/>
+                    </p:column>
+                    <p:column headerText="Numero Dias"  >
+                        <h:outputText value="#{des.noDiasDeprec}"/>
+                    </p:column>
+                    <p:column headerText="Monto Depreciado" >
+                        <h:outputText value="#{des.montoDepreciacion}" >
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText>    
+                    </p:column>
+                
+                </p:dataTable>
+            </p:panel>
+        </ui:define>
+    </ui:composition>
+
+</html>
+

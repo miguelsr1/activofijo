@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+        <ui:define name="content">
+            <p:menubar id="barBtns" > 
+                <p:menuitem value="calcular" icon="fa fa-calculator" action="#{bienesController.calcularDepreciacion}" update="pnlBienes"/>
+                
+                <p:menuitem value="Salir" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+            </p:menubar>
+            <h:form>                
+            <p:panel id="pnlFiltros" header="Bienes Depreciables">
+                <h:panelGrid columns="2">
+                    <h:panelGroup><h:outputLabel value="*" style="font:bold;color:red;size:14px"/>
+                        <p:outputLabel value="A&ntilde;o"/>
+                    </h:panelGroup>  
+                    <p:inputText id="anio" value="#{bienesController.anioDepre}" required="true" requiredMessage="Ingrese el año"/>
+                    <h:outputLabel value="Mes:" />
+                         <p:selectOneMenu id="mes" value="#{bienesController.mes}">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItem itemLabel="Enero" itemValue="01"/>
+                                <f:selectItem itemLabel="Febrero" itemValue="02"/>
+                                <f:selectItem itemLabel="Marzo" itemValue="03"/>
+                                <f:selectItem itemLabel="Abril" itemValue="04"/>
+                                <f:selectItem itemLabel="Mayo" itemValue="05"/>
+                                <f:selectItem itemLabel="Junio" itemValue="06"/>
+                                <f:selectItem itemLabel="Julio" itemValue="07"/>
+                                <f:selectItem itemLabel="Agosto" itemValue="08"/>
+                                <f:selectItem itemLabel="Septiembre" itemValue="09"/>
+                                <f:selectItem itemLabel="Octubre" itemValue="10"/>
+                                <f:selectItem itemLabel="Noviembre" itemValue="11"/>
+                                <f:selectItem itemLabel="Diciembre" itemValue="12"/>
+                            </p:selectOneMenu> 
+                        <h:outputLabel  value="Fuente:      "/> 
+                          <p:selectOneMenu id="idfuente" value="#{bienesController.fuente}"> 
+                              <p:ajax update="idfuente"/>
+                              <f:selectItem itemLabel="-Seleccione-" itemValue=""/>
+                              <f:selectItems  value="#{bienesController.lstFuente}" var="fuente" itemLabel="#{fuente.nombre}" itemValue="#{fuente.idFuente}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Proyecto:"/>
+                        <p:selectOneMenu id="proyecto" value="#{bienesController.proyecto}"> 
+                            <p:ajax update="proyecto"/>
+                                <f:selectItem itemLabel="-Seleccione-" itemValue=""/>
+                                <f:selectItems value="#{bienesController.lstProyecto}" var="proy" itemLabel="#{proy.nombreProyecto}" itemValue="#{proy.idProyecto}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Bien"/>
+                        <p:inputText id="bien"  value="#{bienesController.idBien}"/>
+                </h:panelGrid>
+            </p:panel> 
+         </h:form>                
+              <p:panel id="pnlBienes">
+                  <p:outputLabel id="msg" value="#{bienesController.mensaje}" />
+              </p:panel> 
+            
+        </ui:define>
+    </ui:composition>
+
+</html>
+

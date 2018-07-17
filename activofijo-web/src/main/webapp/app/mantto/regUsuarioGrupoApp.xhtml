@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+        <ui:define name="content">
+            <p:menubar> 
+                <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
+                <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
+                <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+                <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/principal.mined"/>
+                <f:facet  name="options" >  
+                    <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{loginController.logout}"/>
+                </f:facet>  
+            </p:menubar>
+
+            <p:panel id="pnlUsuarios" >
+                <f:facet name="header" >
+                    <i class="fa fa-list-ol blue" style="font-size: 16px;"></i>
+                    <p:spacer width="10"/>
+                    <h:outputText value="Seleccione un Usuario"/>
+                </f:facet>
+                <p:dataTable value="#{usuarioController.lstUsuarios}" var="usu" rowKey="#{usu.login}"
+                             selectionMode="single" selection="#{gruposController.usuario}">
+                    <p:ajax event="rowSelect" update="pnlDatos" listener="#{gruposController.udpUsuarioAppGrupo}" />
+                    <p:column headerText="Usuario">
+                        <h:outputText value="#{usu.login}"/>
+                    </p:column>
+                    <p:column headerText="Nombre Completo" >
+                        <h:outputText value="#{usu.nombres} #{usu.apellidos}"/>
+                    </p:column>
+                    <p:column headerText="Fecha exp.">
+                        <h:outputText value="#{usu.fechaExpiracion}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Correo eléctronico">
+                        <h:outputText value="#{usu.correElectronico}"/>
+                    </p:column>                    
+                </p:dataTable>
+            </p:panel>
+
+            <p:panel id="pnlDatos" >
+                <f:facet name="header" >
+                    <i class="fa fa-list-ol blue" style="font-size: 16px;"></i>
+                    <p:spacer width="10"/>
+                    <h:outputText value="Listado Grupos Registrados"/>
+                </f:facet>
+
+                <h:panelGrid columns="2">
+                    <h:outputText value="Aplicación:" />
+                    <p:selectOneMenu value="#{gruposController.aplicacion}" converter="genericConverter" disabled="#{gruposController.deshabilitar}">
+                        <f:selectItem  itemLabel="---" itemValue=""/>
+                        <f:selectItems value="#{aplicacionController.lstAplicacion}"/>
+                        <p:ajax update="cboDepartamento cboGrupo" listener="#{gruposController.updUsuarioApp}"/>
+                    </p:selectOneMenu>
+                    <h:outputText value="Departamento:" />
+                    <p:selectOneMenu id="cboDepartamento" value="#{gruposController.usuarioApp.codigoDepartamento}" disabled="#{gruposController.deshabilitarDepartamento}">
+                        <f:selectItem itemLabel="TODO EL PAIS" itemValue="00"/>
+                        <f:selectItem itemLabel="AHUACHAPAN" itemValue="01"/>
+                        <f:selectItem itemLabel="SANTA ANA" itemValue="02"/>
+                        <f:selectItem itemLabel="SONSONATE" itemValue="03"/>
+                        <f:selectItem itemLabel="CHALATENANGO" itemValue="04"/>
+                        <f:selectItem itemLabel="LA LIBERTAD" itemValue="05"/>
+                        <f:selectItem itemLabel="SAN SALVADOR" itemValue="06"/>
+                        <f:selectItem itemLabel="CUSCATLAN" itemValue="07"/>
+                        <f:selectItem itemLabel="LA PAZ" itemValue="08"/>
+                        <f:selectItem itemLabel="CABAÑAS" itemValue="09"/>
+                        <f:selectItem itemLabel="SAN VICENTE" itemValue="10"/>
+                        <f:selectItem itemLabel="USULUTAN" itemValue="11"/>
+                        <f:selectItem itemLabel="SAN MIGUEL" itemValue="12"/>
+                        <f:selectItem itemLabel="MORAZAN" itemValue="13"/>
+                        <f:selectItem itemLabel="LA UNION" itemValue="14"/>
+                        <p:ajax update="cboGrupo" listener="#{gruposController.updGrupoApp}"/>
+                    </p:selectOneMenu>
+                    <h:outputText value="Grupo:" />
+                    <p:selectOneMenu id="cboGrupo" value="#{gruposController.grupoApp}" converter="genericConverter" disabled="#{gruposController.deshabilitar}">
+                        <f:selectItem  itemLabel="---" itemValue=""/>
+                        <f:selectItems value="#{gruposController.lstGrupoAplicacion}"/>
+                        <p:ajax listener="#{gruposController.updGruposAppByUsuario}"/>
+                    </p:selectOneMenu>
+                </h:panelGrid>
+            </p:panel>
+        </ui:define>
+    </ui:composition>
+</html>

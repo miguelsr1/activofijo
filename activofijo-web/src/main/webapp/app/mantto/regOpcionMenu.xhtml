@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+        <ui:define name="content">
+            <p:menubar> 
+                <p:menuitem value="Nuevo" icon="fa fa-file-o" action="#{opcionMenuController.prepareCreate}" update="pnlEdicion"/>
+                <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
+                <p:menuitem value="Guardar" icon="fa fa-save" action="#{opcionMenuController.guardar}" update="pnlOpcionMenu"/>
+                <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/principal.mined"/>
+                <f:facet  name="options" >  
+                    <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{loginController.logout}"/>
+                </f:facet>  
+            </p:menubar>
+            <p:scrollPanel style="width:100%;height:90%">
+                <p:panel id="pnlEdicion">
+                    <f:facet name="header" >
+                        <i class="fa fa-table blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Datos de Opciones de Menu"/>
+                    </f:facet>
+                    <h:panelGrid columns="2">
+                        <h:outputText value="Id:" style="text-align: right;"/>
+                        <p:inputText size="5" disabled="true" value="#{opcionMenuController.opcionMenu.idOpcMenu}"/>
+                        <h:outputText value="Opción padre:"/>
+                        <p:selectOneMenu value="#{opcionMenuController.opcionMenu.idOpcMenuPadre}" converter="genericConverter" disabled="#{opcionMenuController.deshabilitar}">
+                            <f:selectItem itemValue="----"/>
+                            <f:selectItems value="#{opcionMenuController.lstOpcionMenu}"/>
+                            <p:ajax listener="#{opcionMenuController.filtrarOpcionesMenu}" update="pnlOpcionMenu"/>
+                        </p:selectOneMenu>
+                        <h:outputLabel value="Nombre:" for="txtNombre"/>
+                        <p:inputText id="txtNombre" size="25" value="#{opcionMenuController.opcionMenu.nombreOpcion}" required="true" requiredMessage="El nombre de la opción es necesaria" disabled="#{opcionMenuController.deshabilitar}"/>
+                        <h:outputLabel value="Enlace:" for="txtUrl"/>
+                        <p:inputText id="txtUrl" size="70" value="#{opcionMenuController.opcionMenu.url}" disabled="#{opcionMenuController.deshabilitar}"/>
+                        <h:outputLabel value="Icono:" for="txtIcono"/>
+                        <p:inputText id="txtIcono" value="#{opcionMenuController.opcionMenu.icono}" disabled="#{opcionMenuController.deshabilitar}"/>
+                        <h:outputLabel value="Orden:" for="txtOrden"/>
+                        <p:inputText id="txtOrden" size="5" value="#{opcionMenuController.opcionMenu.orden}" disabled="#{opcionMenuController.deshabilitar}" style="text-align: right;"/>
+                    </h:panelGrid>
+                </p:panel>
+
+                <p:panel id="pnlOpcionMenu" >
+                    <f:facet name="header" >
+                        <i class="fa fa-list-ol blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Lista de Opciones de Menu Registradas"/>
+                    </f:facet>
+                    <p:dataTable value="#{opcionMenuController.lstOpcionMenu}" var="opcion" rowKey="#{opcion.idOpcMenu}"
+                                 selectionMode="single" selection="#{opcionMenuController.opcionMenu}">
+                        <p:ajax event="rowSelect" listener="#{opcionMenuController.editarOpcMenu}" update="pnlEdicion"/>
+                        <p:column headerText="Id" style="width: 35px; text-align: center;">
+                            <h:outputText value="#{opcion.idOpcMenu}"/>
+                        </p:column>
+                        <p:column headerText="Id Padre" style="width: 150px;">
+                            <h:outputText value="#{opcion.idOpcMenuPadre}"/>
+                        </p:column>
+                        <p:column headerText="Nombre" style="width: 200px;">
+                            <h:outputText value="#{opcion.nombreOpcion}"/>
+                        </p:column>
+                        <p:column headerText="Enlace">
+                            <h:outputText value="#{opcion.url}"/>
+                        </p:column>
+                        <p:column headerText="Icono" style="width: 80px;">
+                            <h:outputText value="#{opcion.icono}"/>
+                        </p:column>
+                        <p:column headerText="Orden" style="width: 35px; text-align: center;">
+                            <h:outputText value="#{opcion.orden}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+            </p:scrollPanel>
+        </ui:define>
+    </ui:composition>
+</html>

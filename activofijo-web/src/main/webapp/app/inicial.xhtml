@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+        <ui:define name="content">
+            <h:form>
+                <p:menubar> 
+                    <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
+                    <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
+                    <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+                    <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                    <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/principal.mined"/>
+
+                    <f:facet  name="options" >  
+                        
+                        <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{loginController.logout}"/>
+                    </f:facet>  
+                </p:menubar>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

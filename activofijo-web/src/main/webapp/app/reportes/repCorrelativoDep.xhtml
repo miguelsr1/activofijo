@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+        <ui:define name="content">
+            <p:menubar id="barBtns" > 
+                <p:menuitem value="Buscar" icon="fa fa-search" action="#{bienesController.buscarCorrelativo}" update=" barBtns pnlBienes" />
+                <p:menuitem id="btnImp" value="Imprimir" icon="fa fa-print" ajax="false" action="#{bienesController.imprimirCorrelativos}" />
+                <p:menuitem value="Salir" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+            </p:menubar>
+            <p:panel id="pnlFiltros" header="Unidades Administrativas ">
+                <h:panelGrid columns="2">
+                    <p:row>
+                        <p:column> <h:outputLabel  value="Tipo Unidad:      "/> </p:column> 
+                        <p:column>
+                            <h:selectOneMenu id="tipUni" value="#{bienesController.tipoUnidad}">
+                                <p:ajax update="uadm" listener="#{bienesController.filtrarUnidadesAdm}" process="@this,tipUni"/>
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItem itemLabel="Unidad Administrativa" itemValue="UA"/>
+                                <f:selectItem itemLabel="Centro Escolar" itemValue="CE"/>
+                            </h:selectOneMenu> 
+                        </p:column> 
+                    </p:row>  
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Unidad Activo Fijo:       " />
+                            <h:selectOneMenu id="uaf" value="#{bienesController.unidadAF}" disabled="#{bienesController.esAdm}">
+                                <p:ajax update="uadm" listener="#{bienesController.filtrarUnidadesAdm}" process="@this,tipUni"/>
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{bienesController.lstUnidadAF}" var="uAF" itemLabel="#{uAF.unidadActivoFijo} - #{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Unidad Administrativa:     " />
+                            <h:selectOneMenu  id="uadm" value="#{bienesController.unidadAdm}">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{bienesController.lstUnidadAdm}" var="uadm" itemLabel="#{uadm.afUnidadesAdministrativasPK.codigoUnidad} - #{uadm.nombreUnidad}" itemValue="#{uadm.afUnidadesAdministrativasPK.codigoUnidad}"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                    </p:row>
+                </h:panelGrid>                        
+            </p:panel>   
+               <p:panel id="pnlBienes">
+                   <p:dataTable value="#{bienesController.lstCorrelativos}" var="bien"  style="width: 60%"
+                       paginator="true" rows="25"  paginatorPosition="top"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                       <p:column headerText="Descripci&oacute;n Bien">
+                           <h:outputText value="#{bien.idTipoBien} - #{bien.nombreTipoBien}" />
+                       </p:column>
+                       <p:column headerText="Correlativo" >
+                           <h:outputText value="#{bien.correlativo}"/>
+                       </p:column>
+                   </p:dataTable>
+               </p:panel>
+        </ui:define>
+    </ui:composition>
+
+</html>
+

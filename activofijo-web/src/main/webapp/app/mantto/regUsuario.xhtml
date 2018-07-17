@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+        <ui:define name="content">
+            <p:menubar> 
+                <p:menuitem value="Nuevo" icon="fa fa-file-o" action="#{usuarioController.prepareCreate}" update="pnlEdicion"/>
+                <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
+                <p:menuitem value="Guardar" icon="fa fa-save" action="#{usuarioController.guardar}" update="pnlEdicion pnlUsuarios"/>
+                <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/principal.mined"/>
+                <f:facet  name="options" >  
+                    <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{loginController.logout}"/>
+                </f:facet>  
+            </p:menubar>
+
+            <p:panel id="pnlEdicion">
+                <f:facet name="header" >
+                    <i class="fa fa-table blue" style="font-size: 16px;"></i>
+                    <p:spacer width="10"/>
+                    <h:outputText value="Datos del Usuario"/>
+                </f:facet>
+                <h:panelGrid columns="2">
+                    <p:outputLabel value="Tipo de Usuario:" />
+                    <p:selectOneRadio value="#{usuarioController.usuario.tipoUsuario}" >
+                        <f:selectItem itemLabel="Administrativo" itemValue="I"/>
+                        <f:selectItem itemLabel="Departamental" itemValue="D"/>
+                        <f:selectItem itemLabel="Centro Escolar" itemValue="C"/>
+                        <f:selectItem itemLabel="Externo" itemValue="E"/>
+                        <p:ajax update="pnlEdicion"/>
+                    </p:selectOneRadio>
+                    <p:outputLabel value="Buscar empleado:" rendered="#{usuarioController.usuario.tipoUsu eq 'I'}"/>
+                    <p:commandButton actionListener="#{usuarioController.findEmpleados}" icon="fa fa-search" rendered="#{usuarioController.usuario.tipoUsu eq 'I'}">
+                        <p:ajax event="dialogReturn" listener="#{usuarioController.selectEmpleado}" update="pnlEdicion"/>
+                    </p:commandButton>
+                    <p:outputLabel value="Código de Infraestructura:" rendered="#{usuarioController.usuario.tipoUsu eq 'C'}"/>
+                    <h:panelGrid columns="3" rendered="#{usuarioController.usuario.tipoUsu eq 'C'}">
+                        <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{usuarioController.codigoEntidad}" size="5" autocomplete="off" requiredMessage="Código de infraestructura">
+                            <p:ajax event="keyup" update="nombreCE" listener="#{usuarioController.buscarEntidadEducativa}" />
+                        </p:inputText>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel id="nombreCE" value="#{usuarioController.entidadEducativa.nombre}" style="font-weight: bold"/>
+                    </h:panelGrid>
+                    <p:outputLabel value="Departamento:" rendered="#{usuarioController.usuario.tipoUsu eq 'D'}"/>
+                    <p:selectOneMenu value="#{usuarioController.usuario.tipoUsuario}" rendered="#{usuarioController.usuario.tipoUsu eq 'D'}" >
+                        <f:selectItem itemLabel="Todo el país" itemValue="00"/>
+                        <f:selectItem itemLabel="AHUACHAPAN" itemValue="01"/>
+                        <f:selectItem itemLabel="SANTA ANA" itemValue="02"/>
+                        <f:selectItem itemLabel="SONSONATE" itemValue="03"/>
+                        <f:selectItem itemLabel="CHALATENANGO" itemValue="04"/>
+                        <f:selectItem itemLabel="LA LIBERTAD" itemValue="05"/>
+                        <f:selectItem itemLabel="SAN SALVADOR" itemValue="06"/>
+                        <f:selectItem itemLabel="CUSCATLAN" itemValue="07"/>
+                        <f:selectItem itemLabel="LA PAZ" itemValue="08"/>
+                        <f:selectItem itemLabel="CABAÑAS" itemValue="09"/>
+                        <f:selectItem itemLabel="SAN VICENTE" itemValue="10"/>
+                        <f:selectItem itemLabel="USULUTAN" itemValue="11"/>
+                        <f:selectItem itemLabel="SAN MIGUEL" itemValue="12"/>
+                        <f:selectItem itemLabel="MORAZAN" itemValue="13"/>
+                        <f:selectItem itemLabel="LA UNION" itemValue="14"/>
+                    </p:selectOneMenu>
+                    <h:outputText value="Nombre:" />
+                    <h:panelGrid columns="3">
+                        <p:inputText size="25" disabled="#{usuarioController.usuario.tipoUsu eq 'I'}" value="#{usuarioController.nombres}" placeholder="NOMBRES"/>
+                        <p:spacer width="10" height="8"/>
+                        <p:inputText size="25" disabled="#{usuarioController.usuario.tipoUsu eq 'I'}" value="#{usuarioController.apellidos}" placeholder="APELLIDOS"/>
+                    </h:panelGrid>
+
+                    <h:outputText value="Código empleado:" rendered="#{usuarioController.usuario.tipoUsu eq 'I'}"/>
+                    <p:inputText value="#{usuarioController.codigoEmpleado}" rendered="#{usuarioController.usuario.tipoUsu eq 'I'}" disabled="#{usuarioController.modifUsuario}"/>
+                    <h:outputLabel value="Correo eléctronico:" />
+                    <p:inputText size="25" value="#{usuarioController.correoElectronico}" />
+                    <h:outputLabel value="Usuario:" />
+                    <p:inputText styleClass="textMayuscula" onkeyup="return cUpper(this);" size="25" value="#{usuarioController.usuario.login}" autocomplete="false" disabled="#{usuarioController.modifUsuario}" />
+                    <h:outputLabel value="Clave de Acceso:" />
+                    <p:password size="25" value="#{usuarioController.usuario.claveAcceso}" autocomplete="false" />
+                    <h:outputLabel value="Fecha expiración:" />
+                    <p:calendar value="#{usuarioController.usuario.fechaExpiracion}" pattern="dd/MM/yyyy" size="9"/>
+                    <h:outputLabel value="¿Cambiar clave de acceso?:" />
+                    <p:selectOneRadio value="#{usuarioController.usuario.cambiarClave}" >
+                        <f:selectItem itemLabel="No" itemValue="N"/>
+                        <f:selectItem itemLabel="Si" itemValue="S"/>
+                    </p:selectOneRadio>                    
+                    <h:outputLabel value="Activo:" />
+                    <p:selectOneRadio value="#{usuarioController.usuario.activo}" >
+                        <f:selectItem itemLabel="Activo" itemValue="A"/>
+                        <f:selectItem itemLabel="Inactivo" itemValue="I"/>
+                    </p:selectOneRadio>                    
+                </h:panelGrid>
+            </p:panel>
+
+            <p:panel id="pnlUsuarios" >
+                <f:facet name="header" >
+                    <i class="fa fa-list-ol blue" style="font-size: 16px;"></i>
+                    <p:spacer width="10"/>
+                    <h:outputText value="Lista de Usuarios"/>
+                </f:facet>
+                <p:dataTable value="#{usuarioController.lstUsuarios}" var="usu" rowKey="#{usu.login}"
+                             selectionMode="single" selection="#{usuarioController.usuario}">
+                    <p:ajax event="rowSelect" listener="#{usuarioController.editarUsuario}" update="pnlEdicion"/>
+                    <p:column headerText="Usuario">
+                        <h:outputText value="#{usu.login}"/>
+                    </p:column>
+                    <p:column headerText="Nombre Completo" >
+                        <h:outputText value="#{usu.nombres} #{usu.apellidos}"/>
+                    </p:column>
+                    <p:column headerText="Fecha exp.">
+                        <h:outputText value="#{usu.fechaExpiracion}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Correo eléctronico">
+                        <h:outputText value="#{usu.correElectronico}"/>
+                    </p:column>                    
+                </p:dataTable>
+            </p:panel>
+        </ui:define>
+    </ui:composition>
+</html>

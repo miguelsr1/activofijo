@@ -1,0 +1,90 @@
+
+/**
+Barra de herramientas
+**/
+.fa-plus::before {
+    content: "";
+    font-size: 14px;
+    color: #33afde;
+    padding:2px;
+}
+.fa-file-o::before {
+    content: "";
+    font-size: 14px;
+    color: #33afde;
+    padding:2px;
+}
+.fa-edit::before, .fa-pencil-square-o::before {
+    content: "";
+    font-size: 16px;
+    color: #33afde;
+    padding:2px;
+}
+.fa-save::before, .fa-floppy-o::before {
+    content: "";
+    font-size: 16px;
+    color: #33afde;
+    padding:2px;
+}
+.fa-print::before {
+    content: "";
+    font-size: 16px;
+    color: #33afde;
+    padding:2px;
+}
+.fa-home::before {
+    content: "";
+    font-size: 16px;
+    color: #33afde;
+    padding:2px;
+}
+.fa-search::before {
+    content: "";
+    font-size: 16px;
+    color: #33afde;
+    padding:2px;
+}
+.fa-check::before {
+    content: "";
+    font-size: 16px;
+    color: #33afde;
+    padding:2px;
+}
+.fa-plus-circle::before {
+    content: "";
+    font-size: 16px;
+    color: #33afde;
+    padding:2px;
+}
+.fa-check-circle::before {
+    content: "";
+    font-size: 16px;
+    color: #5fcf80;
+    padding:2px;
+}
+.fa-minus-circle::before {
+    content: "";
+    font-size: 16px;
+    color: #d0525d;
+    padding:2px;
+}
+.fa-trash-o::before {
+    content: "";
+    font-size: 16px;
+    color: #33afde;
+    padding:2px;
+}
+.fa-file-excel-o::before {
+    font-size: 16px;
+    color: #33afde;
+    padding:2px;
+}
+.fa-eraser::before {
+    
+    font-size: 16px;
+    color: red;
+    padding:2px;
+}
+.ui-icon-check{
+    
+}

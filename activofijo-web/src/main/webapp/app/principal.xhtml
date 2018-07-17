@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaPrincipal.xhtml">
+        <ui:define name="content">
+            <h:form>
+           <p:growl id="growl" showDetail="true" sticky="true" >
+                        <p:autoUpdate/>
+                    </p:growl>
+                <div class="contentPrincipal ">
+                    <div style="position: absolute; right: 1%;" >
+                        <p:commandButton value="Salir" icon="fa fa-sign-out" action="#{loginController.logout}" />
+                    </div>
+                    <p:spacer width="10" height="100"/>
+                    <div class="bloque2 textoConSombra" style=" min-height:200px; background-position:left top; background-repeat:no-repeat; margin: 0px auto;">
+                            <div class="subItem" >
+                            <p:commandLink ajax="false" styleClass="secciones" action="{opcionMenuController.seleccionApp}">
+                                <h:panelGrid columns="1" columnClasses="colAppImagen,colAppDescripcion" style="margin: 0 auto;" >
+                                    <p:graphicImage value="../resources/images/user_app.png" />
+                                    <p:outputLabel value="Seguridad"/>
+                                </h:panelGrid>
+                                <f:setPropertyActionListener target="#{opcionMenuController.idApp}" value="1" />
+                                <f:param name="usuario" value="#{opcionMenuController.usuario}"/> 
+                                <f:param name="idApp" value="#{opcionMenuController.idApp}"/> 
+
+                            </p:commandLink>
+                        </div>
+                            <div class="subItem" >
+                            <p:commandLink ajax="false" styleClass="secciones" action="#{opcionMenuController.seleccionApp}">
+                                <h:panelGrid columns="1" columnClasses="colAppImagen,colAppDescripcion" style="margin: 0 auto;">
+                                    <p:graphicImage value="../resources/images/activo_app.png" />
+                                    <p:outputLabel value="Activo Fijo"/>
+                                </h:panelGrid>
+                                <f:setPropertyActionListener target="#{opcionMenuController.idApp}" value="5" />
+                            </p:commandLink>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

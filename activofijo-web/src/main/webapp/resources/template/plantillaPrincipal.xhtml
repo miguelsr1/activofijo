@@ -1,0 +1,210 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="#{request.contextPath}/resources/images/favicon.png" rel="shortcut icon"/>
+        <link href="#{request.contextPath}/resources/css/principal.css" rel="stylesheet" type="text/css" />
+        <link href="#{request.contextPath}/resources/css/side-menu.css" rel="stylesheet" type="text/css" />
+        <link href="#{request.contextPath}/resources/css/spark-1.css" rel="stylesheet" type="text/css" />
+        <link href="#{request.contextPath}/resources/css/iconos-1.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="#{request.contextPath}/resources/js/funciones-1.js"></script>
+        <title>Sistema de Control de Usuarios</title>
+        <style>
+            .columnRight{
+                float : left;
+                clear : none;
+                text-align: center;
+                height: 82px;
+                width: 25%;
+            }
+            .columnMid{
+                float : left;
+                vertical-align: middle !important;
+                clear : none;
+                height: 82px;
+                width: 50%;
+            }
+            .columnLeft{
+                float : left;
+                text-align: center;
+                clear : none;
+                width: 25%;
+                height: 82px;
+            }
+            .wrapper_header {
+                height:105px;
+            }
+            .faces-layout-fix {
+                border: none;
+                height: 100%;
+            }
+            .ui-growl {
+                right: 50%;
+                top: 50%;
+                margin-top: -100px;
+                margin-right: -150px;
+            }
+            .ui-widget-overlay {
+                background: #2d5972 !important;
+                opacity: 0.8;
+            }
+            .ui-layout-container{
+                margin: 0 auto !important;
+            }
+
+            .contentPrincipal {
+                background-repeat: no-repeat;
+                position: relative;
+                margin: 0 auto;
+                width: 85%;
+            }
+            .bloque1 {
+                width: 46%;
+            }
+            .bloque2 {
+                width: 92% ;
+            }
+            .subItem {
+                float: left;
+                width: 20%;
+                margin: 0 auto !important;
+            }
+            .subItem2 {
+                float: left;
+                width: 50%;
+            }
+            .propiedadBloque1 {
+                border-radius: 5px;
+                display: block;
+                float: left;
+                overflow: hidden;
+                padding: 2%;
+                text-align: center;
+                transition: all 0.5s ease 0s;
+                width: 46%;
+            }
+            .propiedadBloque2 {
+                border-radius: 5px;
+                display: block;
+                padding: 2%;
+                float: left;
+                overflow: hidden;
+                text-align: center;
+                transition: all 0.5s ease 0s;
+            }
+            .propiedadBloque1:hover, .MOBILE .propiedadBloque1:hover, .propiedadBloque2:hover, .MOBILE .propiedadBloque2:hover {
+                background-color: #e7f1fa;
+                transition: all 0.5s ease 0s;
+            }
+            .textoConSombra {
+                text-shadow: 0 1px 0 #ffffff;
+            }
+            .estiloDeTopico {
+                color: #25aae1;
+                display: block;
+                font-size: 18px;
+            }
+            .estiloFuente {
+                font-family: "exosemibold","Trebuchet MS",Arial,Helvetica,sans-serif;
+            }
+            .secciones {
+                border-radius: 4px;
+                display: block;
+                line-height: 1.42857;
+                margin-bottom: 20px;
+                padding: 4px;
+                transition: border 0.2s ease-in-out 0s;
+            }
+            a.secciones.active,a.secciones:focus,a.secciones:hover{
+                border-color:#337ab7;
+                background-color: #8ac7fe;
+            }
+            .ui-widget-header {
+                background: rgba(0, 0, 0, 0) -moz-linear-gradient(center top , #f6f7f9 0px, #f6f7f9 100%) repeat scroll 0 0 !important;
+                border: 1px solid #d9d9d9;
+                color: #1b1d1f;
+            }
+            #fluid-banner-login {
+                height: 100%;
+                height: -webkit-calc(100vh - 120px);
+                height: calc(100vh - 120px);
+                max-width: 1280px; 
+                overflow:hidden; 
+                margin: 0 auto;
+            }
+
+            #fixed-thumbs {
+                height: 20px;
+            }
+            @media (max-width: 640px) {
+                .bloque1 {
+                    width: 100%;
+                }
+                .bloque2 {
+                    width: 100%;
+                }
+                .subItem{
+                    width: 100%;
+                }
+                .subItem2{
+                    width: 100%;
+                }
+            }
+        </style>
+
+    </h:head>
+
+    <h:body>
+          <p:idleMonitor onactive="PF('sessionTimeOutDialog').show();" 
+                       timeout="600000" >
+            <p:ajax event="active" />
+        </p:idleMonitor>
+        <p:dialog header="Sesión caducada" id="sessionTimeOutDialog" 
+                  widgetVar="sessionTimeOutDialog" resizable="false" draggable="false"
+                  modal="true" closable="false" width="400" 
+                  visible="false">
+            <h:panelGrid columns="1" style="text-align: center;">
+                <h:panelGrid columns="2">
+                    <h:outputText value="La sesión a caducado por inactividad (10 min), por favor, pulse sobre el siguiente botón para volver a acceder a la aplicación" />
+                    <p:graphicImage
+                        url="/resources/images/desconectado.png"  />
+                </h:panelGrid>
+            </h:panelGrid>
+            <f:facet name="footer">
+                <p:commandButton id="confirmBackToLogin" value="Iniciar sesión" action="#{loginController.logout}" />
+            </f:facet>
+        </p:dialog>
+          <div id="layout-topbar" class="ShadowGray">
+            <div id="layout-topbar-indent">
+                <div class="columnRight">
+                    <p:graphicImage styleClass="img1" value="#{pageContext.servletContext.contextPath}/resources/images/mined.png"/> 
+                </div>
+                <div class="columnMid">
+                    <br/><h:outputText style="font-size: 20px; color: black;" value="Ministerio de Educación"/>
+                    <br/><h:outputText style="font-size: 18px; color: black;" value="Sistema de Registro y Control de Bienes Muebles"/>
+                </div>
+                <div class="columnLeft">
+                    <p:graphicImage styleClass="img1" value="#{pageContext.servletContext.contextPath}/resources/images/escudo.png"/> 
+                </div>
+            </div>
+        </div>
+        <div id="fluid-banner-login">
+            <div id="layout-portlets-cover">
+                <div class="layout-portlets-box">
+                    <div style="width: 100%;">
+                        <ui:insert name="content"></ui:insert>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="fixed-thumbs" style="text-align: center; margin-top: 5px;">
+            <h:outputText value="Todos los derechos reservados - activoFijo-web version 1.2.7" style="color: white; font-size: 12px; font-weight: bold;"/>
+        </div>
+    </h:body>
+</html>

@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <h:outputStylesheet name="css/jsfcrud.css"/>
+    </h:head>
+    <h:body>
+       <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaLogin.xhtml">
+            <ui:define name="content" >
+                <h:form id="frmLogin">
+                  <p:growl id="growl" showDetail="true" sticky="true" >
+                        <p:autoUpdate/>
+                    </p:growl>
+                    <div style=" margin:0 auto 0 auto; left: 40%; top: 40%; width: 350px">
+                        <p:panel id="pnlCredenciales" styleClass="centradoTotal" header="Cambio contraseña" >
+                            <p:focus context="pnlCredenciales"/>  
+                            <h:panelGrid columns="2">
+                                <p:graphicImage value="#{request.contextPath}/../recursos/imagenes/login.png" />
+                                <h:panelGrid columns="2">
+                                    <p:outputLabel value="Usuario: "/>
+                                    <p:inputText value="#{loginController.login}" id="txtUsuario" styleClass="textMayuscula"/>
+                                </h:panelGrid>
+                            </h:panelGrid>
+                            <p:separator/>
+                            <h:panelGrid columns="2">
+                                <p:commandButton value="Guardar" action="#{loginController.resetearContrasena}" id="btnIngresar"/>
+                                <p:ajaxStatus style="width:16px;height:16px;">
+                                    <f:facet name="start">
+                                        <p:graphicImage value="#{request.contextPath}/../recursos/imagenes/ajaxloading.gif" />
+                                    </f:facet>
+
+                                    <f:facet name="complete">
+                                        <h:outputText value="" />
+                                    </f:facet>
+                                </p:ajaxStatus>
+                            </h:panelGrid>
+
+                        </p:panel>
+                    </div>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</html>
+

@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+        <ui:define name="content">
+            <p:menubar id="barBtns" > 
+                <p:menuitem value="Buscar" icon="fa fa-search" action="#{descargoController.buscarDescargos2}" update="pnlBienes" />
+                <p:menuitem value="Reporte" icon="fa fa-file-excel-o" ajax="false" action="#{descargoController.generarXls_reporteBienesDescargar}" />
+                <p:menuitem id="btnImp" value="Imprimir" icon="fa fa-print" ajax="false" action="#{descargoController.imprimirBienesDescargo}"/>
+                <p:menuitem value="Salir" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+            </p:menubar>
+            <p:panel  header="Descargo de Bienes">
+                <h:panelGrid>
+                    <p:row>
+                        <p:column> <h:outputLabel  value="Tipo Unidad:      "/> </p:column> 
+                        <p:column>
+                            <h:selectOneMenu id="tipUni" value="#{descargoController.tipoUnidad}" disabled="#{descargoController.actTipo}">
+                                <p:ajax update="uadm" listener="#{descargoController.filtrarUnidadesAdm}" process="@this,tipUni"/>
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItem itemLabel="Unidad Administrativa" itemValue="UA"/>
+                                <f:selectItem itemLabel="Centro Escolar" itemValue="CE"/>
+                            </h:selectOneMenu> 
+                        </p:column> 
+                    </p:row>  
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Unidad Activo Fijo:       " />
+                            <h:selectOneMenu id="uaf" value="#{descargoController.unidadAF}" disabled="#{descargoController.actAF}">
+                                <p:ajax update="uadm" listener="#{descargoController.filtrarUnidadesAdm}" process="@this,tipUni"/>
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{descargoController.lstUnidadAF}" var="uAF" itemLabel="#{uAF.unidadActivoFijo} - #{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Unidad Administrativa:     " />
+                            <h:selectOneMenu  id="uadm" value="#{descargoController.unidadAdm}" disabled="#{descargoController.actAd}">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{descargoController.lstUnidadAdm}" var="uadm" itemLabel="#{uadm.afUnidadesAdministrativasPK.codigoUnidad} - #{uadm.nombreUnidad}" itemValue="#{uadm.afUnidadesAdministrativasPK.codigoUnidad}"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                         <p:column><h:outputLabel value="Estado descargo:     "/>
+                            <h:selectOneMenu id="estadoSol" value="#{descargoController.estSolicitud}" >
+                                <f:selectItem itemLabel="-Seleccione-" itemValue=""/>
+                                <f:selectItem itemLabel="Solicitud" itemValue="S"/>
+                                <f:selectItem itemLabel="Proceso Descargo" itemValue="P"/>
+                                <f:selectItem itemLabel="Descargado" itemValue="D"/>
+                                <f:selectItem itemLabel="Denegada" itemValue="X"/>
+                            </h:selectOneMenu> 
+                        </p:column>      
+                        <p:column> <h:outputLabel  value="Codigo Inventario:      "/> </p:column> 
+                        <p:column><h:inputText id="inv" value="#{descargoController.codigoInv}"/></p:column>   
+                    </p:row>    
+                    <p:row >
+                        <p:column><h:outputLabel value="Fecha descargo    Desde:"/>
+                            <p:calendar id="fechacrea1" value="#{descargoController.fec1}" pattern="dd/MM/yyyy"/></p:column>
+                        <p:column><h:outputLabel value="Hasta :     "/>
+                            <p:calendar id="fechacrea2" value="#{descargoController.fec2}" pattern="dd/MM/yyyy"/></p:column> 
+                    </p:row>
+                    <p:row>
+                        <p:column> <h:outputLabel  value="Numero Acta:      "/> </p:column> 
+                        <p:column><h:inputText id="acta" value="#{descargoController.numSolicitud}"/></p:column>   
+                        <p:column> <h:outputLabel  value="Serie:      "/> </p:column> 
+                        <p:column><h:inputText id="serie" value="#{descargoController.serie}"/></p:column>   
+                    </p:row>     
+                    <p:row>
+                        <p:column><h:outputLabel value="Activos:     "/>
+                            <h:selectOneMenu id="activo" value="#{descargoController.activo}" >
+                                <f:selectItem itemLabel="Seleccione" itemValue=""/>    
+                                <f:selectItem itemLabel="Mayores 600" itemValue="A"/>
+                                <f:selectItem itemLabel="Menores 600" itemValue="N"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                         <p:column>
+                            <h:outputLabel value="Categoria:      "/>
+                            <h:selectOneMenu id="catbien" value="#{descargoController.cat}">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{descargoController.lstCatBien}" var="cat" itemLabel="#{cat.idCatBien} - #{cat.descripcionCatBien}" itemValue="#{cat.idCatBien}"/>
+                            </h:selectOneMenu> 
+                        </p:column>  
+                    </p:row>     
+                </h:panelGrid>                        
+            </p:panel>   
+            <p:panel id="pnlBienes">
+                <p:dataTable id="tBienes" value="#{descargoController.lstBienesDescargar}" var="des" rowKey="#{des.idBien}" paginator="true" rows="25">
+                    <p:column headerText="Inventario"  style="width: 150px">
+                        <h:outputText value="#{des.codigoInventario}"/>
+                    </p:column>
+                    <p:column headerText="Categoría " style="width: 150px">
+                        <h:outputText value="#{des.categoria}"/>
+                    </p:column>
+                    <p:column headerText="Descripci&oacute;n " style="width: 200px">
+                        <h:outputText value="#{des.descripcionBien}"/>
+                    </p:column>
+                    <p:column headerText="Marca " style="width: 100px">
+                        <h:outputText value="#{des.marca}"/>
+                    </p:column>
+                    <p:column headerText="Modelo " style="width: 100px">
+                        <h:outputText value="#{des.modelo}"/>
+                    </p:column>
+                    <p:column headerText="Serie " style="width: 100px">
+                        <h:outputText value="#{des.numeroSerie}"/>
+                    </p:column>
+                    <p:column headerText="Fecha " style="width: 100px">
+                        <h:outputLabel value="#{des.fechaAdquisicion}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputLabel>
+                    </p:column>
+                     <p:column headerText="Costo"  style="width: 100px">
+                         <h:outputText value="#{des.valorAdquisicion}" >
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText>    
+                    </p:column>
+                   <p:column headerText="Fecha Descargo " style="width: 100px">
+                       <h:outputLabel value="#{des.fechaDescargo}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputLabel>
+                    </p:column>
+                    <p:column headerText="Numero de Acta"  style="width: 150px">
+                        <h:outputText value="#{des.codigoDescargo}"/>
+                    </p:column>
+                    <p:column headerText="Depreciaci&oacute;n Acumulada"  style="width: 100px">
+                        <h:outputText value="#{des.montoDepreciacion}" >
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText>    
+                    </p:column>
+                    
+                </p:dataTable>
+            </p:panel>
+        </ui:define>
+    </ui:composition>
+
+</html>
+
