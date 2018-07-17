@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+    <persistence-unit name="seguridadV2PU" transaction-type="JTA">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <jta-data-source>java:/SeguridadV2Ds</jta-data-source>
+        <class>sv.gob.mined.seguridad.model.Aplicacion</class>
+        <class>sv.gob.mined.seguridad.model.AplicacionOpcMenu</class>
+        <class>sv.gob.mined.seguridad.model.BitacoraAcceso</class>
+        <class>sv.gob.mined.seguridad.model.Grupo</class>
+        <class>sv.gob.mined.seguridad.model.GrupoAplicacion</class>
+        <class>sv.gob.mined.seguridad.model.HistorialClavesAcceso</class>
+        <class>sv.gob.mined.seguridad.model.OpcionMenu</class>
+        <class>sv.gob.mined.seguridad.model.ParametrosGenerales</class>
+        <class>sv.gob.mined.seguridad.model.Usuario</class>
+        <class>sv.gob.mined.seguridad.model.UsuarioAplicacion</class>
+        <class>sv.gob.mined.seguridad.model.UsuarioGrupoAplicacion</class>
+        <class>sv.gob.mined.seguridad.model.rhevaluacion.Empleado</class>
+        <class>sv.gob.mined.seguridad.model.view.VwCatalogoEntidadEducativa</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <properties>
+            <property name="eclipselink.cache.shared.default" value="false"/>
+            <property name="eclipselink.target-database" value="Oracle"/>
+            <property name="eclipselink.target-server" value="JBoss"/>
+            <property name="eclipselink.cache.size.default" value="0"/> 
+        </properties>
+    </persistence-unit>
+    <persistence-unit name="activoFijoPU" transaction-type="JTA">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <jta-data-source>java:/ActivoV2DS</jta-data-source>
+        <mapping-file>META-INF/consultasNativas.xml</mapping-file>
+        <class>sv.gob.mined.activofijo.model.AfBienesDepreciables</class>
+        <class>sv.gob.mined.activofijo.model.AfCalidadBien</class>
+        <class>sv.gob.mined.activofijo.model.AfCategoriasBien</class>
+        <class>sv.gob.mined.activofijo.model.AfClasificacionBien</class>
+        <class>sv.gob.mined.activofijo.model.AfDepreciaciones</class>
+        <class>sv.gob.mined.activofijo.model.AfDescargos</class>
+        <class>sv.gob.mined.activofijo.model.AfDescargosDetalle</class>
+        <class>sv.gob.mined.activofijo.model.AfEjercicioFiscal</class>
+        <class>sv.gob.mined.activofijo.model.AfEstatusBien</class>
+        <class>sv.gob.mined.activofijo.model.AfFormaAdquisicion</class>
+        <class>sv.gob.mined.activofijo.model.AfFuenteFinanciamiento</class>
+        <class>sv.gob.mined.activofijo.model.AfProyectos</class>
+        <class>sv.gob.mined.activofijo.model.AfSeccionesUnidad</class>
+        <class>sv.gob.mined.activofijo.model.AfSolvencias</class>
+        <class>sv.gob.mined.activofijo.model.AfTipoBienes</class>
+        <class>sv.gob.mined.activofijo.model.AfTipoDescargo</class>
+        <class>sv.gob.mined.activofijo.model.AfTipoTraslados</class>
+        <class>sv.gob.mined.activofijo.model.AfTraslados</class>
+        <class>sv.gob.mined.activofijo.model.AfTrasladosDetalle</class>
+        <class>sv.gob.mined.activofijo.model.AfUnidadesActivoFijo</class>
+        <class>sv.gob.mined.activofijo.model.AfUnidadesAdministrativas</class>
+        <class>sv.gob.mined.activofijo.model.VwBienes</class>
+        <class>sv.gob.mined.activofijo.model.VwCorrelativos</class>
+        <class>sv.gob.mined.activofijo.model.VwDepreciaciones</class>
+        <class>sv.gob.mined.activofijo.model.VwDatosxCuentas</class>
+        <class>sv.gob.mined.activofijo.model.dto.DatosDepreciacion</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <properties>
+            <property name="eclipselink.cache.shared.default" value="false"/>
+            <property name="eclipselink.target-database" value="Oracle"/>
+            <property name="eclipselink.target-server" value="JBoss"/>
+            <property name="eclipselink.cache.size.default" value="0"/> 
+        </properties>
+    </persistence-unit>
+</persistence>

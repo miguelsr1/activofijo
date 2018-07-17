@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<entity-mappings 
+    xmlns="http://java.sun.com/xml/ns/persistence/orm" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm  http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
+    <description>Native queries para Activo Fijo</description>
+    
+   
+    <named-native-query name="BusquedaDepreciacionByBien" 
+                        result-class="sv.gob.mined.activofijo.model.dto.DatosDepreciacion">
+        <query>
+            <![CDATA[
+                select   rownum as idRow,
+                        a.NOMBRE_UNIDAD_AF as unidad,
+                        u.NOMBRE_UNIDAD as institucion,
+                        f.NOMBRE as fuente,
+                        b.CODIGO_INVENTARIO as numeroInventario,
+                        b.DESCRIPCION_BIEN as descripcionBien,
+                        c.DESCRIPCION_CAT_BIEN as categoriaBien,
+                        b.FECHA_ADQUISICION as fechaAdquisicion,
+                        b.VIDA_UTIL as vidaUtil,
+                        b.valor_adquisicion as precio,
+                        (b.valor_adquisicion - d.monto) as valorActual
+                from  AF_BIENES_DEPRECIABLES b 
+                inner join (select id_bien,sum(monto_depreciacion) monto from af_depreciaciones group by id_bien) d on d.id_bien=b.id_bien
+                inner join AF_UNIDADES_ACTIVO_FIJO a on a.UNIDAD_ACTIVO_FIJO=b.UNIDAD_ACTIVO_FIJO
+                inner join AF_UNIDADES_ADMINISTRATIVAS u on u.UNIDAD_ACTIVO_FIJO=b.UNIDAD_ACTIVO_FIJO and u.CODIGO_UNIDAD=b.CODIGO_UNIDAD
+                inner join AF_FUENTE_FINANCIAMIENTO f on f.ID_FUENTE=b.ID_FUENTE
+                inner join AF_CATEGORIAS_BIEN c on c.ID_CAT_BIEN=b.ID_CAT_BIEN
+                where b.ID_BIEN=?1
+            ]]>
+        </query>
+    </named-native-query>
+</entity-mappings>
