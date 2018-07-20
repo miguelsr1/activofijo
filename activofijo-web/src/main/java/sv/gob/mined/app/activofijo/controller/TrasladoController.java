@@ -305,7 +305,11 @@ public class TrasladoController implements Serializable {
    }
    
    public String getNombreAdm(String codigo,String tipo){
+       if (codigo.isEmpty() || tipo.isEmpty()){
+           return null;
+       }else {
           return cejb.NomUnidad(codigo,tipo);
+       }   
    }
    
    public String getTipoUnidad(String codigo){
@@ -596,13 +600,13 @@ public class TrasladoController implements Serializable {
         String condicion="";
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         
-        if(!codigoTras.isEmpty()){ condicion=condicion +" a.codigo_traslado='"+codigoTras+"' and "; }
+        if(!codigoTras.isEmpty() && codigoTras!=null){ condicion=condicion +" a.codigo_traslado='"+codigoTras+"' and "; }
         if (fecTraslado!=null){ condicion=condicion+ " a.fecha_traslado= to_date('"+sdf.format(fecTraslado)+"','dd/mm/yyyy') and ";}
-        if (!unidadAFOrig.isEmpty()) { condicion=condicion+ " a.unidad_af_origen="+unidadAFOrig+" and ";}
-        if (!unidadAdmOrg.isEmpty()) { condicion=condicion+ " a.codigo_unidad_origen="+unidadAdmOrg+" and ";}
-        if (!unidadAfDest.isEmpty()) { condicion=condicion+ " a.unidad_af_dest="+unidadAfDest+" and ";}
-        if (unidadAdmDes!=null) { condicion=condicion+ " a.codigo_unidad_dest="+unidadAdmDes+" and ";}
-        if (!estado.isEmpty()){ condicion=condicion+ " a.estado="+estado+" and ";   }
+        if (!unidadAFOrig.equals("0")) { condicion=condicion+ " a.unidad_af_origen="+unidadAFOrig+" and ";}
+        if (!unidadAdmOrg.equals("0")) { condicion=condicion+ " a.codigo_unidad_origen="+unidadAdmOrg+" and ";}
+        if (!unidadAfDest.equals("0")) { condicion=condicion+ " a.unidad_af_dest="+unidadAfDest+" and ";}
+        if (!unidadAdmDes.equals("0")) { condicion=condicion+ " a.codigo_unidad_dest="+unidadAdmDes+" and ";}
+        if (!estado.equals("3")){ condicion=condicion+ " a.estado="+estado+" and ";   }
         
         
         if (!condicion.equals("")){

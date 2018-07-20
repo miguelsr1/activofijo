@@ -97,7 +97,7 @@
                         <p:column><p:inputTextarea id="obsFallo" rows="3" cols="60" value="#{descargoController.obsFallo}"/></p:column>
                     </h:panelGrid>
                         <f:facet name="footer">
-                            <p:commandButton value="Aceptar" onclick="this.form.target = '_blank';PF('dlgImprimir').hide();" ajax="false" action="#{descargoController.realizarDescargo}"/>
+                            <p:commandButton value="Aceptar" onclick="PF('dlgImprimir').hide();" ajax="false" action="#{descargoController.realizarDescargo}"/>
                             <p:commandButton value="Cancelar" ajax="true" onclick="PF('dlgImprimir').hide();"/>
                         </f:facet>
 

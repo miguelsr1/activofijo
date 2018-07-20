@@ -684,7 +684,7 @@ public class DescargoController implements Serializable {
         String condicion="where";
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         
-        if (!estSolicitud.equals("")){ condicion = condicion + " a.estado='"+estSolicitud.trim()+"' and ";}
+        if (!estSolicitud.equals("Y")){ condicion = condicion + " a.estado='"+estSolicitud.trim()+"' and ";}
         if(!numSolicitud.isEmpty()){ condicion=condicion +" a.codigo_descargo='"+numSolicitud.trim()+"' and "; }
         if (fec1!=null){ condicion=condicion+ " a.fecha_descargo>= '"+sdf.format(fec1)+"' and ";}
         if (fec2!=null){ condicion=condicion+ " a.fecha_descargo<= '"+sdf.format(fec2)+"' and ";}
@@ -707,7 +707,7 @@ public class DescargoController implements Serializable {
         if (!unidadAdm.equals("0")) { condicion=condicion+ " a.codigo_unidad="+unidadAdm+" and ";}
         if (!unidadAF.equals("0")) { condicion=condicion+ " a.unidad_activo_fijo="+unidadAF+" and ";}
         if(!codigoInv.isEmpty()){ condicion=condicion +" a.codigo_inventario='"+codigoInv+"' and "; }
-        if (!estSolicitud.equals("")){ condicion = condicion + " a.estado='"+estSolicitud.trim()+"' and ";}
+        if (!estSolicitud.equals("Y")){ condicion = condicion + " a.estado='"+estSolicitud.trim()+"' and ";}
         if (cat!=0){condicion = condicion + "a.id_cat_bien="+cat+" and ";}
          if(!numSolicitud.isEmpty()){ condicion=condicion +" a.codigo_descargo='"+numSolicitud.trim()+"' and "; }
      

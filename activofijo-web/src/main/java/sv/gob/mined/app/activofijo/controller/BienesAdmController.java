@@ -702,6 +702,7 @@ public class BienesAdmController implements Serializable{
     public void guardarBien() {
         int i = 0;
         String co;
+        if (tipo!=null){
         String tBien = cejb.getTBien(tipo).getCodigoTipoBien();
 
         bd.setUnidadActivoFijo(unidadAF);
@@ -778,7 +779,10 @@ public class BienesAdmController implements Serializable{
         }
        // JsfUtil.mensajeAlerta("Bien Guardado satisfactoriamente");
         JsfUtil.redireccionar("buscarbienesAdm.mined?faces-redirect=true");
-
+        }
+        else{
+            JsfUtil.mensajeAlerta("Debe seleccionar el tipo de bien");
+        }
     }
 
     public void buscarCorrelativo() {

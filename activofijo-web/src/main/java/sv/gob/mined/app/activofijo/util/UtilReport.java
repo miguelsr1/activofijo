@@ -311,10 +311,10 @@ public final class UtilReport {
         }
     }
     public static byte[] getRpt(InputStream input, HashMap map, EntityManager em) throws JRException{
-        em.getTransaction().begin();
         Connection conn = em.unwrap(java.sql.Connection.class);
+        JasperFillManager.fillReport(input, map, conn);
+
         byte[] content = JasperRunManager.runReportToPdf(input, map, conn);
-        em.getTransaction().commit();
         return content;
     }
 
