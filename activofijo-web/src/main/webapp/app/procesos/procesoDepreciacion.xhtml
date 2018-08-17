@@ -36,8 +36,7 @@
                                 <f:selectItem itemLabel="Diciembre" itemValue="12"/>
                             </p:selectOneMenu> 
                         <h:outputLabel  value="Fuente:      "/> 
-                          <p:selectOneMenu id="idfuente" value="#{bienesController.fuente}"> 
-                              <p:ajax update="idfuente"/>
+                          <p:selectOneMenu id="idfuente" value="#{bienesController.fuente}" > 
                               <f:selectItem itemLabel="-Seleccione-" itemValue=""/>
                               <f:selectItems  value="#{bienesController.lstFuente}" var="fuente" itemLabel="#{fuente.nombre}" itemValue="#{fuente.idFuente}"/>
                         </p:selectOneMenu>

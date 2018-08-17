@@ -594,10 +594,10 @@ public class TrasladoDepController implements Serializable {
         
         if(!codigoTras.isEmpty()){ condicion=condicion +" a.codigo_traslado='"+codigoTras+"' and "; }
         if (fecTraslado!=null){ condicion=condicion+ " a.fecha_traslado= to_date('"+sdf.format(fecTraslado)+"','dd/mm/yyyy') and ";}
-        if (!unidadAFOrig.isEmpty()) { condicion=condicion+ " a.unidad_af_origen="+unidadAFOrig+" and ";}
-        if (!unidadAdmOrg.isEmpty()) { condicion=condicion+ " a.codigo_unidad_origen="+unidadAdmOrg+" and ";}
-        if (!unidadAfDest.isEmpty()) { condicion=condicion+ " a.unidad_af_dest="+unidadAfDest+" and ";}
-        if (unidadAdmDes!=null) { condicion=condicion+ " a.codigo_unidad_dest="+unidadAdmDes+" and ";}
+        if (!unidadAFOrig.equals("0")) { condicion=condicion+ " a.unidad_af_origen="+unidadAFOrig+" and ";}
+        if (!unidadAdmOrg.equals("0")) { condicion=condicion+ " a.codigo_unidad_origen="+unidadAdmOrg+" and ";}
+        if (!unidadAfDest.equals("0")) { condicion=condicion+ " a.unidad_af_dest="+unidadAfDest+" and ";}
+        if (!unidadAdmDes.equals("0")) { condicion=condicion+ " a.codigo_unidad_dest="+unidadAdmDes+" and ";}
         if (estado!=null){ condicion=condicion+ " a.estado="+estado+" and ";   }
         
         
@@ -642,12 +642,13 @@ public class TrasladoDepController implements Serializable {
     }
     
     public void guardarTraslado(){
-        if (tras.getIdTraslado()==null){
-            tras.setUnidadAfOrigen(unidadAFOrig);
-            tras.setCodigoUnidadOrigen(unidadAdmOrg);
-            tras.setIdTipoTraslado(tipTraslado);
-            tras.setEstado('0');
-        
+        if(!lstBienesTrasladar.isEmpty()){
+            if (tras.getIdTraslado()==null){
+                tras.setUnidadAfOrigen(unidadAFOrig);
+                tras.setCodigoUnidadOrigen(unidadAdmOrg);
+                tras.setIdTipoTraslado(tipTraslado);
+                tras.setEstado('0');
+
             if (tipTraslado.equals('3')){
                 tras.setUnidadAfDest(unidadAfDest);
                 tras.setCodigoUnidadDest(unidadAdmDes);
@@ -662,6 +663,10 @@ public class TrasladoDepController implements Serializable {
             }
            JsfUtil.mensajeAlerta("Traslado Almacenado");
          // JsfUtil.redireccionar("buscarTrasladosDep.mined?faces-redirect=true");
+        }else{
+            JsfUtil.mensajeError("Traslado sin bienes asociados");
+        }
+        
     }
 
     public List<VwBienes> dropBienesTrasladar() {

@@ -79,7 +79,7 @@
                             </h:panelGrid>
                         </p:panel>
                         <f:facet name="footer">
-                            <p:commandButton value="Aceptar" onclick="this.form.target = '_blank';PF('dlgImprimir').hide();" ajax="false" action="#{bienesCEController.imprimirBienes}"/>
+                            <p:commandButton value="Aceptar" onclick="PF('dlgImprimir').hide();" ajax="false" action="#{bienesCEController.imprimirBienes}"/>
                             <p:commandButton value="Cancelar" ajax="true" onclick="PF('dlgImprimir').hide();"/>
                         </f:facet>
                     </p:dialog>
@@ -94,7 +94,7 @@
                     </h:panelGrid>
                 </p:panel>
                 <f:facet name="footer">
-                    <p:commandButton value="Aceptar" onclick="this.form.target = '_blank';PF('dlgSolvencia').hide();" ajax="false" action="#{bienesCEController.imprimirSolvencia}"/>
+                    <p:commandButton value="Aceptar" onclick="PF('dlgSolvencia').hide();" ajax="false" action="#{bienesCEController.imprimirSolvencia}"/>
                     <p:commandButton value="Cancelar" ajax="true" onclick="PF('dlgSolvencia').hide();"/>
                 </f:facet>
             </p:dialog>

@@ -7,6 +7,7 @@ package sv.gob.mined.app.activofijo.controller;
 
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -27,8 +28,10 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -41,6 +44,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.primefaces.event.SelectEvent;
 import sv.gob.mined.activofijo.ejb.BienesEJB;
 import sv.gob.mined.activofijo.ejb.CatalogosEJB;
+import sv.gob.mined.activofijo.ejb.ReportesEJB;
 import sv.gob.mined.activofijo.model.AfBienesDepreciables;
 import sv.gob.mined.activofijo.model.AfCategoriasBien;
 import sv.gob.mined.activofijo.model.AfTipoDescargo;
@@ -52,6 +56,7 @@ import sv.gob.mined.activofijo.model.VwBienes;
 import sv.gob.mined.activofijo.model.VwDescargos;
 import sv.gob.mined.app.activofijo.util.JsfUtil;
 import sv.gob.mined.app.activofijo.util.UtilReport;
+import static sv.gob.mined.app.activofijo.util.UtilReport.PATH_IMAGENES;
 import sv.gob.mined.seguridad.model.Usuario;
 import sv.gob.mined.seguridad.web.controller.LoginController;
 
@@ -67,6 +72,9 @@ public class DescargoController implements Serializable {
     private CatalogosEJB cejb;
     @EJB
     private BienesEJB bejb;
+    @EJB 
+    private ReportesEJB reb;
+    
     private AfDescargosDetalle td = new AfDescargosDetalle();
     private AfDescargos tras = new AfDescargos();
     private VwBienes Vb = new VwBienes();
@@ -204,7 +212,7 @@ public class DescargoController implements Serializable {
                          btnEnviar=false;
                         btnImp=false;
                    }
-                    else{ btnDesc=false;
+                    else{ btnDesc=true;
                           btnGuardar=false;
                           btnEnviar= false;
                           btnImp=false;
@@ -649,15 +657,20 @@ public class DescargoController implements Serializable {
     }
     
      public void imprimirDescargo() throws IOException, JRException {
-        HashMap param = new HashMap();
-        
-        param.put("p_codigoDescargo",tras.getDescargoId().toString());
+          List<JasperPrint> jasperPrintList = new ArrayList();
+         HashMap param = new HashMap();
+         param.put("p_codigoDescargo",tras.getDescargoId().toString());
         param.put("p_unidadAF",unidadAF);
         param.put("p_unidadAdm",unidadAdm);
-      
-        UtilReport.rptGenerico((HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse(), param, "rep_af10.jasper", cejb.getEm());
-
-        //  UtilReport.rptGenerico((HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse(),param, "rep_mobiliario.jasper", cejb.getEm());
+        ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        param.put("p_RutaImg", ctx.getRealPath(PATH_IMAGENES));
+        
+        
+         JasperPrint jp= reb.getRpt(param, DescargoController.class.getClassLoader().getResourceAsStream(("reportes" + File.separator + "rep_af10.jasper")));
+       
+        jasperPrintList.add(jp);
+     
+        UtilReport.generarReporte(jasperPrintList, "rptAF10");
     }   
    
      public void imprimirBienesDescargo() throws IOException, JRException {
@@ -713,10 +726,10 @@ public class DescargoController implements Serializable {
      
         if (fec1!=null){ condicion=condicion+ " a.fecha_descargo>= '"+sdf.format(fec1)+"' and ";}
         if (fec2!=null){ condicion=condicion+ " a.fecha_descargo<= '"+sdf.format(fec2)+"' and ";}
-        if (!activo.equals("") && activo!=null){
+        if (!activo.equals("X")){
            condicion= condicion+ " trim(a.tipo_descargo)='"+activo+"' and ";
         }
-        if (!serie.equals("") && serie!=null){condicion = condicion +"a.numero_serie='"+serie+"' and "; }
+        if (!serie.isEmpty()){condicion = condicion +"a.numero_serie='"+serie+"' and "; }
          
          
         
@@ -726,26 +739,28 @@ public class DescargoController implements Serializable {
     }
     
      public void guardarDescargo(){
-       
-      if (tras.getDescargoId()==null){
-          tras.setUnidadActivoFijo(unidadAF); 
-          tras.setTipoDescargo(activo.charAt(0));
-          tras.setIdTipoDescargo(tipDescargo); 
-          tras.setEstado('S');
-      }
-        
-          bejb.guardarDescargo(tras, usuDao.getLogin());
-      
-      
-       tras.getDescargoId();
-        if (tras.getDescargoId()!=null){
-            
-            bejb.guardarDescargoDetalle(lstBienesDescargar,tras);
-            //bejb.actualizarEstadoBien(lstBienesDescargar,"S");
-        }
-        
-       // JsfUtil.mensajeInformacion("Solicitud Almacenada");
-        JsfUtil.redireccionar("buscarDescargos.mined?faces-redirect=true");
+       if (!lstBienesDescargar.isEmpty()){
+            if (tras.getDescargoId()==null){
+                tras.setUnidadActivoFijo(unidadAF); 
+                tras.setTipoDescargo(activo.charAt(0));
+                tras.setIdTipoDescargo(tipDescargo); 
+                tras.setEstado('S');
+            }
+
+                bejb.guardarDescargo(tras, usuDao.getLogin());
+
+
+             tras.getDescargoId();
+              if (tras.getDescargoId()!=null){
+
+                  bejb.guardarDescargoDetalle(lstBienesDescargar,tras);
+                  //bejb.actualizarEstadoBien(lstBienesDescargar,"S");
+              }
+              JsfUtil.mensajeInformacion("Solicitud Almacenada");
+              JsfUtil.redireccionar("/app/mantenimientos/descargoBienes.mined?faces-redirect=true&idDescargo="+tras.getDescargoId());
+       }else{
+           JsfUtil.mensajeError("Descargo sin bienes asociados");
+       }  
     }
      
     public void enviarDescargo(){
@@ -762,8 +777,8 @@ public class DescargoController implements Serializable {
             bejb.actualizarEstadoBien(lstBienesDescargar,"P");
         }
         pnlTras=true;
-       // JsfUtil.mensajeInformacion("Solicitud Almacenada");
-        JsfUtil.redireccionar("buscarDescargos.mined?faces-redirect=true");
+        JsfUtil.mensajeInformacion("Descargo enviado a Descargo");
+       // JsfUtil.redireccionar("buscarDescargos.mined?faces-redirect=true");
     }
     
     

@@ -40,7 +40,7 @@
                                <h:outputLabel  value="Tipo Unidad:      "/> 
                                <h:selectOneMenu id="tipUni" value="#{trasladoDepController.tipUniOrg}">
                                    <p:ajax update="uadm" listener="#{trasladoDepController.filtrarUnidadesAdm}" process="@this,tipUni"/>
-                                   <f:selectItem itemLabel="-Seleccione-" itemValue=""/>
+                                   <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
                                    <f:selectItem itemLabel="Unidad Administrativa" itemValue="UA"/>
                                    <f:selectItem itemLabel="Centro Escolar" itemValue="CE"/>
                                 </h:selectOneMenu> 
@@ -48,12 +48,12 @@
                                <h:outputLabel  value="Unidad AF:      "/> 
                                <h:selectOneMenu id="uaf" value="#{trasladoDepController.unidadAFOrig}" disabled="true">
                                     <p:ajax update="uaf uadm" listener="#{trasladoDepController.filtrarUnidadesAdm}"/>
-                                    <f:selectItem itemLabel="-Seleccione-" itemValue=""/>
+                                    <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
                                     <f:selectItems value="#{trasladoDepController.lstAFOrg}" var="uAF" itemLabel="#{uAF.unidadActivoFijo}-#{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
                                 </h:selectOneMenu> 
                                 <h:outputLabel  value="Unidad Administrativa:      "/> 
                                 <p:selectOneMenu  id="uadm" value="#{trasladoDepController.unidadAdmOrg}">
-                                    <f:selectItem itemLabel="-Seleccione-" itemValue=""/>     
+                                    <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>     
                                     <f:selectItems value="#{trasladoDepController.lstUnidadAdm}" var="uadm" itemLabel="#{uadm.afUnidadesAdministrativasPK.codigoUnidad}-#{uadm.nombreUnidad}" itemValue="#{uadm.afUnidadesAdministrativasPK.codigoUnidad}"/>
                                 </p:selectOneMenu>  
                             </p:panel>  
@@ -65,20 +65,20 @@
                                <h:outputLabel  value="Tipo Unidad:      "/> 
                                <h:selectOneMenu id="tipUni1" value="#{trasladoDepController.tipUniDes}">
                                    <p:ajax update="uadm1" listener="#{trasladoDepController.filtrarUnidadesAdmDestino}" process="@this,tipUni"/>
-                                   <f:selectItem itemLabel="-Seleccione-" itemValue=""/>
+                                   <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
                                    <f:selectItem itemLabel="Unidad Administrativa" itemValue="UA"/>
                                    <f:selectItem itemLabel="Centro Escolar" itemValue="CE"/>
                                 </h:selectOneMenu> 
                                <h:outputLabel  value="Unidad AF:      "/> 
                                <h:selectOneMenu id="uaf1" value="#{trasladoDepController.unidadAfDest}">
                                     <p:ajax update="uaf1 uadm1" listener="#{trasladoDepController.filtrarUnidadesAdmDestino}"/>
-                                    <f:selectItem itemLabel="-Seleccione-" itemValue=""/>
+                                    <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
                                     <f:selectItems value="#{trasladoDepController.lstAFDes}" var="uAF" itemLabel="#{uAF.unidadActivoFijo} - #{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
                                 </h:selectOneMenu> 
                                 <p:spacer width="8"/>
                                 <h:outputLabel  value="Unidad Administrativa:      "/> 
-                                <p:selectOneMenu  id="uadm1" value="#{trasladoDepController.admDestino}">
-                                    <f:selectItem itemLabel="-Seleccione-" itemValue=""/>     
+                                <p:selectOneMenu  id="uadm1" value="#{trasladoDepController.unidadAdmDes}">
+                                    <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>     
                                     <f:selectItems value="#{trasladoDepController.lstUnidadAdmDes}" var="uadm1" itemLabel="#{uadm1.afUnidadesAdministrativasPK.codigoUnidad}-#{uadm1.nombreUnidad}" itemValue="#{uadm1.afUnidadesAdministrativasPK.codigoUnidad}"/>
                                 </p:selectOneMenu>  
                             </p:panel> 

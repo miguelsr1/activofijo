@@ -20,10 +20,14 @@
                               <p:column> <h:outputLabel  value="Codigo Traslado:      "/> </p:column> 
                               <p:column><h:inputText id="codigoTras" value="#{trasladoController.codigoTras}"/></p:column>   
                           </p:row>    
-                          <p:row>
-                            <p:column><h:outputLabel value="Fecha Traslado:     "/>
-                                <p:calendar id="fechaTras" value="#{trasladoController.fecTraslado}" pattern="dd/MM/yyyy"/></p:column>
-                           </p:row>
+                      
+                           <p:row >
+                        <p:column><h:outputLabel value="Fecha Traslado  Desde:"/>
+                            <p:calendar id="fechacrea1" value="#{trasladoController.fec1}" pattern="dd/MM/yyyy"/></p:column>
+                        <p:column><h:outputLabel value="Hasta :     "/>
+                            <p:calendar id="fechacrea2" value="#{trasladoController.fec2}" pattern="dd/MM/yyyy"/></p:column> 
+                    </p:row>    
+                         
                             <p:row>
                             <p:column><h:outputLabel value="Estado Traslado:     "/>
                                 <h:selectOneMenu id="estadoSol" value="#{trasladoController.estado}" >
@@ -75,14 +79,14 @@
                                <h:selectOneMenu id="uaf1" value="#{trasladoController.unidadAfDest}">
                                     <p:ajax update="uaf1 uadm1" listener="#{trasladoController.filtrarUnidadesAdmDestino}"/>
                                     <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
-                                    <f:selectItems value="#{trasladoController.lstAFDes}" var="uAF" itemLabel="#{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
+                                    <f:selectItems value="#{trasladoController.lstAFDes}" var="uAF" itemLabel="#{uAF.unidadActivoFijo}-#{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
                                 </h:selectOneMenu> 
                                 <p:spacer width="8"/>
                                 <h:outputLabel  value="Unidad Administrativa:      "/> 
                                 <p:selectOneMenu  id="uadm1" value="#{trasladoController.unidadAdmDes}">
                                     <p:ajax update="uadm1"/>
                                     <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>     
-                                    <f:selectItems value="#{trasladoController.lstUnidadAdmDes}" var="uadm1" itemLabel="#{uadm1.nombreUnidad}" itemValue="#{uadm1.afUnidadesAdministrativasPK.codigoUnidad}"/>
+                                    <f:selectItems value="#{trasladoController.lstUnidadAdmDes}" var="uadm1" itemLabel="#{uadm1.afUnidadesAdministrativasPK.codigoUnidad}-#{uadm1.nombreUnidad}" itemValue="#{uadm1.afUnidadesAdministrativasPK.codigoUnidad}"/>
                                 </p:selectOneMenu>  
                             </p:panel> 
                               </p:column> 
@@ -90,11 +94,13 @@
                     </h:panelGrid>                        
                    </p:panel>   
                     <p:panel id="pnlBienes">
-                        <p:dataTable id="tBienes" value="#{trasladoController.lstTraslados}" var="tras" rowKey="#{tras.idTraslado}" selectionMode="single">
-                            <p:ajax event="rowSelect" listener="#{trasladoController.trasladosId}"/>
-                     <p:column headerText="Id"  style="width: 15px">
-                         <h:outputText value="#{tras.idTraslado}"/>
-                       </p:column>
+                        
+                        <p:dataTable id="tBienes" value="#{trasladoController.lstTraslados}" selection="#{trasladoController.lstTdtmp}" var="tras" rowKey="#{tras.idTraslado}" 
+                         style="width: 100%"    paginator="true" rows="20"  paginatorPosition="top" scrollable="true"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                     <p:column selectionMode="multiple" style="width:16px;text-align:center"/> 
+                     <p:column style="width: 30px">
+                        <p:commandButton  update="pnlBienes" icon="fa fa-eraser fa-lg" action="#{trasladoController.abrirDialog}" />
+                     </p:column> 
                        <p:column headerText="C&oacute;digo " style="width: 150px">
                            <h:outputText value="#{tras.codigoTraslado}"/>
                        </p:column>
@@ -123,6 +129,14 @@
                         </p:column>   
                    </p:dataTable>
                </p:panel>
+                 <p:dialog id="dlg1" header="Eliminar bien" widgetVar="dlg1" minHeight="40">
+                <h:outputText value="Esta seguro de Eliminar" />
+                <p:spacer width="8"/>
+                <p:commandButton value="Si" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" action="#{trasladoController.eliminarTraslado}"  update="tBienes">
+                    <p:ajax update="tBienes"/>
+                </p:commandButton>
+                <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('dlg1').hide();"/> 
+            </p:dialog>
             </ui:define>
         </ui:composition>
       

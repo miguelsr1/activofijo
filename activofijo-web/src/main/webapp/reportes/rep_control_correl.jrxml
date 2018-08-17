@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rep_control_correl" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="207b8e66-6ec2-47ae-8c92-d06a5fb32016">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="p_unidadAF" class="java.lang.String">
+		<defaultValueExpression><![CDATA[01]]></defaultValueExpression>
+	</parameter>
+	<parameter name="p_unidadAdm" class="java.lang.String">
+		<defaultValueExpression><![CDATA[07]]></defaultValueExpression>
+	</parameter>
+	<parameter name="p_RutaImg" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Java\\sistemas\\activofijo-web\\src\\main\\webapp\\resources\\images\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT CORRELATIVO,CODIGO_TIPO_BIEN,CODIGO_UNIDAD,UNIDAD_ACTIVO_FIJO,NOMBRE_UNIDAD_AF,NOMBRE_UNIDAD,NOMBRE_TIPO_BIEN
+FROM VW_CORRELATIVOS
+WHERE TRIM(UNIDAD_ACTIVO_FIJO)=$P{p_unidadAF}
+AND TRIM(CODIGO_UNIDAD)=$P{p_unidadAdm}
+ORDER BY ID_TIPO_BIEN]]>
+	</queryString>
+	<field name="CORRELATIVO" class="java.lang.String"/>
+	<field name="CODIGO_TIPO_BIEN" class="java.lang.String"/>
+	<field name="CODIGO_UNIDAD" class="java.lang.String"/>
+	<field name="UNIDAD_ACTIVO_FIJO" class="java.lang.String"/>
+	<field name="NOMBRE_UNIDAD_AF" class="java.lang.String"/>
+	<field name="NOMBRE_UNIDAD" class="java.lang.String"/>
+	<field name="NOMBRE_TIPO_BIEN" class="java.lang.String"/>
+	<group name="Unidad_pertence" isStartNewPage="true" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{UNIDAD_ACTIVO_FIJO}+$F{NOMBRE_UNIDAD_AF}]]></groupExpression>
+		<groupHeader>
+			<band height="130">
+				<staticText>
+					<reportElement uuid="c0540595-e860-4110-94c3-56521a8691a1" mode="Opaque" x="35" y="109" width="272" height="20" forecolor="#000000" backcolor="#99CCFF"/>
+					<textElement textAlignment="Center">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[DESCRIPCION DEL BIEN]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="3eb18eb4-b06a-4ec9-9dc0-cfe461ba3beb" mode="Opaque" x="310" y="109" width="100" height="20" forecolor="#000000" backcolor="#99CCFF"/>
+					<textElement textAlignment="Center">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CODIGO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="c0540595-e860-4110-94c3-56521a8691a1" mode="Transparent" x="4" y="2" width="313" height="21" forecolor="#000000" backcolor="#99CCFF"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MINISTERIO DE EDUCACION]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="62ace9a6-5f01-4a7c-9207-cb2a22116ea4" x="4" y="18" width="313" height="20"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE_UNIDAD_AF}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="bccab9f2-6710-4cd4-882c-fbf94ef2961e" x="4" y="33" width="313" height="20"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE_UNIDAD}.trim()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="bccab9f2-6710-4cd4-882c-fbf94ef2961e" x="5" y="85" width="560" height="20"/>
+					<textElement textAlignment="Center">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["REPORTE DE CONTROL DE CORRELATIVOS"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="3eb18eb4-b06a-4ec9-9dc0-cfe461ba3beb" mode="Opaque" x="412" y="109" width="100" height="20" forecolor="#000000" backcolor="#99CCFF"/>
+					<textElement textAlignment="Center">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CORRELATIVO]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="033b9b31-f94c-4418-99d4-8b29fab15a35" x="336" y="54" width="142" height="14" isRemoveLineWhenBlank="true"/>
+					<textElement textAlignment="Right">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Fecha de impresión: "]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement uuid="033b9b31-f94c-4418-99d4-8b29fab15a35" x="473" y="54" width="87" height="14" isRemoveLineWhenBlank="true"/>
+					<textElement>
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+				<image>
+					<reportElement uuid="abfdfa5a-36c3-42ae-9ae1-38f883925bca" x="512" y="2" width="55" height="51"/>
+					<imageExpression><![CDATA[$P{p_RutaImg}+File.separator+"escudo.png"]]></imageExpression>
+				</image>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="66"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="6" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="2" splitType="Stretch"/>
+	</pageHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement uuid="0e3a6b90-c62e-43e6-a320-b2d39e132bb3" x="35" y="2" width="272" height="16"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{NOMBRE_TIPO_BIEN}.trim()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="c5056779-3dc5-4e6b-9f4a-a0752a40f415" x="310" y="2" width="100" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{CODIGO_TIPO_BIEN}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="c5056779-3dc5-4e6b-9f4a-a0752a40f415" x="412" y="3" width="100" height="16"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{CORRELATIVO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="33" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="033b9b31-f94c-4418-99d4-8b29fab15a35" x="224" y="4" width="65" height="14" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag. "+$V{PAGE_NUMBER}.toString().trim()+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement uuid="66df3b26-e74e-4755-9c7d-e986be1e7b8e" x="296" y="4" width="40" height="14" isRemoveLineWhenBlank="true"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}.toString().trim()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="033b9b31-f94c-4418-99d4-8b29fab15a35" x="423" y="4" width="142" height="14" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CONTROL DE CORRELATIVOS"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="033b9b31-f94c-4418-99d4-8b29fab15a35" x="5" y="4" width="142" height="14" isRemoveLineWhenBlank="true"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ACTIVO FIJO"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="1b810d20-2f8f-4ee5-828c-a7a7209df0a3" x="5" y="4" width="567" height="1"/>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

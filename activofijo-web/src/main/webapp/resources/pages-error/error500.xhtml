@@ -23,14 +23,46 @@
                 <p>Comunicar este problema al administrador del aplicativo.</p>
             </div>
             <div>
-                <ul>
-                    <li><b>Ajax request:</b> #{facesContext.partialViewContext.ajaxRequest ? 'Yes' : 'No'}</li>
-                    <li><b>Exception type:</b> #{pfExceptionHandler.type}</li>
-                    <li><b>StackTrace:</b>
+              <p:panelGrid  style="width: 100%; border:0px none; background-color:transparent;"
+                              styleClass="form-group ui-panelgrid-blank">
+                    <p:row>
+                        <p:column>
+                            <b>Tipo de Excepción: </b>
+                            <p:outputLabel value="#{pfExceptionHandler.type}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <b>Origen: </b>
+                            <p:outputLabel value="#{pfExceptionHandler.stackTrace[1]}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <b>Hora y fecha: </b>
+                            <p:outputLabel value="#{pfExceptionHandler.formattedTimestamp}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <b>Clase: </b>
+                            <p:outputLabel value="#{pfExceptionHandler.stackTrace[1].className}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <b>Nombre del método: </b>
+                            <p:outputLabel value="#{pfExceptionHandler.stackTrace[0].methodName}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <b>Linea: </b>
+                            <p:outputLabel value="#{pfExceptionHandler.stackTrace[0].lineNumber}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
 
-                        <p:textEditor widgetVar="editor2" readonly="true" toolbarVisible="false" value="#{pfExceptionHandler.formattedStackTrace}" height="300" style="margin-bottom:10px"/>
-                    </li>
-                </ul>
             </div>
             <div class="exception-panel-footer">
                 <p:commandButton type="button" value="Inicio" onclick="window.location = '#{request.contextPath}/app/inicial.mined';" />

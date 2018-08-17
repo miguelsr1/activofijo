@@ -644,6 +644,7 @@ public class TrasladoCEController implements Serializable {
     }
     
     public void guardarTraslado(){
+        if (!lstBienesTrasladar.isEmpty()){
         if (tras.getIdTraslado()==null){
             tras.setUnidadAfOrigen(unidadAFOrig);
             tras.setCodigoUnidadOrigen(unidadAdmOrg);
@@ -664,6 +665,10 @@ public class TrasladoCEController implements Serializable {
             }
            JsfUtil.mensajeAlerta("Traslado Almacenado");
           //JsfUtil.redireccionar("buscarTrasladosCE.mined?faces-redirect=true");
+        }
+        else{
+            JsfUtil.mensajeError("Traslado sin bienes asociados");
+        }
     }
 
     public List<VwBienes> dropBienesTrasladar() {

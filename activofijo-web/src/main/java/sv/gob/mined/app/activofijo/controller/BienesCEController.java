@@ -4,6 +4,7 @@
  */
 package sv.gob.mined.app.activofijo.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -25,12 +26,15 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import sv.gob.mined.activofijo.ejb.BienesEJB;
 import sv.gob.mined.activofijo.ejb.CatalogosEJB;
+import sv.gob.mined.activofijo.ejb.ReportesEJB;
 import sv.gob.mined.activofijo.model.AfBienesDepreciables;
 import sv.gob.mined.activofijo.model.AfCalidadBien;
 import sv.gob.mined.activofijo.model.AfCategoriasBien;
@@ -47,6 +51,7 @@ import sv.gob.mined.activofijo.model.VwBienes;
 import sv.gob.mined.activofijo.model.VwCorrelativos;
 import sv.gob.mined.app.activofijo.util.JsfUtil;
 import sv.gob.mined.app.activofijo.util.UtilReport;
+import static sv.gob.mined.app.activofijo.util.UtilReport.PATH_IMAGENES;
 import sv.gob.mined.seguridad.model.Usuario;
 import sv.gob.mined.seguridad.web.controller.LoginController;
 
@@ -63,6 +68,8 @@ public class BienesCEController implements Serializable {
     public CatalogosEJB cejb;
     @EJB
     public BienesEJB bejb;
+    @EJB 
+    private ReportesEJB reb;
     private AfBienesDepreciables bd = new AfBienesDepreciables();
     private AfTipoBienes tb = new AfTipoBienes();
     private String unidadAF;
@@ -73,7 +80,7 @@ public class BienesCEController implements Serializable {
     private Integer numLote = 0;
     private Long idBien;
     private Long cat;
-    private Long tipo = 0l;
+    private Long tipo;
     private Long tipoBien;
     private Long section;
     private Long calidad = Long.valueOf(1);
@@ -113,15 +120,15 @@ public class BienesCEController implements Serializable {
     private boolean modifica = false;
     private boolean mostrarProy = true;
     private Usuario usuDao = new Usuario();
-    private List<AfBienesDepreciables> lstBienesDepreciable = new ArrayList<AfBienesDepreciables>();
-    private List<AfUnidadesAdministrativas> lstUnidadAdm = new ArrayList<AfUnidadesAdministrativas>();
-    private List<AfTipoBienes> lstTipoBienes = new ArrayList<AfTipoBienes>();
-    private List<AfCategoriasBien> lstCatBien = new ArrayList<AfCategoriasBien>();
-    private List<AfFormaAdquisicion> lstFormaAdq = new ArrayList<AfFormaAdquisicion>();
-    private List<AfEjercicioFiscal> lstAnios = new ArrayList<AfEjercicioFiscal>();
-    private List<AfProyectos> lstProyectos = new ArrayList<AfProyectos>();
-    private List<VwBienes> lstBienes = new ArrayList<VwBienes>();
-    private List<VwCorrelativos> lstCorrelativos = new ArrayList<VwCorrelativos>();
+    private List<AfBienesDepreciables> lstBienesDepreciable = new ArrayList<>();
+    private List<AfUnidadesAdministrativas> lstUnidadAdm = new ArrayList<>();
+    private List<AfTipoBienes> lstTipoBienes = new ArrayList<>();
+    private List<AfCategoriasBien> lstCatBien = new ArrayList<>();
+    private List<AfFormaAdquisicion> lstFormaAdq = new ArrayList<>();
+    private List<AfEjercicioFiscal> lstAnios = new ArrayList<>();
+    private List<AfProyectos> lstProyectos = new ArrayList<>();
+    private List<VwBienes> lstBienes = new ArrayList<>();
+    private List<VwCorrelativos> lstCorrelativos = new ArrayList<>();
 
     /**
      * Creates a new instance of BienesController
@@ -643,7 +650,9 @@ public class BienesCEController implements Serializable {
         HashMap param = new HashMap();
         SimpleDateFormat formateador = new SimpleDateFormat("dd 'de ' MMMM 'de' yyyy", new Locale("es"));
         Calendar cal = Calendar.getInstance();
-        //String nomReporte="rep_solvencia_CE.jasper";
+        ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        param.put("p_RutaImg", ctx.getRealPath(PATH_IMAGENES));
+        
 
         //    String  year= String.valueOf(cal.get(Calendar.YEAR)); 
         String fecRep = formateador.format(cal.getTime());
@@ -651,8 +660,9 @@ public class BienesCEController implements Serializable {
         param.put("p_unidadAF", unidadAF);
         param.put("p_unidadAdm", unidadAdm);
         //    param.put("p_fecRep",fecRep);
-
-        UtilReport.rptGenerico((HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse(), param, "rep_control_correl.jasper", cejb.getEm());
+        UtilReport.rptGenerico((HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse(),
+                        reb.getRpt(UtilReport.class.getClassLoader().getResourceAsStream("reportes" + File.separator + "rep_control_correl.jasper"), param));
+//        UtilReport.rptGenerico((HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse(), param, "rep_control_correl.jasper", cejb.getEm());
 
     }
 
@@ -704,7 +714,7 @@ public class BienesCEController implements Serializable {
 
     public void existeCorre(AjaxBehaviorEvent event) {
         String tipoBien = cejb.getTBien(tipo).getCodigoTipoBien();
-        if (cejb.getBuscarCorrelativo(unidadAF, unidadAdm, tipoBien, correlativo) != 0) {
+        if (cejb.getBuscarCorrelativo(unidadAF, unidadAdm, tipoBien, correlativo)) {
             JsfUtil.mensajeCorrelativo();
         } else {
             codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
@@ -722,7 +732,7 @@ public class BienesCEController implements Serializable {
         BigDecimal pct = new BigDecimal(10);
         int i = 0;
         String co;
-        if (tipo!=null){
+      if (tipo!=0){
         String tipoBien = cejb.getTBien(tipo).getCodigoTipoBien();
 
         bd.setUnidadActivoFijo(unidadAF);
@@ -769,7 +779,7 @@ public class BienesCEController implements Serializable {
                         co = String.format("%04d", sum);
                     }
 
-                    if (cejb.getBuscarCorrelativo(unidadAF, unidadAdm, tipo.toString(), co) == 0) {
+                    if (!cejb.getBuscarCorrelativo(unidadAF, unidadAdm, tipo.toString(), co)) {
                         bd.setCorrelativo(co);
                         codigoInventario = unidadAdm + "-" + tipoBien + "-" + co;
                     } else {
@@ -784,20 +794,22 @@ public class BienesCEController implements Serializable {
             } else {
 
                 // obtenerCorre();
-                if (cejb.getBuscarCorrelativo(unidadAF, unidadAdm, tipo.toString(), correlativo) == 0) {
+                if (!cejb.getBuscarCorrelativo(unidadAF, unidadAdm, tipo.toString(), correlativo)) {
                     bd.setCorrelativo(correlativo);
                     codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
                 } else {
                     obtenerCorre();
+                    co = correlativo;
+                    bd.setCorrelativo(co);
                 }
                 bd.setCodigoInventario(codigoInventario);
                 bejb.guardarBien(bd, usuDao.getLogin());
                 JsfUtil.mensajeInsert();
             }
         } else {
-            bd.setCorrelativo(correlativo);
+          /*  bd.setCorrelativo(correlativo);
             codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
-            bd.setCodigoInventario(codigoInventario);
+            bd.setCodigoInventario(codigoInventario);*/
             bejb.guardarBien(bd, usuDao.getLogin());
             JsfUtil.mensajeInsert();
         }
@@ -921,10 +933,13 @@ public class BienesCEController implements Serializable {
     }
 
     public void imprimirSolvencia() throws IOException, JRException {
+        List<JasperPrint> jasperPrintList = new ArrayList();
         HashMap param = new HashMap();
         SimpleDateFormat formateador = new SimpleDateFormat("dd 'dias del mes de' MMMM 'del año' yyyy", new Locale("es"));
         Calendar cal = Calendar.getInstance();
-
+       ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        param.put("p_RutaImg", ctx.getRealPath(PATH_IMAGENES));
+        
         //    String  year= String.valueOf(cal.get(Calendar.YEAR)); 
         String fecRep = formateador.format(cal.getTime());
         // String Responsable= usuDao.getNombres()+' '+usuDao.getApellidos();
@@ -934,8 +949,13 @@ public class BienesCEController implements Serializable {
         param.put("p_unidadAF", unidadAF);
         param.put("p_unidadAdm", unidadAdm);
         param.put("p_fecRep", fecRep);
-
-        UtilReport.rptGenerico((HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse(), param, "rep_solvencia_CE.jasper", cejb.getEm());
+        
+          JasperPrint jp= reb.getRpt(param, DescargoController.class.getClassLoader().getResourceAsStream(("reportes" + File.separator + "rep_solvencia_CE.jasper")));
+       
+        jasperPrintList.add(jp);
+     
+        UtilReport.generarReporte(jasperPrintList, "rptConstancia");
+        
     }
 
 }

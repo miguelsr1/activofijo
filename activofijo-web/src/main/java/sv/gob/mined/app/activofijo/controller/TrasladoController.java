@@ -56,12 +56,14 @@ public class TrasladoController implements Serializable {
     public Character tipTraslado;
     public List<AfTipoTraslados> lstTipoTraslado = new ArrayList<AfTipoTraslados>();
     public List<AfTraslados> lstTraslados = new ArrayList<AfTraslados>();
+    public List<AfTraslados> lstTdtmp = new ArrayList();
     public List<AfUnidadesActivoFijo> lstAFOrg = new ArrayList<AfUnidadesActivoFijo>();
     public List<AfUnidadesActivoFijo> lstAFDes = new ArrayList<AfUnidadesActivoFijo>();
     public List<AfUnidadesAdministrativas> lstUnidadAdm = new ArrayList<AfUnidadesAdministrativas>();
     public List<AfUnidadesAdministrativas> lstUnidadAdmDes = new ArrayList<AfUnidadesAdministrativas>();
     public List<AfBienesDepreciables> lstBienes = new ArrayList<AfBienesDepreciables>();
     public List<VwBienes> lstBienesTrasladar = new ArrayList<VwBienes>();
+    
     private int rowDrop = 0;
     public String unidadAdm;
     public String unidadAdmOrg;
@@ -91,6 +93,8 @@ public class TrasladoController implements Serializable {
     private String tipoUsu;
     public Long idBien;
     public AfBienesDepreciables Bienes;
+    public Date fec1;
+    public Date fec2;
     public String codigoInv;
     public String codigoTras;
     public Long idTraslado;
@@ -168,6 +172,14 @@ public class TrasladoController implements Serializable {
          
       }
 
+    public List<AfTraslados> getLstTdtmp() {
+        return lstTdtmp;
+    }
+
+    public void setLstTdtmp(List<AfTraslados> lstTdtmp) {
+        this.lstTdtmp = lstTdtmp;
+    }
+
     public String getObservacion() {
         return observacion;
     }
@@ -198,6 +210,22 @@ public class TrasladoController implements Serializable {
 
     public void setActivarCampos(boolean activarCampos) {
         this.activarCampos = activarCampos;
+    }
+
+    public Date getFec1() {
+        return fec1;
+    }
+
+    public void setFec1(Date fec1) {
+        this.fec1 = fec1;
+    }
+
+    public Date getFec2() {
+        return fec2;
+    }
+
+    public void setFec2(Date fec2) {
+        this.fec2 = fec2;
     }
 
     
@@ -576,6 +604,13 @@ public class TrasladoController implements Serializable {
         return cejb.getUnidadAf();
     }
     
+     public void abrirDialog() {
+        if (!lstTdtmp.isEmpty()) {
+            RequestContext.getCurrentInstance().execute("PF('dlg1').show()");
+        } else {
+            JsfUtil.mensajeError("Seleccione Traslado a Eliminar");
+        }
+    }
     public void bienesTrasladar() {
         
         if (Bienes!=null){
@@ -585,6 +620,16 @@ public class TrasladoController implements Serializable {
         }else{
            JsfUtil.mensajeError("Ingrese el bien a trasladar");
         }
+    }
+     public void eliminarTraslado() {
+        for (AfTraslados td : lstTdtmp) {
+            
+            bejb.removeTraslado(td.getIdTraslado());
+        }
+        RequestContext.getCurrentInstance().execute("PF('dlg1').hide()");
+        buscarTraslados();
+        JsfUtil.mensajeEliminarTraslado();
+
     }
     
     public void trasladosId(SelectEvent event) {
@@ -601,8 +646,9 @@ public class TrasladoController implements Serializable {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         
         if(!codigoTras.isEmpty() && codigoTras!=null){ condicion=condicion +" a.codigo_traslado='"+codigoTras+"' and "; }
-        if (fecTraslado!=null){ condicion=condicion+ " a.fecha_traslado= to_date('"+sdf.format(fecTraslado)+"','dd/mm/yyyy') and ";}
-        if (!unidadAFOrig.equals("0")) { condicion=condicion+ " a.unidad_af_origen="+unidadAFOrig+" and ";}
+        if (fec1!=null){ condicion=condicion+ " a.fecha_traslado>= '"+sdf.format(fec1)+"' and ";}
+        if (fec2!=null){ condicion=condicion+ " a.fecha_traslado<= '"+sdf.format(fec2)+"' and ";}
+       if (!unidadAFOrig.equals("0")) { condicion=condicion+ " a.unidad_af_origen="+unidadAFOrig+" and ";}
         if (!unidadAdmOrg.equals("0")) { condicion=condicion+ " a.codigo_unidad_origen="+unidadAdmOrg+" and ";}
         if (!unidadAfDest.equals("0")) { condicion=condicion+ " a.unidad_af_dest="+unidadAfDest+" and ";}
         if (!unidadAdmDes.equals("0")) { condicion=condicion+ " a.codigo_unidad_dest="+unidadAdmDes+" and ";}
@@ -650,7 +696,8 @@ public class TrasladoController implements Serializable {
     }
     
     public void guardarTraslado(){
-        if (tras.getIdTraslado()==null){
+        if (!lstBienesTrasladar.isEmpty()){
+          if (tras.getIdTraslado()==null){
             tras.setUnidadAfOrigen(unidadAFOrig);
             tras.setCodigoUnidadOrigen(unidadAdmOrg);
             tras.setIdTipoTraslado(tipTraslado);
@@ -669,7 +716,11 @@ public class TrasladoController implements Serializable {
                 bejb.guardarTrasladoDetalle(lstBienesTrasladar,tras);
             }
           JsfUtil.mensajeAlerta("Traslado Almacenado");
-         // JsfUtil.redireccionar("buscarTraslados.mined?faces-redirect=true");
+          JsfUtil.redireccionar("buscarTraslados.mined?faces-redirect=true");
+        }
+        else{
+           JsfUtil.mensajeError("Traslado sin bienes asociados");
+        }
     }
 
     public List<VwBienes> dropBienesTrasladar() {
@@ -702,10 +753,11 @@ public class TrasladoController implements Serializable {
         SimpleDateFormat formateador = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new Locale("es"));
 
         Date fecRep = new Date();
+        
         param.put("CodUnidadDes",tras.getCodigoUnidadDest());
         param.put("UnidadDes",getNombreAdm(tras.getCodigoUnidadDest(),tipUniDes));
         param.put("codigoTraslado",tras.getCodigoTraslado());
-        param.put("fecSolitud", tras.getFechaSolicitud());
+        param.put("fecSolicitud", tras.getFechaSolicitud());
         param.put("nomAutoriza",tras.getNombreAutoriza());
         param.put("nomRecibe",tras.getNombreRecibe());
         param.put("tipoTraslado",getTipoTraslado(tras.getIdTipoTraslado().toString()));

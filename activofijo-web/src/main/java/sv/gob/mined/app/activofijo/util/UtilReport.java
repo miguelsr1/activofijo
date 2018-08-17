@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
-import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -24,9 +24,11 @@ import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
+import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
 import net.sf.jasperreports.engine.export.JRRtfExporter;
 import net.sf.jasperreports.engine.export.JRTextExporterParameter;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import sv.gob.mined.activofijo.ejb.ReportesEJB;
 
 /**
  *
@@ -34,7 +36,8 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
  */
 public final class UtilReport {
 
-   public static final String PATH_IMAGENES = File.separator + "resources" + File.separator + "images" + File.separator;
+    public static final String PATH_IMAGENES = File.separator + "resources" + File.separator + "images" + File.separator;
+
     /**
      * Permite cargar la plantilla (.jrxml) como un objeto del tipo
      * {@link JasperDesign}
@@ -71,8 +74,8 @@ public final class UtilReport {
     }
 
     /**
-     * Permite realizar la impresiÃƒÂ³n del reporte y lo representa a travez
-     * de un objeto del tipo {@link JasperPrint}
+     * Permite realizar la impresiÃƒÂ³n del reporte y lo representa a travez de
+     * un objeto del tipo {@link JasperPrint}
      *
      * @param pReporteCompilado Un objeto del tipo {@link JasperReport}
      * @param pParametrosReporte Los parametros que se enviaran al reporte
@@ -100,8 +103,8 @@ public final class UtilReport {
     }
 
     /**
-     * Permite realizar la impresiÃƒÂ³n del reporte y lo representa a travez
-     * de un objeto del tipo {@link JasperPrint}
+     * Permite realizar la impresiÃƒÂ³n del reporte y lo representa a travez de
+     * un objeto del tipo {@link JasperPrint}
      *
      * @param pReporteCompilado Un objeto del tipo {@link JasperReport}
      * @param pParametrosReporte Los parametros que se enviaran al reporte
@@ -150,8 +153,6 @@ public final class UtilReport {
 
         JRRtfExporter vRtfExporter = new JRRtfExporter();
 
-
-
         vRtfExporter.setParameter(JRTextExporterParameter.JASPER_PRINT,
                 vJasperPrint);
         vRtfExporter.setParameter(JRTextExporterParameter.OUTPUT_STREAM,
@@ -182,8 +183,6 @@ public final class UtilReport {
         ByteArrayOutputStream vByteOutputStream = new ByteArrayOutputStream();
 
         JRRtfExporter vRtfExporter = new JRRtfExporter();
-
-
 
         vRtfExporter.setParameter(JRTextExporterParameter.JASPER_PRINT,
                 vJasperPrint);
@@ -219,14 +218,12 @@ public final class UtilReport {
         //JRRtfExporter vRtfExporter = new JRRtfExporter();
         JRPdfExporter vRtfExporter = new JRPdfExporter();
 
-
         vRtfExporter.setParameter(JRTextExporterParameter.JASPER_PRINT,
                 vJasperPrint);
         vRtfExporter.setParameter(JRTextExporterParameter.OUTPUT_STREAM,
                 vByteOutputStream);
 
         vRtfExporter.exportReport();
-
 
         return vByteOutputStream.toByteArray();
     }
@@ -253,14 +250,12 @@ public final class UtilReport {
         //JRRtfExporter vRtfExporter = new JRRtfExporter();
         JRPdfExporter vRtfExporter = new JRPdfExporter();
 
-
         vRtfExporter.setParameter(JRTextExporterParameter.JASPER_PRINT,
                 vJasperPrint);
         vRtfExporter.setParameter(JRTextExporterParameter.OUTPUT_STREAM,
                 vByteOutputStream);
 
         vRtfExporter.exportReport();
-
 
         return vByteOutputStream.toByteArray();
     }
@@ -273,30 +268,26 @@ public final class UtilReport {
             JasperPrint jasperPrint = JasperFillManager.fillReport(UtilReport.class.getClassLoader().getResourceAsStream("reportes" + File.separator + nombreRpt), param, new JRBeanCollectionDataSource(lst));
 
             byte[] content = JasperExportManager.exportReportToPdf(jasperPrint);
-            response.setHeader("Content-disposition", "attachment;filename="+nombreRpt+".pdf");
+            response.setHeader("Content-disposition", "attachment;filename=" + nombreRpt + ".pdf");
             response.setContentType("application/pdf");
             response.setContentLength(content == null ? 0 : content.length);
             ServletOutputStream ouputStream = response.getOutputStream();
             ouputStream.write(content, 0, content.length);
             ouputStream.flush();
             ouputStream.close();
-        
+
             FacesContext.getCurrentInstance().responseComplete();
         } catch (JRException ex) {
             Logger.getLogger(UtilReport.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(UtilReport.class.getName()).log(Level.SEVERE, null, ex);
         }
-    } 
+    }
 
-    
-    public static void rptGenerico(HttpServletResponse response,  HashMap param, String nombreRpt,EntityManager em) throws JRException, IOException {
+    public static void rptGenerico(HttpServletResponse response, byte[] content) throws JRException, IOException {
         try {
-            ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
-              param.put("p_RutaImg", ctx.getRealPath(PATH_IMAGENES));
 
-            byte[] content = getRpt(UtilReport.class.getClassLoader().getResourceAsStream("reportes"+ File.separator + nombreRpt), param, em);
-            response.setHeader("Content-disposition","attachment;filename=Descargo.pdf");
+            response.setHeader("Content-disposition", "attachment;filename=archivo.pdf");
             response.setContentType("application/pdf");
             response.setContentLength(content == null ? 0 : content.length);
             ServletOutputStream ouputStream = response.getOutputStream();
@@ -304,19 +295,34 @@ public final class UtilReport {
             ouputStream.flush();
             ouputStream.close();
             FacesContext.getCurrentInstance().responseComplete();
-        } catch (JRException ex) {
-            Logger.getLogger(UtilReport.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(UtilReport.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public static byte[] getRpt(InputStream input, HashMap map, EntityManager em) throws JRException{
-        Connection conn = em.unwrap(java.sql.Connection.class);
-        JasperFillManager.fillReport(input, map, conn);
+    
+public static void generarReporte(List<JasperPrint> jasperPrintList, String nombreRpt) {
+        try {
+            HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            JRPdfExporter exporter = new JRPdfExporter();
 
-        byte[] content = JasperRunManager.runReportToPdf(input, map, conn);
-        return content;
+            exporter.setParameter(JRExporterParameter.JASPER_PRINT_LIST, jasperPrintList);
+            exporter.setParameter(JRPdfExporterParameter.IS_CREATING_BATCH_MODE_BOOKMARKS, Boolean.FALSE);
+            exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, baos);
+            exporter.exportReport();
+
+            response.setContentType("application/pdf");
+            response.setHeader("Content-disposition", "attachment;filename=" + nombreRpt + ".pdf");
+            response.setContentLength(baos == null ? 0 : baos.toByteArray().length);
+            response.getOutputStream().write(baos.toByteArray());
+
+            response.getOutputStream().flush();
+            response.getOutputStream().close();
+            FacesContext.getCurrentInstance().responseComplete();
+        } catch (IOException | JRException ex) {
+            Logger.getLogger(UtilReport.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    
+
 }

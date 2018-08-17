@@ -87,6 +87,10 @@ public class JsfUtil {
         msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "<big>Información</big>", "<big>Bien Elimnado</big>");
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
+     public static void mensajeEliminarTraslado() {
+        msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "<big>Información</big>", "<big>Traslado Elimnado</big>");
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
    public static void mensajeCorrelativo() {
         msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "<big>Información</big>", "<big>Existe Correlativo</big>");
         FacesContext.getCurrentInstance().addMessage(null, msg);

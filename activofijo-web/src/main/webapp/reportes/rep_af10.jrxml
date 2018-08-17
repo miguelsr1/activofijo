@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rep_af10" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a3aaae0d-7f8f-4f6e-a53a-ae3e0a954290">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#0066FF" fill="Solid">
+		<pen lineWidth="1.0"/>
+		<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="p_codigoDescargo" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="p_unidadAF" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="p_unidadAdm" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="p_RutaImg" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Java\\sistemas\\activofijo-web\\src\\main\\webapp\\resources\\images\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[Select d.unidad_activo_fijo, nvl(d.codigo_descargo,'') codigo_descargo,d.nombre_coord_adm, d.nombre_director,d.id_tipo_descargo,d.descargo_id,
+d.fecha_solicitud, d.fecha_fallo, e.codigo_unidad, e.id_bien, b.codigo_inventario, b.descripcion_bien, b.marca, b.modelo,
+b.fecha_adquisicion,b.valor_adquisicion,b.numero_motor,b.numero_serie,b.numero_chasis, b.id_cat_bien, b.unidad_activo_fijo,
+f.nombre_unidad, f.direccion, b.numero_placa,  u.nombre_unidad_af,t.NOMBRE_TIPO_DESCARGO
+from af_descargos d left outer join af_descargos_detalle e on d.descargo_id = e.descargo_id
+left outer join af_bienes_depreciables b on d.unidad_activo_fijo = b.unidad_activo_fijo and e.codigo_unidad = b.codigo_unidad and e.id_bien = b.id_bien
+left OUTER JOIN af_unidades_administrativas f on d.unidad_activo_fijo =f.unidad_activo_fijo and e.codigo_unidad = f.codigo_unidad
+left outer join af_unidades_activo_fijo u on f.unidad_activo_fijo = u.unidad_activo_fijo
+left outer join AF_TIPO_DESCARGO t on t.ID_TIPO_DESCARGO=d.id_tipo_descargo
+where trim(d.unidad_activo_fijo) =$P{p_unidadAF}
+and trim(e.codigo_unidad) =$P{p_unidadAdm}
+and trim(d.descargo_id)=$P{p_codigoDescargo}]]>
+	</queryString>
+	<field name="UNIDAD_ACTIVO_FIJO" class="java.lang.String"/>
+	<field name="CODIGO_DESCARGO" class="java.lang.String"/>
+	<field name="NOMBRE_COORD_ADM" class="java.lang.String"/>
+	<field name="NOMBRE_DIRECTOR" class="java.lang.String"/>
+	<field name="ID_TIPO_DESCARGO" class="java.lang.String"/>
+	<field name="DESCARGO_ID" class="java.math.BigDecimal"/>
+	<field name="FECHA_SOLICITUD" class="java.sql.Timestamp"/>
+	<field name="FECHA_FALLO" class="java.sql.Timestamp"/>
+	<field name="CODIGO_UNIDAD" class="java.lang.String"/>
+	<field name="ID_BIEN" class="java.math.BigDecimal"/>
+	<field name="CODIGO_INVENTARIO" class="java.lang.String"/>
+	<field name="DESCRIPCION_BIEN" class="java.lang.String"/>
+	<field name="MARCA" class="java.lang.String"/>
+	<field name="MODELO" class="java.lang.String"/>
+	<field name="FECHA_ADQUISICION" class="java.sql.Timestamp"/>
+	<field name="VALOR_ADQUISICION" class="java.math.BigDecimal"/>
+	<field name="NUMERO_MOTOR" class="java.lang.String"/>
+	<field name="NUMERO_SERIE" class="java.lang.String"/>
+	<field name="NUMERO_CHASIS" class="java.lang.String"/>
+	<field name="ID_CAT_BIEN" class="java.math.BigDecimal"/>
+	<field name="NOMBRE_UNIDAD" class="java.lang.String"/>
+	<field name="DIRECCION" class="java.lang.String"/>
+	<field name="NUMERO_PLACA" class="java.lang.String"/>
+	<field name="NOMBRE_UNIDAD_AF" class="java.lang.String"/>
+	<field name="NOMBRE_TIPO_DESCARGO" class="java.lang.String"/>
+	<variable name="V_suma" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{VALOR_ADQUISICION}]]></variableExpression>
+	</variable>
+	<group name="UNIDAD_ACTIVO_FIJO" isStartNewPage="true" isResetPageNumber="true" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{UNIDAD_ACTIVO_FIJO}+$F{CODIGO_UNIDAD}]]></groupExpression>
+		<groupHeader>
+			<band height="156">
+				<staticText>
+					<reportElement uuid="70bc1f42-545e-4505-af6e-93dacf794067" style="table_TH" mode="Opaque" x="0" y="126" width="66" height="30" forecolor="#000000" backcolor="#CCCCCC"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" markup="none">
+						<font isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[TIPO DE DESCARGO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="28c2ce0c-a859-4254-b38a-b82999dc1927" style="table_TH" mode="Opaque" x="67" y="126" width="108" height="30" backcolor="#CCCCCC"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[CODIGO DE INVENTARIO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="db535595-c0c9-4779-a812-b5bfb5fd4b89" style="table_TH" mode="Opaque" x="176" y="126" width="168" height="30" backcolor="#CCCCCC"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[DESCRIPCION]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="8e93f130-f374-4d25-832c-129e76989ebf" style="table_TH" mode="Opaque" x="345" y="126" width="78" height="30" backcolor="#CCCCCC"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[MARCA/ N° DE PLACA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="9bf1ac41-0f72-4d1f-adbb-bdb8d11e514e" style="table_TH" mode="Opaque" x="424" y="126" width="75" height="30" backcolor="#CCCCCC"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[MODELO/ N° DE MOTOR]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="f510234b-af1a-41f9-a324-e83319b0f3e7" style="table_TH" mode="Opaque" x="500" y="126" width="81" height="30" backcolor="#CCCCCC"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[SERIE/ N° DE CHASIS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="c0540595-e860-4110-94c3-56521a8691a1" mode="Transparent" x="0" y="6" width="313" height="21" forecolor="#000000" backcolor="#99CCFF"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MINISTERIO DE EDUCACION]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="c0540595-e860-4110-94c3-56521a8691a1" mode="Transparent" x="0" y="104" width="738" height="21" forecolor="#000000" backcolor="#99CCFF"/>
+					<textElement textAlignment="Center">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[FORMULARIO DE DESCARGO DE MOBILIARIO Y EQUIPO (AF-10)]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="1e3d905b-5044-4409-8b7e-c7b94a4ec281" x="0" y="23" width="313" height="20"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{NOMBRE_UNIDAD_AF}]]></textFieldExpression>
+				</textField>
+				<image hAlign="Right">
+					<reportElement uuid="128effda-51e5-43cb-87af-87232772f0b6" x="628" y="6" width="100" height="50"/>
+					<imageExpression><![CDATA[$P{p_RutaImg}+File.separator+"escudo.png"]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement uuid="4e66c0a0-e2fc-42a7-9421-c7dea356fbe1" style="table_TH" mode="Opaque" x="582" y="126" width="79" height="30" backcolor="#CCCCCC"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[FECHA DE ADQUISICION]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="f2b684a4-522e-467d-8155-0eb6723ebc4e" style="table_TH" mode="Opaque" x="662" y="126" width="83" height="30" backcolor="#CCCCCC"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[PRECIO]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="1e3d905b-5044-4409-8b7e-c7b94a4ec281" x="0" y="41" width="313" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{NOMBRE_UNIDAD}.trim()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="1e3d905b-5044-4409-8b7e-c7b94a4ec281" x="0" y="68" width="426" height="34"/>
+					<textElement/>
+					<textFieldExpression><![CDATA["DIRECCION:"+$F{DIRECCION}.trim()]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="1e3d905b-5044-4409-8b7e-c7b94a4ec281" x="501" y="49" width="163" height="18"/>
+					<textElement/>
+					<textFieldExpression><![CDATA["N° SOLICITUD: "+$F{CODIGO_DESCARGO}.trim()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="1e3d905b-5044-4409-8b7e-c7b94a4ec281" x="503" y="64" width="107" height="18"/>
+					<textElement/>
+					<textFieldExpression><![CDATA["FECHA SOLICITUD:"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="1e3d905b-5044-4409-8b7e-c7b94a4ec281" x="502" y="81" width="108" height="18"/>
+					<textElement/>
+					<textFieldExpression><![CDATA["FECHA FALLO:"]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement uuid="1e3d905b-5044-4409-8b7e-c7b94a4ec281" x="610" y="64" width="77" height="18"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{FECHA_SOLICITUD}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement uuid="1e3d905b-5044-4409-8b7e-c7b94a4ec281" x="610" y="81" width="77" height="18"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{FECHA_FALLO}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="1e3d905b-5044-4409-8b7e-c7b94a4ec281" x="344" y="43" width="114" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA["CODIGO: "+$F{CODIGO_UNIDAD}.trim()]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="58f78134-f67c-4ce1-818e-218cb4c1b913" style="table" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="66" height="20" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement markup="none">
+					<font size="8" isUnderline="false" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_TIPO_DESCARGO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="9220da38-2730-450f-aaa0-906c613c3a87" stretchType="RelativeToTallestObject" mode="Opaque" x="66" y="0" width="108" height="20" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement markup="none">
+					<font size="8" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CODIGO_INVENTARIO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="1450e6be-b8b3-4df8-9463-6b5d000154ec" style="table" stretchType="RelativeToTallestObject" mode="Opaque" x="174" y="0" width="169" height="20" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement markup="none">
+					<font size="8" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRIPCION_BIEN}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="216ab5dd-82a4-42bf-a0b4-cbbc3330bc41" stretchType="RelativeToTallestObject" mode="Opaque" x="343" y="0" width="78" height="20" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement markup="none">
+					<font size="8" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{MARCA}.trim().equals("")?$F{NUMERO_PLACA}:$F{MARCA})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="175f0823-03df-4720-986e-b8cf39ee06cd" stretchType="RelativeToTallestObject" mode="Opaque" x="421" y="0" width="79" height="20" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement markup="none">
+					<font size="8" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{MODELO}.trim().equals("")?$F{NUMERO_MOTOR}:$F{MODELO})]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="bc0dbac6-dce0-4603-a34a-df31562be3b8" style="table" stretchType="RelativeToTallestObject" mode="Opaque" x="499" y="0" width="82" height="20" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement markup="none">
+					<font size="8" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{NUMERO_SERIE}.trim().equals("")?$F{NUMERO_CHASIS}:$F{NUMERO_SERIE})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="91ca323a-52bf-4ca2-9953-0a833b1fff0d" stretchType="RelativeToTallestObject" mode="Opaque" x="580" y="0" width="81" height="20" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font size="8" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_ADQUISICION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="3a04e71b-020f-4679-a223-832595be458a" stretchType="RelativeToTallestObject" x="661" y="0" width="83" height="20" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VALOR_ADQUISICION}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="22" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="033b9b31-f94c-4418-99d4-8b29fab15a35" x="10" y="5" width="142" height="14" isRemoveLineWhenBlank="true"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ACTIVO FIJO"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="1b810d20-2f8f-4ee5-828c-a7a7209df0a3" x="10" y="5" width="739" height="1"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="033b9b31-f94c-4418-99d4-8b29fab15a35" x="283" y="5" width="65" height="14" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag. "+$V{PAGE_NUMBER}.toString().trim()+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement uuid="66df3b26-e74e-4755-9c7d-e986be1e7b8e" x="355" y="5" width="40" height="14" isRemoveLineWhenBlank="true"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}.toString().trim()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="033b9b31-f94c-4418-99d4-8b29fab15a35" x="502" y="5" width="247" height="14" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DESCARGO DE MOBILIARIO Y EQUIPO - AF10"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="122" splitType="Stretch">
+			<textField pattern="$ #,##0.00">
+				<reportElement uuid="db333535-9634-406a-b754-6f85e8a48c89" x="637" y="0" width="108" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_suma}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="70bc1f42-545e-4505-af6e-93dacf794067" mode="Opaque" x="466" y="0" width="171" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="1e3d905b-5044-4409-8b7e-c7b94a4ec281" x="10" y="25" width="426" height="17"/>
+				<textElement/>
+				<textFieldExpression><![CDATA["Jefe de la unidad, Director o Coordinador."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="1e3d905b-5044-4409-8b7e-c7b94a4ec281" x="10" y="71" width="72" height="17"/>
+				<textElement/>
+				<textFieldExpression><![CDATA["firma y sello"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="1e3d905b-5044-4409-8b7e-c7b94a4ec281" x="10" y="92" width="72" height="17"/>
+				<textElement/>
+				<textFieldExpression><![CDATA["nombre"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="1e3d905b-5044-4409-8b7e-c7b94a4ec281" x="86" y="69" width="239" height="17" forecolor="#F0F0F0"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{NOMBRE_DIRECTOR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="1e3d905b-5044-4409-8b7e-c7b94a4ec281" x="86" y="86" width="239" height="17" forecolor="#F0F0F0"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{NOMBRE_DIRECTOR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>
