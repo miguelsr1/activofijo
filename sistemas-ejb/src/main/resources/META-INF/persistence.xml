@@ -53,6 +53,7 @@
         <class>sv.gob.mined.activofijo.model.VwCorrelativos</class>
         <class>sv.gob.mined.activofijo.model.VwDepreciaciones</class>
         <class>sv.gob.mined.activofijo.model.VwDatosxCuentas</class>
+        <class>sv.gob.mined.activofijo.model.VwSolvencia</class>
         <class>sv.gob.mined.activofijo.model.dto.DatosDepreciacion</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>

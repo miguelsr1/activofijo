@@ -4,7 +4,7 @@
 
     <groupId>sv.gob.mined</groupId>
     <artifactId>sistemas-ejb</artifactId>
-    <version>1.0.0</version>
+    <version>1.2.9</version>
     <packaging>ejb</packaging>
 
     <name>sistemas-ejb</name>
@@ -20,6 +20,12 @@
             <artifactId>javaee-api</artifactId>
             <version>7.0</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+            <version>4.8.0</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.eclipse.persistence</groupId>

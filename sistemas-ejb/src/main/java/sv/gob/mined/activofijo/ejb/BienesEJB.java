@@ -28,6 +28,7 @@ import sv.gob.mined.activofijo.model.VwDescargos;
 import sv.gob.mined.activofijo.model.VwCorrelativos;
 import sv.gob.mined.activofijo.model.VwDatosxCuentas;
 import sv.gob.mined.activofijo.model.VwDepreciaciones;
+import sv.gob.mined.activofijo.model.VwSolvencia;
 import sv.gob.mined.activofijo.model.dto.DatosUnidad;
 import sv.gob.mined.activofijo.model.dto.DatosxCuentas;
 import sv.gob.mined.activofijo.model.dto.DatosDepreciacion;
@@ -45,20 +46,6 @@ public class BienesEJB {
     @PersistenceContext(unitName = "activoFijoPU", type = PersistenceContextType.TRANSACTION)
     public EntityManager em;
 
-    /* public void guardarTraslado(AfTraslados tras, String usu) {
-        em.getTransaction().begin();
-        if (tras.getIdTraslado() != null) {
-            tras.us
-            em.merge(bienes);
-            // JsfUtil.mensajeUpdate();
-        } else {
-            bienes.setUsuarioCrea(usu);
-            bienes.setFechaCreacion(new Date());
-            em.persist(bienes);
-            //JsfUtil.mensajeInsert();
-        }
-        em.getTransaction().commit();
-    }*/
     public AfTraslados getTraslado(Long Id) {
         Query q = em.createNativeQuery("select * from  Af_Traslados a where a.id_traslado=" + Id, AfTraslados.class);
         if (q.getResultList().isEmpty()) {
@@ -108,22 +95,28 @@ public class BienesEJB {
     }
 
     public void guardarDescargo(AfDescargos tras, String usu) {
-        em.getTransaction().begin();
-        if (tras.getDescargoId() != null) {
-            tras.setUsuarioModifica(usu);
-            tras.setFechaModifica(new Date());
-            em.merge(tras);
-        } else {
-            tras.setUsuarioCrea(usu);
-            tras.setFechaSolicitud(new Date());
-            tras.setFechaCreacion(new Date());
-            em.persist(tras);
-        }
-        em.getTransaction().commit();
+        //em.getTransaction().begin();
+        try {
+            
+
+            if (tras.getDescargoId() != null) {
+                tras.setUsuarioModifica(usu);
+                tras.setFechaModifica(new Date());
+                em.merge(tras);
+            } else {
+                tras.setUsuarioCrea(usu);
+                tras.setFechaSolicitud(new Date());
+                tras.setFechaCreacion(new Date());
+                em.persist(tras);
+            }
+        } catch (Exception e) {
+           System.out.println("Error al Almacenar el descargo "+ e);
+      }
     }
 
     public void guardarTraslado(AfTraslados tras, String usu) {
-        em.getTransaction().begin();
+     //   em.getTransaction().begin();
+     try {
         if (tras.getIdTraslado() != null) {
             if (tras.getEstado()=='1'){
                 tras.setFechaAutoriza(new Date());
@@ -139,7 +132,10 @@ public class BienesEJB {
             tras.setFechaCreacion(new Date());
             em.persist(tras);
         }
-        em.getTransaction().commit();
+     }catch( Exception e){
+      System.out.println("Error al Almacenar el traslado "+ e);
+     }
+     //   em.getTransaction().commit();
     }
 
     public AfEstatusBien obtenerEstatus(Long idEstatus) {
@@ -166,7 +162,7 @@ public class BienesEJB {
     public Integer calcularDepreciacion(String idBien, String Anio, String mes, String fuente, String proyecto) {
         Integer bienes = 0;
         try {
-            em.getTransaction().begin();
+        //    em.getTransaction().begin();
             java.sql.Connection connection = em.unwrap(java.sql.Connection.class);
 
             CallableStatement cstmt = connection.prepareCall("{call PRD_DEPRECIACION(?1, ?2, ?3, ?4, ?5,?6)}");
@@ -180,22 +176,53 @@ public class BienesEJB {
             bienes = cstmt.getInt("pBienes");
             System.out.println("NumBienes: " + bienes);
 
-            em.getTransaction().commit();
+          //  em.getTransaction().commit();
             cstmt.close();
+            
         } catch (Exception e) {
-            e.printStackTrace();
+             System.out.println("Error al realizar cálculo de Depreciación "+ e);
         }
-        return bienes;
+       return bienes;
+    }
+    public void removeTraslado(Long idTd){
+         AfTraslados td;
+         AfTrasladosDetalle tdet ;
+         
+        try{
+            Query q = em.createNativeQuery("select * from af_traslados where id_traslado=" + idTd, AfTraslados.class);
+            if (!q.getResultList().isEmpty() && q.getResultList() != null) {
+                td = (AfTraslados) q.getResultList().get(0);
+                
+                q = em.createNativeQuery("select * from af_traslados_detalle where id_traslado=" + idTd, AfTrasladosDetalle.class);
+                if (!q.getResultList().isEmpty() && q.getResultList() != null) {
+                     tdet = (AfTrasladosDetalle) q.getResultList().get(0);
+                   try {
+                      em.remove(tdet);
+                      em.remove(td);
+                    }catch(Exception e){
+                        System.out.println("Error al eliminar traslados "+ e);
+                    } 
+                } else {
+                    try{
+                       em.remove(td);
+                    }catch(Exception e){
+                        System.out.println("Error al eliminar traslado detalle "+ e);
+                    }       
+                }
+            }
+           }catch(Exception e){
+             System.out.println("Error al eliminar traslado "+ e);
+           }   
     }
 
     public void removeBien(Long idBien) {
-        AfBienesDepreciables bd = new AfBienesDepreciables();
-        AfDescargosDetalle dd = new AfDescargosDetalle();
-        AfDescargos d = new AfDescargos();
-        AfTraslados t = new AfTraslados();
-        AfTrasladosDetalle td = new AfTrasladosDetalle();
-        AfDepreciaciones depre = new AfDepreciaciones();
-
+        AfBienesDepreciables bd ;
+        AfDescargosDetalle dd ;
+        AfDescargos d ;
+        AfTraslados t ;
+        AfTrasladosDetalle td ;
+        AfDepreciaciones depre;
+try{
         Query q = em.createNativeQuery("select * from af_bienes_depreciables A  where a.id_bien=" + idBien, AfBienesDepreciables.class);
         bd = (AfBienesDepreciables) q.getResultList().get(0);
 
@@ -208,16 +235,18 @@ public class BienesEJB {
 
             q = em.createNativeQuery("select count(*) from af_descargos_detalle where descargo_id=" + dd.getDescargoId().getDescargoId());
             if (Integer.valueOf(q.getSingleResult().toString()) == 1) {
-                em.getTransaction().begin();
+               try{ 
                 em.remove(dd);
-                em.getTransaction().commit();
-                em.getTransaction().begin();
                 em.remove(d);
-                em.getTransaction().commit();
+               }catch(Exception e){
+                System.out.println("Error al eliminar descargos "+ e);
+            } 
             } else {
-                em.getTransaction().begin();
+              try{
                 em.remove(dd);
-                em.getTransaction().commit();
+              }catch(Exception e){
+                System.out.println("Error al eliminar descargos detalle "+ e);
+            } 
             }
         }
         q = em.createNativeQuery("select * from af_traslados_detalle where id_bien=" + idBien, AfTrasladosDetalle.class);
@@ -228,53 +257,58 @@ public class BienesEJB {
             t = (AfTraslados) q.getResultList().get(0);
 
             q = em.createNativeQuery("select count(*) from af_traslados_detalle where id_traslado=" + td.getIdTraslado());
-            if (Integer.valueOf(q.getSingleResult().toString()) == 1) {
-                em.getTransaction().begin();
+            if (Integer.valueOf(q.getSingleResult().toString()) >= 1) {
+               try {
                 em.remove(td);
-                em.getTransaction().commit();
-                em.getTransaction().begin();
-                em.remove(t);
-                em.getTransaction().commit();
+                    em.remove(t);
+              }catch(Exception e){
+                System.out.println("Error al eliminar traslados "+ e);
+               } 
+                    
             } else {
-                em.getTransaction().begin();
+                try{
                 em.remove(td);
-                em.getTransaction().commit();
+              }catch(Exception e){
+                System.out.println("Error al eliminar traslado detalle "+ e);
+               } 
+             
 
             }
         }
-        q = em.createNativeQuery("select * from af_depreciaciones where id_bien=" + idBien, AfDepreciaciones.class);
-        if (!q.getResultList().isEmpty() && q.getResultList() != null) {
-            depre = (AfDepreciaciones) q.getResultList().get(0);
-            em.getTransaction().begin();
-            em.remove(depre);
-            em.getTransaction().commit();
-        }
-        em.getTransaction().begin();
-        em.remove(bd);
-        em.getTransaction().commit();
-
+        q = em.createNativeQuery("delete af_Depreciaciones where id_bien= "+idBien);
+        q.executeUpdate();
+        
+       em.remove(bd);
+    }catch( Exception e){
+    System.out.println("Error al eliminar bien "+ e);
+}
     }
 
     public void removeDetalleTraslado(Long idTras, Long idBien) {
-        em.getTransaction().begin();
+      try{
         AfTrasladosDetalle td = new AfTrasladosDetalle();
         Query q = em.createNativeQuery("select * from af_traslados_detalle A  where a.id_traslado=" + idTras + " and id_Bien=" + idBien, AfTrasladosDetalle.class);
         td = (AfTrasladosDetalle) q.getResultList().get(0);
         em.remove(td);
-        em.getTransaction().commit();
+        }catch(Exception e){
+                System.out.println("Error al eliminar traslados detalle "+ e);
+        } 
     }
 
     public void removeDetalleDescargo(Long idDes, Long idBien) {
-        em.getTransaction().begin();
+      try{
         AfDescargosDetalle td = new AfDescargosDetalle();
         Query q = em.createNativeQuery("select * from af_descargos_detalle A  where a.descargo_id=" + idDes + " and id_Bien=" + idBien, AfDescargosDetalle.class);
         td = (AfDescargosDetalle) q.getResultList().get(0);
         em.remove(td);
-        em.getTransaction().commit();
+       }catch(Exception e){
+                System.out.println("Error al eliminar descargos detalle "+ e);
+      } 
+             
     }
 
     public void actualizarEstadoBien(List<VwBienes> vb, String estado) {
-        em.getTransaction().begin();
+    try{
         for (VwBienes object : vb) {
             AfBienesDepreciables b = buscarBien(object.getIdBien());
             if (estado.equals("P")) {
@@ -290,24 +324,28 @@ public class BienesEJB {
             }
             em.merge(b);
         }
-        em.getTransaction().commit();
+         }catch(Exception e){
+                System.out.println("Error al actualizar estados de bien "+ e);
+               } 
     }
 
     public void actualizarBienTraslado(List<VwBienes> vb,String unidad,String uAF) {
-        em.getTransaction().begin();
+      try{ 
         for (VwBienes object : vb) {
             AfBienesDepreciables b = buscarBien(object.getIdBien());
             b.setCodigoUnidad(unidad);
             b.setUnidadActivoFijo(uAF);
             em.merge(b);
         }
-        em.getTransaction().commit();
+     }catch(Exception e){
+                System.out.println("Error al actualizar estados de bien "+ e);
+               } 
     }
     
     
     
     public void guardarTrasladoDetalle(List<VwBienes> vb, AfTraslados des) {
-        em.getTransaction().begin();
+       try{
         for (VwBienes object : vb) {
             AfTrasladosDetalle td = buscarDetalleTras(object.getIdTraslado(),object.getIdTrasladoDet());
             if (td.getIdTrasladoDetalle()== null) { //nuevos
@@ -316,11 +354,13 @@ public class BienesEJB {
                 em.persist(td);
             } 
         }
-        em.getTransaction().commit();
+        
+      }catch(Exception e){
+                System.out.println("Error al guardar traslado detalle "+ e);
+               } 
     }
 
     public AfTrasladosDetalle buscarDetalleTras(Long idDes,Long desDet){
-      //  em.getTransaction().begin();
         AfTrasladosDetalle td = new AfTrasladosDetalle();
         if (idDes!=null){
             Query q = em.createNativeQuery("select * from af_traslados_detalle A  where a.id_traslado=" + idDes + " and id_traslado_detalle=" + desDet, AfTrasladosDetalle.class);
@@ -333,7 +373,6 @@ public class BienesEJB {
     }
     
     public AfDescargosDetalle buscarDetalle(Long idDes,Long desDet){
-      //  em.getTransaction().begin();
         AfDescargosDetalle td = new AfDescargosDetalle();
         if (idDes!=null){
             Query q = em.createNativeQuery("select * from af_descargos_detalle A  where a.descargo_id=" + idDes + " and id_detalle_descargo=" + desDet, AfDescargosDetalle.class);
@@ -346,7 +385,7 @@ public class BienesEJB {
     }
     
     public void guardarDescargoDetalle(List<VwBienes> vb, AfDescargos des) {
-        em.getTransaction().begin();
+      try{
         for (VwBienes object : vb) {
             AfDescargosDetalle td = buscarDetalle(object.getDescargoId(),object.getIdDetalleDescargo());
             if (td.getIdDetalleDescargo() == null) { //nuevos
@@ -358,11 +397,13 @@ public class BienesEJB {
                 em.persist(td);
             } 
         }
-        em.getTransaction().commit();
+    }catch(Exception e){
+                System.out.println("Error al guardar descargo detalle "+ e);
+               } 
     }
 
     public void guardarSol(AfSolvencias sol, String usu) {
-        em.getTransaction().begin();
+    try{
         if (sol.getIdSolvencia() != null) {
             sol.setUsuarioModifica(usu);
             sol.setFechaModifica(new Date());
@@ -372,11 +413,13 @@ public class BienesEJB {
             sol.setFechaSolvencia(new Date());
             em.persist(sol);
         }
-        em.getTransaction().commit();
+    }catch(Exception e){
+                System.out.println("Error al guardar solvencia "+ e);
+               } 
     }
 
     public void guardarBien(AfBienesDepreciables bienes, String usu) {
-        em.getTransaction().begin();
+    try{
         if (bienes.getIdBien() != null) {
             bienes.setUsuarioModif(usu);
             bienes.setFechaModif(new Date());
@@ -388,7 +431,9 @@ public class BienesEJB {
             em.persist(bienes);
             //JsfUtil.mensajeInsert();
         }
-        em.getTransaction().commit();
+     }catch(Exception e){
+                System.out.println("Error al guardar bien "+ e);
+               } 
     }
 
     public List<VwDepreciaciones> depreciacionAnio(String Anio, String mes) {
@@ -406,8 +451,16 @@ public class BienesEJB {
         return lstDepre;
     }
 
+    public List<VwSolvencia> buscarEntidades(String condicion){
+        String sql=" select   rownum as idRow, CODIGO_ENTIDAD as codigoEntidad, UNIDAD_ACTIVO_FIJO as unidadActivoFijo,NOMBRE_MUNICIPIO as nombreMunicipio,NOMBRE as nombre,"+
+                   " FECHA_SOLVENCIA as fechaSolvencia, ANIO as anio, nvl(NUMBIENES,0) as numBienes, nvl(COSTO,0) as costo  from  vw_solvencia "+condicion;
+         Query q = em.createNativeQuery(sql,VwSolvencia.class);
+        
+          return q.getResultList();
+    }
+    
     public List<VwCorrelativos> buscarCorrelativos(String condicion) {
-        List<VwCorrelativos> lstCorrelativos = new ArrayList<VwCorrelativos>();
+        List<VwCorrelativos> lstCorrelativos = new ArrayList();
         Query q = em.createNativeQuery("select A.* from Vw_Correlativos A " + condicion + " order by A.id_tipo_bien");
         List lst = q.getResultList();
         for (Object object : lst) {
@@ -696,9 +749,12 @@ public class BienesEJB {
         if (condicion.trim().equals("where")) {
             condicion = null;
         }
-
-        Query q = em.createNativeQuery("select * from Af_Traslados a " + condicion, AfTraslados.class);
-        return q.getResultList();
+        Query q = em.createNativeQuery("select * from Af_Traslados a " + condicion+" order by a.fecha_traslado", AfTraslados.class);
+        if (!q.getResultList().isEmpty()){
+           return q.getResultList();
+        }else{
+            return null;
+        }
     }
 
     public List<VwDescargos> buscarDescargos(String condicion) {
@@ -877,7 +933,7 @@ public class BienesEJB {
     public List<DatosDepreciacion> getLstdepre(Long idBien, List<AfDepreciaciones> lstDepre,String fecRep,String usuario){
 
         List<DatosDepreciacion> lst;
-        
+      
          Query q = em.createNamedQuery("BusquedaDepreciacionByBien",DatosDepreciacion.class);
          q.setParameter(1,idBien);
           

@@ -43,14 +43,14 @@ public class CatalogosEJB {
     }
 
     public String NomUnidad(String codigo, String tipo) {
-        Query q = em.createQuery("Select a.nombreUnidad from AfUnidadesAdministrativas a where trim(a.afUnidadesAdministrativasPK.codigoUnidad)=:codigo and a.tipoUnidad=:tipo");
-        q.setParameter("codigo", codigo);
-        q.setParameter("tipo", tipo);
-        if (q.getSingleResult() != null) {
-            return q.getSingleResult().toString();
-        } else {
-            return null;
-        }
+            Query q = em.createQuery("Select a.nombreUnidad from AfUnidadesAdministrativas a where trim(a.afUnidadesAdministrativasPK.codigoUnidad)=:codigo and a.tipoUnidad=:tipo");
+            q.setParameter("codigo", codigo);
+            q.setParameter("tipo", tipo);
+            if (!q.getResultList().isEmpty()) {
+                return q.getSingleResult().toString();
+            } else {
+                return "";
+            }
     }
 
     public String NomCentro(String codigo) {
@@ -113,12 +113,12 @@ public class CatalogosEJB {
     }
 
     public String getTipoUnidad(String codigo) {
-        Query q = em.createQuery("Select a.tipoUnidad from AfUnidadesAdministrativas a where trim(a.afUnidadesAdministrativasPK.codigoUnidad)=:codigo");
-        q.setParameter("codigo", codigo.trim());
-        if (q.getSingleResult() != null) {
+        Query q = em.createQuery("Select a.tipoUnidad from AfUnidadesAdministrativas a where trim(a.afUnidadesAdministrativasPK.codigoUnidad)=trim(:codigo)");
+        q.setParameter("codigo", codigo);
+        if (!q.getResultList().isEmpty()) {
             return q.getSingleResult().toString();
         } else {
-            return null;
+            return "";
         }
     }
 
@@ -231,17 +231,14 @@ public class CatalogosEJB {
 
     }
 
-    public Integer getBuscarCorrelativo(String uaf, String uadm, String tipo, String correlativo) {
-        Query q = em.createQuery("Select count(a) from AfBienesDepreciables a where trim(a.unidadActivoFijo)=:uaf and trim(a.codigoUnidad)=:uadm and a.idTipoBien=:tipo and a.correlativo=:correlativo");
-        q.setParameter("uaf", uaf);
-        q.setParameter("uadm", uadm);
+    public Boolean getBuscarCorrelativo(String uaf, String uadm, String tipo, String correlativo) {
+        Query q = em.createQuery("Select a from AfBienesDepreciables a where trim(a.unidadActivoFijo)=:uaf and trim(a.codigoUnidad)=:uadm and a.idTipoBien=:tipo and trim(a.correlativo)=:correlativo");
+        q.setParameter("uaf", uaf.trim());
+        q.setParameter("uadm", uadm.trim());
         q.setParameter("tipo", Long.parseLong(tipo));
         q.setParameter("correlativo", correlativo);
-        if (!q.getResultList().isEmpty()) {
-            return ((Long) q.getSingleResult()).intValue();
-        } else {
-            return 0;
-        }
+        //System.out.println("Select a from AfBienesDepreciables a where trim(a.unidadActivoFijo)=:uaf and trim(a.codigoUnidad)=:uadm and trim(a.idTipoBien)=:tipo and trim(a.correlativo)=:correlativo");
+        return q.getResultList().isEmpty(); 
     }
 
     public Integer getCorrelativo(String uaf, String uadm, String tipo) {

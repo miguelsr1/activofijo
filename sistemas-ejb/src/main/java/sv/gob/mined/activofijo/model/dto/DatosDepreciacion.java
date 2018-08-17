@@ -19,7 +19,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import sv.gob.mined.activofijo.model.AfDepreciaciones;
-import sv.gob.mined.activofijo.model.VwDatosxCuentas;
 
 
 
@@ -37,7 +36,9 @@ public class DatosDepreciacion implements Serializable {
     private String institucion;
     private String unidad;
     private String fuente;
+    @Transient
     private String fecReporte;
+    @Transient
     private String usuario;
     private String numeroInventario;
     private String descripcionBien;

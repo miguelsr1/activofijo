@@ -151,13 +151,9 @@ public class SeguridadBean {
     public Boolean guardar(Object obj) {
         Boolean error = false;
         try {
-            em.getTransaction().begin();
             em.persist(obj);
-            em.getTransaction().commit();
         } catch (Exception e) {
-            em.getTransaction().rollback();
             Logger.getLogger(SeguridadBean.class.getName()).log(Level.WARNING, "Error guardando un objeto", e);
-
             error = true;
         }
         return error;
@@ -195,12 +191,8 @@ public class SeguridadBean {
     public Boolean actualizar(Object obj) {
         Boolean error = false;
         try {
-            em.getTransaction().begin();
             em.merge(obj);
-            em.getTransaction().commit();
-
         } catch (Exception e) {
-            em.getTransaction().rollback();
             Logger.getLogger(SeguridadBean.class.getName()).log(Level.WARNING, "Error actualizando un objeto", e);
             error = true;
         }
@@ -265,7 +257,6 @@ public class SeguridadBean {
         q.setParameter("login", login);
         q.setParameter("idApp", app);
 
-        em.getTransaction().begin();
         if (q.getResultList().isEmpty()) {
             usuarioGrupoAplicacion = new UsuarioGrupoAplicacion();
             usuarioGrupoAplicacion.setIdGrupoApp(grupoAplicacion);
@@ -285,7 +276,6 @@ public class SeguridadBean {
 
             em.merge(usuarioGrupoAplicacion);
         }
-        em.getTransaction().commit();
     }
 
     public UsuarioAplicacion getUsuarioApp(Usuario login, Aplicacion app) {
@@ -301,9 +291,9 @@ public class SeguridadBean {
             usuarioAplicacion.setUsuGrupoActivo('A');
             usuarioAplicacion.setCodigoDepartamento("00");
 
-            em.getTransaction().begin();
+      
             em.persist(usuarioAplicacion);
-            em.getTransaction().commit();
+      
         } else {
             usuarioAplicacion = (UsuarioAplicacion) q.getResultList().get(0);
         }
@@ -396,20 +386,18 @@ public class SeguridadBean {
                     aom.setIdOpcMenu(opcionMenu);
                     aom.setIdAplicacion(aplicacionOpcMenu.getIdAplicacion());
                     aom.setIdGrupoApp(aplicacionOpcMenu.getIdGrupoApp());
-
-                    em.getTransaction().begin();
                     em.persist(aom);
-                    em.getTransaction().commit();
+
                 }
             }
-            em.getTransaction().begin();
+  
             em.persist(aplicacionOpcMenu);
-            em.getTransaction().commit();
+  
 
         } else {
-            em.getTransaction().begin();
+  
             em.persist(aplicacionOpcMenu);
-            em.getTransaction().commit();
+  
         }
     }
 
