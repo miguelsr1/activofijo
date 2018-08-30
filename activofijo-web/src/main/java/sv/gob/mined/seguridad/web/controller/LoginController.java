@@ -242,7 +242,7 @@ public class LoginController implements Serializable {
         }
     }
 
-    /*public void guardarContrasena() {
+    public void guardarContrasena() {
         if (clave1.equals(clave2)) {
             if (!seguridadBean.cambiarContrasena(usuario, clave1)) {
                 JsfUtil.mensajeInsert();
@@ -253,10 +253,10 @@ public class LoginController implements Serializable {
             JsfUtil.mensajeAlerta("Contraseña son Diferentes");
         }
 
-    }*/
+    }
 
     public void resetearContrasena() {
-        if (!seguridadBean.resetearContrasena(login.toUpperCase(), "mined")) {
+        if (seguridadBean.resetearContrasena(login.toUpperCase(), "mined")) {
             JsfUtil.mensajeInsert();
             String url = "/index?faces-redirect=true";
             JsfUtil.redireccionar(url);

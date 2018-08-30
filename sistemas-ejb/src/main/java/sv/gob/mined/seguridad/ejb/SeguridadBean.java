@@ -157,6 +157,12 @@ public class SeguridadBean {
         return error;
     }
 
+    /**
+     * Devuelve true si se logra actualizar la contraseña
+     * @param login
+     * @param clave
+     * @return 
+     */
     public Boolean resetearContrasena(String login, String clave) {
         String claveMd5 = UtilSeguridad.getMD5(clave).toUpperCase();
         Usuario user = getUsu(login.toUpperCase());
