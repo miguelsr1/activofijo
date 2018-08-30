@@ -14,8 +14,6 @@
         <class>sv.gob.mined.seguridad.model.Usuario</class>
         <class>sv.gob.mined.seguridad.model.UsuarioAplicacion</class>
         <class>sv.gob.mined.seguridad.model.UsuarioGrupoAplicacion</class>
-        <class>sv.gob.mined.seguridad.model.rhevaluacion.Empleado</class>
-        <class>sv.gob.mined.seguridad.model.view.VwCatalogoEntidadEducativa</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="eclipselink.cache.shared.default" value="false"/>
@@ -54,6 +52,7 @@
         <class>sv.gob.mined.activofijo.model.VwDepreciaciones</class>
         <class>sv.gob.mined.activofijo.model.VwDatosxCuentas</class>
         <class>sv.gob.mined.activofijo.model.VwSolvencia</class>
+        <class>sv.gob.mined.activofijo.model.VwMunicipio</class>
         <class>sv.gob.mined.activofijo.model.dto.DatosDepreciacion</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>

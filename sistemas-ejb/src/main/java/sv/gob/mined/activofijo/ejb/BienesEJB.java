@@ -28,10 +28,12 @@ import sv.gob.mined.activofijo.model.VwDescargos;
 import sv.gob.mined.activofijo.model.VwCorrelativos;
 import sv.gob.mined.activofijo.model.VwDatosxCuentas;
 import sv.gob.mined.activofijo.model.VwDepreciaciones;
+import sv.gob.mined.activofijo.model.VwMunicipio;
 import sv.gob.mined.activofijo.model.VwSolvencia;
 import sv.gob.mined.activofijo.model.dto.DatosUnidad;
 import sv.gob.mined.activofijo.model.dto.DatosxCuentas;
 import sv.gob.mined.activofijo.model.dto.DatosDepreciacion;
+import sv.gob.mined.activofijo.model.dto.DatosSolvencia;
 
 
 /**
@@ -174,7 +176,7 @@ public class BienesEJB {
             cstmt.registerOutParameter("pBienes", java.sql.Types.INTEGER);
             cstmt.execute();
             bienes = cstmt.getInt("pBienes");
-            System.out.println("NumBienes: " + bienes);
+          //  System.out.println("NumBienes: " + bienes);
 
           //  em.getTransaction().commit();
             cstmt.close();
@@ -453,11 +455,22 @@ try{
 
     public List<VwSolvencia> buscarEntidades(String condicion){
         String sql=" select   rownum as idRow, CODIGO_ENTIDAD as codigoEntidad, UNIDAD_ACTIVO_FIJO as unidadActivoFijo,NOMBRE_MUNICIPIO as nombreMunicipio,NOMBRE as nombre,"+
-                   " FECHA_SOLVENCIA as fechaSolvencia, ANIO as anio, nvl(NUMBIENES,0) as numBienes, nvl(COSTO,0) as costo  from  vw_solvencia "+condicion;
+                   " FECHA_SOLVENCIA as fechaSolvencia, ANIO as anio, nvl(NUMBIENES,0) as numBienes, nvl(COSTO,0) as costo,codigo_municipio as codigoMunicipio,fecha_actualizacion as fechaActualizacion,tipo_unidad as tipoUnidad "+
+                   " from  vw_solvencia "+condicion;
          Query q = em.createNativeQuery(sql,VwSolvencia.class);
         
           return q.getResultList();
     }
+    
+    public List<VwMunicipio> buscarMunicipios(String unidad){
+        String sql="select rownum as idRow,codigo_departamento as codigoDepartamento,codigo_municipio as codigoMunicipio,nombre_municipio as nombreMunicipio,unidad_activo_fijo as unidadActivoFijo "+
+                   "from Vw_municipio where unidad_activo_fijo='"+unidad+"'";
+        Query q = em.createNativeQuery(sql,VwMunicipio.class);
+        
+          return q.getResultList();
+        
+    }
+    
     
     public List<VwCorrelativos> buscarCorrelativos(String condicion) {
         List<VwCorrelativos> lstCorrelativos = new ArrayList();
@@ -491,7 +504,7 @@ try{
     
     public List<VwDatosxCuentas> buscarDatos(String condicion){
         String condicion2 = " where a.id_estatus_bien in (1,2) ";
-        System.out.println(condicion);
+        //System.out.println(condicion);
         if (!condicion.equals("")) {
             condicion2 = condicion2+" and "+ condicion;
         }
@@ -534,7 +547,7 @@ try{
     
     public List<VwBienes> buscarBien(String condicion) {
         String condicion2 = "";
-        System.out.println(condicion);
+       // System.out.println(condicion);
         if (!condicion.equals("")) {
             condicion2 = " where " + condicion;
         }
@@ -941,6 +954,61 @@ try{
          lst.get(0).setLstDatos(lstDepre);
          lst.get(0).setFecReporte(fecRep);
          lst.get(0).setUsuario(usuario);
+        return lst;
+    }
+    
+    public List<DatosSolvencia> getLstSol(String UnidadAF,String codUnidad, String fecReporte, List<VwSolvencia> lstSolvencias, String usuario) {
+        List<DatosSolvencia> lst = new ArrayList<>();
+        String Sql;
+        if (codUnidad.equals("0")) {
+            if (!UnidadAF.equals("0")){  
+                 Sql = "select '' institucion,af.NOMBRE_UNIDAD_AF DIRECCION "
+                    + "from AF_UNIDADES_ACTIVO_FIJO af "
+                    + "where trim(UNIDAD_ACTIVO_FIJO)='" + UnidadAF + "'";
+              
+                    Query q = em.createNativeQuery(Sql);
+
+                    for (Object dato : q.getResultList()) {
+                        Object[] ob = (Object[]) dato;
+
+                        DatosSolvencia d = new DatosSolvencia();
+                        d.setInstitucion(null);
+                        d.setUnidad(ob[1].toString());
+                        d.setFecReporte(fecReporte);
+                        d.setUsuario(usuario);
+
+                        d.setLstDatos(lstSolvencias);
+                        lst.add(d);
+                        }
+            }
+            else{
+                   DatosSolvencia d = new DatosSolvencia();
+                        d.setInstitucion(null);
+                        d.setUnidad(null);
+                        d.setFecReporte(fecReporte);
+                        d.setUsuario(usuario);
+
+                        d.setLstDatos(lstSolvencias);
+                        lst.add(d);
+            }
+        } else {
+            Sql = "select trim(ua.CODIGO_UNIDAD)||' - '||ua.NOMBRE_UNIDAD institucion,af.NOMBRE_UNIDAD_AF DIRECCION "
+                    + "from AF_UNIDADES_ADMINISTRATIVAS ua inner join AF_UNIDADES_ACTIVO_FIJO af on af.UNIDAD_ACTIVO_FIJO=ua.UNIDAD_ACTIVO_FIJO "
+                    + "where trim(CODIGO_UNIDAD)='" + codUnidad + "'";
+            Query q = em.createNativeQuery(Sql);
+
+            for (Object dato : q.getResultList()) {
+                Object[] ob = (Object[]) dato;
+                DatosSolvencia d = new DatosSolvencia();
+                d.setInstitucion(ob[0].toString());
+                d.setUnidad(ob[1].toString());
+                d.setFecReporte(fecReporte);
+                d.setUsuario(usuario);
+
+                d.setLstDatos(lstSolvencias);
+                lst.add(d);
+            }
+        }
         return lst;
     }
     

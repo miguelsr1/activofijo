@@ -29,6 +29,10 @@ private Date fechaSolvencia;
 private String anio;
 private Number numBienes;
 private BigDecimal costo;
+private String codigoMunicipio;
+@Temporal(javax.persistence.TemporalType.DATE)
+private Date fechaActualizacion;
+private String tipoUnidad;
 
 public VwSolvencia() {
     }  
@@ -82,6 +86,14 @@ public VwSolvencia() {
         this.fechaSolvencia = fechaSolvencia;
     }
 
+    public Date getFechaActualizacion() {
+        return fechaActualizacion;
+    }
+
+    public void setFechaActualizacion(Date fechaActualizacion) {
+        this.fechaActualizacion = fechaActualizacion;
+    }
+
     public String getAnio() {
         return anio;
     }
@@ -104,6 +116,22 @@ public VwSolvencia() {
 
     public void setCosto(BigDecimal costo) {
         this.costo = costo;
+    }
+
+    public String getCodigoMunicipio() {
+        return codigoMunicipio;
+    }
+
+    public void setCodigoMunicipio(String codigoMunicipio) {
+        this.codigoMunicipio = codigoMunicipio;
+    }
+
+    public String getTipoUnidad() {
+        return tipoUnidad;
+    }
+
+    public void setTipoUnidad(String tipoUnidad) {
+        this.tipoUnidad = tipoUnidad;
     }
 
     @Override

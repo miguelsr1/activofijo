@@ -129,9 +129,7 @@ public class SeguridadBean {
             q.setParameter("idGrupo", idGrupo);
             q.setParameter("idApp", idApp);
             GrupoAplicacion gp = (GrupoAplicacion) q.getSingleResult();
-            em.getTransaction().begin();
             em.remove(gp);
-            em.getTransaction().commit();
         } catch (Exception exp) {
             Throwable e = exp;
             while (e.getCause() != null) {

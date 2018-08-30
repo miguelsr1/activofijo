@@ -4,6 +4,7 @@
  */
 package sv.gob.mined.activofijo.ejb;
 
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -43,6 +44,7 @@ public class CatalogosEJB {
     }
 
     public String NomUnidad(String codigo, String tipo) {
+        
             Query q = em.createQuery("Select a.nombreUnidad from AfUnidadesAdministrativas a where trim(a.afUnidadesAdministrativasPK.codigoUnidad)=:codigo and a.tipoUnidad=:tipo");
             q.setParameter("codigo", codigo);
             q.setParameter("tipo", tipo);
@@ -137,6 +139,19 @@ public class CatalogosEJB {
         Query q = em.createQuery("Select a from AfUnidadesAdministrativas a where a.tipoUnidad=:tipo and trim(a.afUnidadesAdministrativasPK.unidadActivoFijo)=:codigo order by a.afUnidadesAdministrativasPK.codigoUnidad", AfUnidadesAdministrativas.class);
         q.setParameter("tipo", tipo);
         q.setParameter("codigo", codigo);
+        if (q.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return q.getResultList();
+        }
+    }
+    public List<AfUnidadesAdministrativas> getUnidadAdmMun(String codigo, String tipo,String municipio) {
+       String sql=" Select u.* from AF_UNIDADES_ADMINISTRATIVAS u " +
+                  " inner join SILCERRI.ENTIDAD_EDUCATIVA a on a.CODIGO_ENTIDAD=u.CODIGO_UNIDAD " +
+                  " inner join VW_MUNICIPIO m on m.CODIGO_DEPARTAMENTO=a.CODIGO_DEPARTAMENTO and m.CODIGO_MUNICIPIO=a.CODIGO_MUNICIPIO "+
+                  " where u.tipo_Unidad='"+tipo+"' and trim(m.unidad_Activo_Fijo)='"+codigo+"' and m.codigo_municipio='"+municipio+"'";
+ 
+        Query q = em.createNativeQuery(sql, AfUnidadesAdministrativas.class);
         if (q.getResultList().isEmpty()) {
             return null;
         } else {
@@ -471,6 +486,15 @@ public class CatalogosEJB {
         }
     }
 
+    public Date getFechaActual(){
+        Query q = em.createNativeQuery("select sysdate from dual" );
+
+        if (q.getSingleResult() != null) {
+            return (Date) q.getSingleResult();
+        } else {
+            return null;
+        } 
+    }
     public List<AfProyectos> getProyectos() {
         Query q = em.createQuery("select a from AfProyectos a order by a.idProyecto desc", AfProyectos.class);
         return q.getResultList();
