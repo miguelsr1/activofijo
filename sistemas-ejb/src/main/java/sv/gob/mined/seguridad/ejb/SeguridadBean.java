@@ -157,12 +157,19 @@ public class SeguridadBean {
         return error;
     }
 
-    public Boolean resetearContrasena(Usuario usu, String clave) {
+    public Boolean resetearContrasena(String login, String clave) {
         String claveMd5 = UtilSeguridad.getMD5(clave).toUpperCase();
-        usu.setClaveAcceso(claveMd5);
-        usu.setCambiarClave('S');
-        return actualizar(usu);
+        Usuario user = getUsu(login.toUpperCase());
+        user.setClaveAcceso(claveMd5);
+        user.setCambiarClave('S');
 
+        try {
+            em.merge(user);
+            return true;
+        } catch (Exception e) {
+            Logger.getLogger(SeguridadBean.class.getName()).log(Level.WARNING, "Error en reseteo de contraseña", e);
+            return false;
+        }
     }
 
     public Boolean cambiarContrasena(Usuario usu, String clave) {
@@ -289,9 +296,8 @@ public class SeguridadBean {
             usuarioAplicacion.setUsuGrupoActivo('A');
             usuarioAplicacion.setCodigoDepartamento("00");
 
-      
             em.persist(usuarioAplicacion);
-      
+
         } else {
             usuarioAplicacion = (UsuarioAplicacion) q.getResultList().get(0);
         }
@@ -388,14 +394,13 @@ public class SeguridadBean {
 
                 }
             }
-  
+
             em.persist(aplicacionOpcMenu);
-  
 
         } else {
-  
+
             em.persist(aplicacionOpcMenu);
-  
+
         }
     }
 

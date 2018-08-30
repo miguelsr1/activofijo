@@ -44,9 +44,7 @@ public class LoginController implements Serializable {
     private String login;
     private String clave1;
     private String clave2;
-    
 
-    
     /**
      * Creates a new instance of LoginController
      */
@@ -99,7 +97,7 @@ public class LoginController implements Serializable {
             if (!(Boolean) param.get(Constantes.USUARIO_EXPIRADO)) {
                 if ((Boolean) param.get(Constantes.USUARIO_CAMBIAR_CLAVE)) {
                     url = "contrasena?faces-redirect=true";
-                   // JsfUtil.mensajeInformacion("Debe de cambiar la contraseña");
+                    // JsfUtil.mensajeInformacion("Debe de cambiar la contraseña");
                 } else {
                     url = "/app/principal?faces-redirect=true";
                     VarSession.setVariableSession(Constantes.USUARIO, usuario);
@@ -117,19 +115,19 @@ public class LoginController implements Serializable {
         return url;
     }
 
-     public void logout2() throws IOException {
-       try {
-         VarSession.limpiarVariableSession();
-        
-        FacesContext context = FacesContext.getCurrentInstance();
-        ExternalContext externalContext = context.getExternalContext();
-        externalContext.redirect(((ServletContext) externalContext.getContext()).getContextPath() + "/index.mined");
+    public void logout2() throws IOException {
+        try {
+            VarSession.limpiarVariableSession();
+
+            FacesContext context = FacesContext.getCurrentInstance();
+            ExternalContext externalContext = context.getExternalContext();
+            externalContext.redirect(((ServletContext) externalContext.getContext()).getContextPath() + "/index.mined");
         } catch (IOException ex) {
             java.util.logging.Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
- 
-  public void logout() {
+
+    public void logout() {
         try {
             VarSession.limpiarVariableSession();
             FacesContext context = FacesContext.getCurrentInstance();
@@ -139,16 +137,14 @@ public class LoginController implements Serializable {
             java.util.logging.Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-     
-     /*public void logout() throws IOException {
+
+    /*public void logout() throws IOException {
          FacesContext context = FacesContext.getCurrentInstance();
          ExternalContext externalContext = context.getExternalContext();
          externalContext.redirect(((ServletContext) externalContext.getContext()).getContextPath() + "/index.mined");
         externalContext.getSession(false);
   
      }*/
-
-
     public DefaultMenuModel getModel() {
         return model;
     }
@@ -189,7 +185,7 @@ public class LoginController implements Serializable {
                     }
                 }
             } else {
-                
+
                 subMenu.setLabel(" Sin opciones");
                 subMenu.setId("item0");
                 obj = subMenu;
@@ -245,31 +241,25 @@ public class LoginController implements Serializable {
             return opPadre;
         }
     }
-    
-    public void guardarContrasena(){
-      //Usuario user = seguridadBean.getUsu(login);
-      if (clave1.equals(clave2)){
-          if(!seguridadBean.cambiarContrasena(usuario,clave1 )){
-            JsfUtil.mensajeInsert();
-            String url = "/index?faces-redirect=true";
-            JsfUtil.redireccionar(url);
-          }
-      }else{
-          JsfUtil.mensajeAlerta("Contraseña son Diferentes");
-      }
-         
-    }
-    
+
+    /*public void guardarContrasena() {
+        if (clave1.equals(clave2)) {
+            if (!seguridadBean.cambiarContrasena(usuario, clave1)) {
+                JsfUtil.mensajeInsert();
+                String url = "/index?faces-redirect=true";
+                JsfUtil.redireccionar(url);
+            }
+        } else {
+            JsfUtil.mensajeAlerta("Contraseña son Diferentes");
+        }
+
+    }*/
+
     public void resetearContrasena() {
-       Usuario user = seguridadBean.getUsu(login.toUpperCase());
-        if (!seguridadBean.resetearContrasena(user, "mined")){
+        if (!seguridadBean.resetearContrasena(login.toUpperCase(), "mined")) {
             JsfUtil.mensajeInsert();
             String url = "/index?faces-redirect=true";
             JsfUtil.redireccionar(url);
         }
-                
-           
     }
-    
-    
 }
