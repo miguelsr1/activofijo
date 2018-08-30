@@ -15,11 +15,11 @@
                  <p:growl id="growl" showDetail="true" sticky="true" >
                         <p:autoUpdate/>
                     </p:growl>
-                    <div style=" margin:0 auto 0 auto; left: 40%; top: 40%; width: 350px">
+                    <div style=" margin:0 auto 0 auto; left: 40%; top: 40%; width: 400px">
                         <p:panel id="pnlCredenciales" styleClass="centradoTotal" header="Cambio contraseña" >
                             <p:focus context="pnlCredenciales"/>  
                             <h:panelGrid columns="2">
-                                <p:graphicImage value="#{request.contextPath}/../recursos/imagenes/login.png" />
+                                <p:graphicImage value="#{pageContext.servletContext.contextPath}/resources/images/login.png" />
                                 <h:panelGrid columns="2">
                                     <p:outputLabel value="Nueva Contraseña: "/>
                                     <p:password value="#{loginController.clave1}" id="txtNewPass"/>
@@ -32,7 +32,7 @@
                                 <p:commandButton value="Guardar" action="#{loginController.guardarContrasena}" id="btnIngresar"/>
                                 <p:ajaxStatus style="width:16px;height:16px;">
                                     <f:facet name="start">
-                                        <p:graphicImage value="#{request.contextPath}/../recursos/imagenes/ajaxloading.gif" />
+                                        <p:graphicImage value="#{pageContext.servletContext.contextPath}/resources/images/ajaxloading.gif" />
                                     </f:facet>
 
                                     <f:facet name="complete">

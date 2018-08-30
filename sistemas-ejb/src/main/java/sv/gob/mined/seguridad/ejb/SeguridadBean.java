@@ -178,11 +178,18 @@ public class SeguridadBean {
         }
     }
 
-    public Boolean cambiarContrasena(Usuario usu, String clave) {
+    public Boolean cambiarContrasena(String login, String clave) {
         String claveMd5 = UtilSeguridad.getMD5(clave).toUpperCase();
-        usu.setClaveAcceso(claveMd5);
-        usu.setCambiarClave('N');
-        return actualizar(usu);
+        Usuario user = getUsu(login.toUpperCase());
+        user.setClaveAcceso(claveMd5);
+        user.setCambiarClave('N');
+        try {
+            em.merge(user);
+            return true;
+        } catch (Exception e) {
+            Logger.getLogger(SeguridadBean.class.getName()).log(Level.WARNING, "Error en cambio de contraseña", e);
+            return false;
+        }
 
     }
 

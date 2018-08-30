@@ -97,7 +97,6 @@ public class LoginController implements Serializable {
             if (!(Boolean) param.get(Constantes.USUARIO_EXPIRADO)) {
                 if ((Boolean) param.get(Constantes.USUARIO_CAMBIAR_CLAVE)) {
                     url = "contrasena?faces-redirect=true";
-                    // JsfUtil.mensajeInformacion("Debe de cambiar la contraseña");
                 } else {
                     url = "/app/principal?faces-redirect=true";
                     VarSession.setVariableSession(Constantes.USUARIO, usuario);
@@ -138,13 +137,6 @@ public class LoginController implements Serializable {
         }
     }
 
-    /*public void logout() throws IOException {
-         FacesContext context = FacesContext.getCurrentInstance();
-         ExternalContext externalContext = context.getExternalContext();
-         externalContext.redirect(((ServletContext) externalContext.getContext()).getContextPath() + "/index.mined");
-        externalContext.getSession(false);
-  
-     }*/
     public DefaultMenuModel getModel() {
         return model;
     }
@@ -244,10 +236,10 @@ public class LoginController implements Serializable {
 
     public void guardarContrasena() {
         if (clave1.equals(clave2)) {
-            if (!seguridadBean.cambiarContrasena(usuario, clave1)) {
-                JsfUtil.mensajeInsert();
-                String url = "/index?faces-redirect=true";
-                JsfUtil.redireccionar(url);
+            if (seguridadBean.cambiarContrasena(login.toUpperCase(), clave1)) {
+                usuario.setLogin(login.toUpperCase());
+                usuario.setClaveAcceso(clave1);
+                JsfUtil.redireccionar(validarUsuario());
             }
         } else {
             JsfUtil.mensajeAlerta("Contraseña son Diferentes");
