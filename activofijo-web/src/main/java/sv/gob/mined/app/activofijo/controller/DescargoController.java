@@ -1016,7 +1016,7 @@ public class DescargoController implements Serializable {
        public void denegarDescargo(){
   
         tras.setEstado('X');
-        tras.setFechaFallo(new Date());
+        tras.setFechaFallo(cejb.getFechaActual());
         tras.setObservacionFallo(observacion);
         tras.setNombreAutoriza(usuDao.getNombres()+" "+usuDao.getApellidos());
                 

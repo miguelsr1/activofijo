@@ -128,7 +128,7 @@ public class LoginController implements Serializable {
             java.util.logging.Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
- /*
+ 
   public void logout() {
         try {
             VarSession.limpiarVariableSession();
@@ -138,15 +138,15 @@ public class LoginController implements Serializable {
         } catch (IOException ex) {
             java.util.logging.Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }*/
+    }
      
-     public void logout() throws IOException {
+     /*public void logout() throws IOException {
          FacesContext context = FacesContext.getCurrentInstance();
          ExternalContext externalContext = context.getExternalContext();
          externalContext.redirect(((ServletContext) externalContext.getContext()).getContextPath() + "/index.mined");
         externalContext.getSession(false);
   
-     }
+     }*/
 
 
     public DefaultMenuModel getModel() {

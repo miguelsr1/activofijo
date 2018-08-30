@@ -151,13 +151,9 @@ public class BienesCEController implements Serializable {
         usuDao = ((LoginController) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "loginController")).getUsuario();
         if (usuDao.getCodigoEntidad() == null) {
-            try {
-                System.out.println("Usuario sin Entidad asignada " + usuDao.getLogin());
-                ((LoginController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                        getValue(FacesContext.getCurrentInstance().getELContext(), null, "loginController")).logout();
-            } catch (IOException ex) {
-                Logger.getLogger(BienesCEController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            System.out.println("Usuario sin Entidad asignada " + usuDao.getLogin());
+            ((LoginController) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                    getValue(FacesContext.getCurrentInstance().getELContext(), null, "loginController")).logout();
         } else {
             unidadAdm = usuDao.getCodigoEntidad();
             unidadAF = cejb.getUnidadAf(usuDao.getCodigoEntidad(), tipoUnidad);
@@ -670,7 +666,7 @@ public class BienesCEController implements Serializable {
         HashMap param = new HashMap();
         SimpleDateFormat formateador = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new Locale("es"));
         if (fecRep == null) {
-            fecRep = new Date();
+            fecRep =cejb.getFechaActual();
         }
 
         UtilReport.rptGenerico((HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse(), bejb.getLst(unidadAF, unidadAdm, formateador.format(fecRep), lstBienes, usuDao.getLogin()), param, "rep_mobiliario.jasper");

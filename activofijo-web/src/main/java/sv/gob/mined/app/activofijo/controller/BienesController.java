@@ -63,6 +63,7 @@ import sv.gob.mined.activofijo.model.VwCorrelativos;
 import sv.gob.mined.activofijo.model.VwDepreciaciones;
 import sv.gob.mined.activofijo.model.VwDatosxCuentas;
 import sv.gob.mined.activofijo.model.VwSolvencia;
+import sv.gob.mined.activofijo.model.VwMunicipio;
 import sv.gob.mined.app.activofijo.util.JsfUtil;
 import sv.gob.mined.app.activofijo.util.UtilReport;
 import static sv.gob.mined.app.activofijo.util.UtilReport.PATH_IMAGENES;
@@ -89,6 +90,7 @@ public class BienesController implements Serializable {
     private AfSolvencias sol = new AfSolvencias();
     private String unidadAF;
     private String unidadAdm;
+    private String codigoEntidad;
     private String tipoUsu;
     private String tipoUnidad = "UA";
     private String tipoSolvencia;
@@ -125,9 +127,11 @@ public class BienesController implements Serializable {
     private String desBien;
     private String lote = "N";
     private Integer numLote = 0;
+    private Integer numNotificacion = 0;
     private Long idBien;
     private String correlativo;
     private String codigoInventario;
+    private String municipio;
     private boolean activo = true;
     private boolean activoSol = true;
     private boolean pnlVh = false;
@@ -149,6 +153,7 @@ public class BienesController implements Serializable {
     private List<VwBienes> lstBienes = new ArrayList();
     private List<VwCorrelativos> lstCorrelativos = new ArrayList();
     private List<VwSolvencia> lstSolvencia=new ArrayList();
+    private List<VwMunicipio> lstMunicipio=new ArrayList();
     private List<VwDepreciaciones> lstDepreciaciones = new ArrayList();
     private List<VwDatosxCuentas> lstDatos = new ArrayList();
     private List<VwBienes> lstBientmp = new ArrayList();
@@ -181,6 +186,7 @@ public class BienesController implements Serializable {
             codigoInventario = bd.getCodigoInventario();
             unidadAF = bd.getUnidadActivoFijo();
             lstUnidadAdm = cejb.getUnidadAdm(unidadAF, tipoUnidad);
+            lstMunicipio = bejb.buscarMunicipios(unidadAF);
             unidadAdm = bd.getCodigoUnidad();
             calidad = bd.getCodigoCalidadBien().getCodigoCalidadBien();
             cat = bd.getIdCatBien().getIdCatBien();
@@ -213,6 +219,7 @@ public class BienesController implements Serializable {
             //   cat = getLstCatBien().get(0).getIdCatBien();
             lstTipoBienes = cejb.getTipoBien();
             lstUnidadAdm = cejb.getUnidadAdm(unidadAF, tipoUnidad);
+            lstMunicipio = bejb.buscarMunicipios(unidadAF);
             pnlLote = true;
             modifica = false;
         }
@@ -227,6 +234,14 @@ public class BienesController implements Serializable {
             codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
         }
 
+    }
+
+    public String getMunicipio() {
+        return municipio;
+    }
+
+    public void setMunicipio(String municipio) {
+        this.municipio = municipio;
     }
 
     public String getEstadoSol() {
@@ -245,6 +260,15 @@ public class BienesController implements Serializable {
         this.lstSolvencia = lstSolvencia;
     }
 
+    public List<VwMunicipio> getLstMunicipio() {
+        return lstMunicipio;
+    }
+
+    public void setLstMunicipio(List<VwMunicipio> lstMunicipio) {
+        this.lstMunicipio = lstMunicipio;
+    }
+
+    
     public List<VwBienes> getLstBientmp() {
         return lstBientmp;
     }
@@ -261,6 +285,14 @@ public class BienesController implements Serializable {
         this.mensaje = mensaje;
     }
 
+    public Integer getNumNotificacion() {
+        return numNotificacion;
+    }
+
+    public void setNumNotificacion(Integer numNotificacion) {
+        this.numNotificacion = numNotificacion;
+    }
+
     public String getAnioDepre() {
         return anioDepre;
     }
@@ -275,6 +307,14 @@ public class BienesController implements Serializable {
 
     public void setTipoSolvencia(String tipoSolvencia) {
         this.tipoSolvencia = tipoSolvencia;
+    }
+
+    public String getCodigoEntidad() {
+        return codigoEntidad;
+    }
+
+    public void setCodigoEntidad(String codigoEntidad) {
+        this.codigoEntidad = codigoEntidad;
     }
 
     public boolean isActivoSol() {
@@ -705,6 +745,9 @@ public class BienesController implements Serializable {
         //   activo=true;
         return lstUnidadAdm;
     }
+    public List<VwMunicipio> getMunicipios(String codigo){
+        return lstMunicipio = bejb.buscarMunicipios(codigo);
+    }
 
     public List<AfFormaAdquisicion> getLstFormaAdq() {
         return cejb.getFormaAdquisicion();
@@ -741,7 +784,14 @@ public class BienesController implements Serializable {
     public void filtrarUnidades() {
         // activo=false;
         lstUnidadAdm = cejb.getUnidadAdm(unidadAF, "CE");
+        lstMunicipio = bejb.buscarMunicipios(unidadAF);
     }
+    
+    public void filtrarUnidadesMun() {
+        // activo=false;
+        lstUnidadAdm = cejb.getUnidadAdmMun(unidadAF, "CE",municipio);
+    }
+    
     
     public void filtrarUnidadesAdm() {
         // activo=false;
@@ -791,7 +841,7 @@ public class BienesController implements Serializable {
         Calendar cal = Calendar.getInstance();
         String year = String.valueOf(cal.get(Calendar.YEAR));
         sol = cejb.getSolvencias(anio, unidadAdm);
-        if (sol.getIdSolvencia() == null) {
+        if (sol.getIdSolvencia()== null ) {
             sol.setAnio(anio);
             sol.setCodigoUnidad(unidadAdm);
         }
@@ -879,14 +929,9 @@ public class BienesController implements Serializable {
                     // JsfUtil.mensajeInsert();
                 }
             } else {
-                /*     bd.setCorrelativo(correlativo);
-
-                  if (tipoUnidad.equals("CE")){ tmp = codigoInventario.trim().substring(0,codigoInventario.length()-4);
-                      codigoInventario = tmp+correlativo;}
-                  else { tmp = codigoInventario.substring(0,codigoInventario.trim().length()-3);
-                      codigoInventario= tmp+correlativo;}
-
-                  bd.setCodigoInventario(codigoInventario);*/
+                 bd.setCorrelativo(correlativo);
+                 bd.setCodigoInventario(codigoInventario);
+                
                 bejb.guardarBien(bd, usuDao.getLogin());
                 //  JsfUtil.mensajeInsert();
             }
@@ -1169,14 +1214,33 @@ public class BienesController implements Serializable {
 
     }
 
-    /* public void eliminarBienSingle(){
+    public void imprimirSolvenCE() throws IOException, JRException {
+       List<JasperPrint> jasperPrintList = new ArrayList();
+      String descripcion="";
+        HashMap param = new HashMap();
+        SimpleDateFormat formateador = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new Locale("es"));
+        if (fecRep == null) {
+            fecRep = cejb.getFechaActual();
+        }
+         if (estadoSol.equals("1")){
+           descripcion =" QUE ACTUALIZARON INVENTARIO";
+        }else{
+            if (estadoSol.equals("2")){
+                descripcion =" QUE NO ACTUALIZARON INVENTARIO";
+            }
+        }
         
-        bejb.removeBien(idBien);
-        RequestContext.getCurrentInstance().execute("PF('dlg1').hide()");
-         buscarBien(); 
-         JsfUtil.mensajeEliminarBien();
-        
-    }*/
+        ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        param.put("p_RutaImg", ctx.getRealPath(PATH_IMAGENES));
+        param.put("p_rotulo",descripcion);
+         JasperPrint jp= reb.getRpt(param, BienesController.class.getClassLoader().getResourceAsStream(("reportes" + File.separator + "rep_solvencias.jasper")),bejb.getLstSol(unidadAF, unidadAdm, formateador.format(fecRep), lstSolvencia, usuDao.getLogin()));
+       
+        jasperPrintList.add(jp);
+     
+        UtilReport.generarReporte(jasperPrintList, "rptSolvencias");
+    }
+    
+  
     public void imprimirConstancia() throws IOException, JRException {
         if (!unidadAdm.equals("0")) {
             HashMap param = new HashMap();
@@ -1238,14 +1302,14 @@ public class BienesController implements Serializable {
             JsfUtil.mensajeError("Ingrese periodo");
         }
     }
-
+    
     public void imprimirBienes() throws IOException, JRException {
        List<JasperPrint> jasperPrintList = new ArrayList();
      
         HashMap param = new HashMap();
         SimpleDateFormat formateador = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new Locale("es"));
         if (fecRep == null) {
-            fecRep = new Date();
+            fecRep = cejb.getFechaActual();
         }
         ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
         param.put("p_RutaImg", ctx.getRealPath(PATH_IMAGENES));
@@ -1265,7 +1329,7 @@ public class BienesController implements Serializable {
         HashMap param = new HashMap();
 
         SimpleDateFormat formateador = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new Locale("es"));
-        fecRep = new Date();
+        fecRep = cejb.getFechaActual();
          
         UtilReport.rptGenerico((HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse(), bejb.getLstdatos(unidadAF, unidadAdm, formateador.format(fecRep), fuente, lstDatos, usuDao.getLogin()), param, "rep_bienesxsubcuentas.jasper");
 
@@ -1279,7 +1343,7 @@ public class BienesController implements Serializable {
         HashMap param = new HashMap();
 
         SimpleDateFormat formateador = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new Locale("es"));
-        fecRep = new Date();
+        fecRep = cejb.getFechaActual();
         if ((idBien == null) && (codigoInventario == null)) {
             JsfUtil.mensajeError("Debe Ingresar un id o codigo de Inventario a consultar");
         } else {
@@ -1309,6 +1373,166 @@ public class BienesController implements Serializable {
         } else {
             JsfUtil.mensajeError("Seleccione Bienes a Eliminar");
         }
+    }
+
+    public void generarXls_reporteSolvencias() throws IOException {
+        Workbook libro = new HSSFWorkbook();
+        Sheet hoja = libro.createSheet("Reporte Solvencia");
+        String descripcion="";
+        HSSFFont font = (HSSFFont) libro.createFont();
+        font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        font.setColor(HSSFColor.BLACK.index);
+        font.setFontName(HSSFFont.FONT_ARIAL);
+
+        HSSFFont font1 = (HSSFFont) libro.createFont();
+        font1.setBoldweight(HSSFFont.BOLDWEIGHT_NORMAL);
+        font1.setColor(HSSFColor.BLACK.index);
+        font1.setFontName(HSSFFont.FONT_ARIAL);
+
+        HSSFCellStyle style = (HSSFCellStyle) libro.createCellStyle();
+        style.setFont(font);
+
+        HSSFCellStyle style2 = (HSSFCellStyle) libro.createCellStyle();
+        style2.setFont(font1);
+        short alig = 2;
+        style.setAlignment(alig);
+
+        //fila = hoja.createRow((short) 1);
+        Row fila = hoja.createRow((short) 1);
+        Cell celdaEn1 = fila.createCell((short) 1);
+        celdaEn1.setCellStyle(style);
+        celdaEn1.setCellValue("MINISTERIO DE EDUCACIÓN");
+        hoja.addMergedRegion(new CellRangeAddress(1, 1, 1, 5));
+
+        fila = hoja.createRow((short) 2);
+        Cell celdaEn2 = fila.createCell((short) 1);
+        celdaEn2.setCellStyle(style);
+        if (!unidadAF.equals("0")) {
+            celdaEn2.setCellValue(cejb.nomUnidadAf(unidadAF));
+        } else {
+            celdaEn2.setCellValue("");
+        }
+        hoja.addMergedRegion(new CellRangeAddress(2, 2, 1, 5));
+
+        fila = hoja.createRow((short) 3);
+        Cell celdaEn3 = fila.createCell((short) 1);
+        celdaEn3.setCellStyle(style);
+        if (estadoSol.equals("1")){
+           descripcion ="QUE ACTUALIZARON INVENTARIO";
+        }else{
+            if (estadoSol.equals("2")){
+                descripcion ="QUE NO ACTUALIZARON INVENTARIO";
+            }
+        }
+        celdaEn3.setCellValue("DETALLE DE CENTROS ESCOLARES "+descripcion);
+        hoja.addMergedRegion(new CellRangeAddress(3, 3, 1, 15));
+
+        fila = hoja.createRow((short) 5);
+        Cell celdaEn5 = fila.createCell((short) 1);
+        celdaEn5.setCellStyle(style);
+        celdaEn5.setCellValue("UNIDAD ACTIVO FIJO");
+
+        Cell celdaEn6 = fila.createCell((short) 2);
+        celdaEn6.setCellStyle(style);
+        celdaEn6.setCellValue("MUNICIPIO");
+
+        Cell celdaEn7 = fila.createCell((short) 3);
+        celdaEn7.setCellStyle(style);
+        celdaEn7.setCellValue("CODIGO ENTIDAD");
+
+        Cell celdaEn8 = fila.createCell((short) 4);
+        celdaEn8.setCellStyle(style);
+        celdaEn8.setCellValue("NOMBRE CENTRO EDUCATIVO");
+
+        Cell celdaEn9 = fila.createCell((short) 5);
+        celdaEn9.setCellStyle(style);
+        celdaEn9.setCellValue("FECHA ACTUALIZACIÓN");
+
+        Cell celdaEn10 = fila.createCell((short) 6);
+        celdaEn10.setCellStyle(style);
+        celdaEn10.setCellValue("NUMERO BIENES");
+
+        Cell celdaEn11 = fila.createCell((short) 7);
+        celdaEn11.setCellStyle(style);
+        celdaEn11.setCellValue("COSTO INVENTARIO");
+
+        int x = 6;
+        BigDecimal total = new java.math.BigDecimal("0.00");
+        DecimalFormat df = new DecimalFormat();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        df.setMaximumFractionDigits(2);
+        for (VwSolvencia object : lstSolvencia) {
+            fila = hoja.createRow((short) x);
+
+            Cell celda4 = fila.createCell((short) 1);
+            celda4.setCellStyle(style2);
+            celda4.setCellValue(object.getUnidadActivoFijo());
+
+            Cell celda5 = fila.createCell((short) 2);
+            celda5.setCellStyle(style2);
+            celda5.setCellValue(object.getNombreMunicipio());
+
+            Cell celda6 = fila.createCell((short) 3);
+            celda6.setCellStyle(style2);
+            celda6.setCellValue(object.getCodigoEntidad());
+
+            Cell celda7 = fila.createCell((short) 4);
+            celda7.setCellStyle(style2);
+            celda7.setCellValue(object.getNombre());
+
+            Cell celda8 = fila.createCell((short) 5);
+            celda8.setCellStyle(style2);
+            Date getFechaAct;
+            if (object.getFechaActualizacion()!=null){
+                getFechaAct = object.getFechaActualizacion();
+                celda8.setCellValue(sdf.format(getFechaAct));
+            }else{
+                celda8.setCellValue("");
+            }
+            
+            Cell celda9 = fila.createCell((short) 6);
+            celda9.setCellStyle(style2);
+            celda9.setCellValue(object.getNumBienes().doubleValue());
+          
+           
+            Cell celda10 = fila.createCell((short) 7);
+            celda10.setCellStyle(style2);
+            celda10.setCellValue(object.getCosto().doubleValue());
+
+            total = total.add(object.getCosto());
+              x++;
+        }
+        fila = hoja.createRow((short) x);
+        Cell celda11 = fila.createCell((short) 7);
+        celda11.setCellStyle(style2);
+        celda11.setCellValue(total.doubleValue());
+
+        hoja.autoSizeColumn((short) 0);
+        hoja.autoSizeColumn((short) 1);
+        hoja.autoSizeColumn((short) 2);
+        hoja.autoSizeColumn((short) 3);
+        hoja.autoSizeColumn((short) 4);
+        hoja.autoSizeColumn((short) 5);
+        hoja.autoSizeColumn((short) 6);
+        hoja.autoSizeColumn((short) 7);
+       
+        ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
+        FacesContext fc = FacesContext.getCurrentInstance();
+        HttpServletResponse response = (HttpServletResponse) fc.getExternalContext().getResponse();
+
+        libro.write(outByteStream);
+
+        byte[] outArray = outByteStream.toByteArray();
+        response.setContentType("application / ms - excel");
+        response.setContentLength(outArray.length);
+        response.setHeader("Expires:", "0"); // eliminates browser caching
+        //String patron = "dd-MM-yyyy";
+        //SimpleDateFormat formato = new SimpleDateFormat(patron);
+        response.setHeader("Content-Disposition", "attachment;filename = ListadoBienes.xls");
+        OutputStream outStream = response.getOutputStream();
+        outStream.write(outArray);
+        outStream.flush();
+        fc.responseComplete();
     }
 
     public void generarXls_reporteBienes() throws IOException {
@@ -1564,21 +1788,42 @@ public class BienesController implements Serializable {
         lstCorrelativos = bejb.buscarCorrelativos(condicion);
     }
     public void buscarEntidades(){
-        
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         String condicion = "";
+        String valores="";
+       
         if (!unidadAF.equals("0")){ condicion= condicion+"where UNIDAD_ACTIVO_FIJO='" + unidadAF +"' AND " ;
-             if(!unidadAdm.equals("0")){
+            if (!tipoUnidad.equals("0")){
+                condicion = condicion+" tipo_unidad='"+tipoUnidad+"' and ";
+            } 
+            if(!unidadAdm.equals("0")){
                  condicion= condicion +" codigo_entidad='"+unidadAdm+"' and ";
              }
              if (!estadoSol.equals("0")) {
                  if (estadoSol.equals("1")){   condicion= condicion +" fecha_solvencia is not null and "; }
                  else{condicion= condicion +" fecha_solvencia is null and "; }
              }
+             if (!municipio.equals("0")){
+                 condicion = condicion +" codigo_municipio= '"+municipio+"' and ";
+             }
+              if (fecAdq1 != null) {
+                 valores = " b.FECHA_ADQUISICION >= TO_DATE('" + sdf.format(fecAdq1) + "','DD/MM/YYYY') ";
+             }
+             if (fecAdq2 != null) {
+                 if (!valores.equals("")){
+                     valores=valores +" AND ";
+                 }
+                 valores = valores +  " b.FECHA_ADQUISICION <= TO_DATE('" + sdf.format(fecAdq2) + "','DD/MM/YYYY') ";
+                  
+             }
+            if (!valores.equals("")){
+               condicion =condicion + " CODIGO_ENTIDAD in (select b.codigo_unidad from AF_BIENES_DEPRECIABLES b where "+valores+") AND ";
+            }   
              
            if (!condicion.equals("")) {
               condicion = condicion.substring(0, condicion.length() - 4);
            }
-             
+            activo=false;
             lstSolvencia = bejb.buscarEntidades(condicion);
            
          }else{
@@ -1586,7 +1831,7 @@ public class BienesController implements Serializable {
         }    
     }
 
-    public void imprimirCorrelativos() throws IOException, JRException {
+     public void imprimirCorrelativos() throws IOException, JRException {
         
         List<JasperPrint> jasperPrintList = new ArrayList();
         ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
@@ -1601,8 +1846,30 @@ public class BienesController implements Serializable {
      
         UtilReport.generarReporte(jasperPrintList, "rptControlCorrelativo");
     }
+    
+    public void imprimirNotificacion() throws IOException, JRException {
+        
+        List<JasperPrint> jasperPrintList = new ArrayList();
+        SimpleDateFormat formateador = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new Locale("es"));
+        fecRep = cejb.getFechaActual();
+        ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        HashMap param = new HashMap();
+        param.put("p_ActivoFijo", unidadAF);
+        param.put("p_Unidad", codigoEntidad);
+        param.put("p_noNotifica", numNotificacion.toString());
+        param.put("p_RutaImg", ctx.getRealPath(PATH_IMAGENES));
+        param.put("pFecha", formateador.format(fecRep));
+        
+        JasperPrint jp= reb.getRpt(param, BienesController.class.getClassLoader().getResourceAsStream(("reportes" + File.separator + "rep_notificacion.jasper")));
+       
+        jasperPrintList.add(jp);
+     
+        UtilReport.generarReporte(jasperPrintList, "rptNotificacion");
+    }
 
-
+    public void definirUnidad(String codEntidad){
+        unidadAdm=codEntidad;
+    }
 
     public void calcularDepreciacion() throws IOException, JRException {
         String condicion = " where d.anio='" + anioDepre + "' and ";

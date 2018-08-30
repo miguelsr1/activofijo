@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rep_notificacion" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a4495f35-eddd-42e2-83cb-ad7665d54cd4">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="111"/>
+	<parameter name="p_ActivoFijo" class="java.lang.String">
+		<defaultValueExpression><![CDATA[1385]]></defaultValueExpression>
+	</parameter>
+	<parameter name="p_Unidad" class="java.lang.String"/>
+	<parameter name="p_noNotifica" class="java.lang.String"/>
+	<parameter name="p_RutaImg" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Java\\sistemas\\activofijo-web\\src\\main\\webapp\\resources\\images\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pFecha" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select f.unidad_activo_fijo, u.codigo_unidad, u.nombre_unidad, f.nombre_unidad_af, m.nombre_municipio
+from af_unidades_administrativas u
+left outer join af_unidades_activo_fijo f on u.unidad_activo_fijo = f.unidad_activo_fijo
+LEFT OUTER join silcerri.entidad_educativa e on u.codigo_unidad = e.codigo_entidad
+Left OUTER join silcerri.municipio m on m.codigo_departamento = e.codigo_departamento and m.codigo_municipio = e.codigo_municipio
+where trim(u.unidad_activo_fijo)= $P{p_ActivoFijo}
+and trim(u.codigo_unidad)=$P{p_Unidad}]]>
+	</queryString>
+	<field name="UNIDAD_ACTIVO_FIJO" class="java.lang.String"/>
+	<field name="CODIGO_UNIDAD" class="java.lang.String"/>
+	<field name="NOMBRE_UNIDAD" class="java.lang.String"/>
+	<field name="NOMBRE_UNIDAD_AF" class="java.lang.String"/>
+	<field name="NOMBRE_MUNICIPIO" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="585" splitType="Stretch">
+			<textField>
+				<reportElement uuid="6cc12325-d8a6-4203-9c79-b760dfbf14dc" x="11" y="79" width="550" height="30"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["CUMPLIENDO CON LA NORMATIVA N) DEL INSTRUCTIVO DE ACTIVO FIJO LA CUAL DETERMINA PRESENTAR EL INVENTARIO A MAS TARDAR EL ÚLTIMO DIA HÁBIL DEL MES DE NOVIEMBRE DE CADA AÑO."]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6cc12325-d8a6-4203-9c79-b760dfbf14dc" x="11" y="113" width="550" height="91"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["El Director(a) del Centro Escolar el único responsable de dar cumplimiento al instructivo del Sistema de Registro y Control de Bienes Muebles del MINED, exonerando la responsabilidad al nivel central y departamental, así mismo superar cualquier observación posterior (Si en caso hubiese). Por lo tanto queda de manifiesto que el Centro Educativo: "+$F{NOMBRE_UNIDAD}.trim()+" código de infraestructura: "+$F{CODIGO_UNIDAD}.trim()+" del municipio de "+$F{NOMBRE_MUNICIPIO}.trim()+", no ha cumplido con la presentación del inventario escolar en el tiempo requerido estando PENDIENTE en los registros departamentales. Por lo tanto se solicita se actualice su inventario escolar a la mayor brevedad posible, así superar esta observación."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="420bf756-c9b8-47aa-a10b-333570688647" x="11" y="233" width="296" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA["Técnico de Activo Fijo"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="bff13864-3f46-40df-b167-8edfdfed0aa4" x="11" y="253" width="296" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{NOMBRE_UNIDAD_AF}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement uuid="abfdfa5a-36c3-42ae-9ae1-38f883925bca" x="231" y="3" width="64" height="60"/>
+				<imageExpression><![CDATA[$P{p_RutaImg}+File.separator+"escudo.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement uuid="8b1e190b-cec6-4165-af06-39c3f9cf4c8a" x="11" y="0" width="131" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Notificación: "+$P{p_noNotifica}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="23ea47a2-bc5a-4183-a409-e22c162eeebd" x="373" y="0" width="188" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{pFecha}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="3dae69d4-331a-4774-ab42-339bb92827fe" x="11" y="287" width="550" height="1"/>
+			</line>
+			<textField>
+				<reportElement uuid="23ea47a2-bc5a-4183-a409-e22c162eeebd" x="383" y="304" width="188" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{pFecha}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement uuid="abfdfa5a-36c3-42ae-9ae1-38f883925bca" x="243" y="296" width="64" height="60"/>
+				<imageExpression><![CDATA[$P{p_RutaImg}+File.separator+"escudo.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement uuid="8b1e190b-cec6-4165-af06-39c3f9cf4c8a" x="21" y="304" width="131" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Notificación: "+$P{p_noNotifica}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="bff13864-3f46-40df-b167-8edfdfed0aa4" x="21" y="554" width="296" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{NOMBRE_UNIDAD_AF}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6cc12325-d8a6-4203-9c79-b760dfbf14dc" x="11" y="365" width="550" height="30"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["CUMPLIENDO CON LA NORMATIVA N) DEL INSTRUCTIVO DE ACTIVO FIJO LA CUAL DETERMINA PRESENTAR EL INVENTARIO A MAS TARDAR EL ÚLTIMO DIA HÁBIL DEL MES DE NOVIEMBRE DE CADA AÑO."]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6cc12325-d8a6-4203-9c79-b760dfbf14dc" x="11" y="399" width="550" height="91"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["El Director(a) del Centro Escolar el único responsable de dar cumplimiento al instructivo del Sistema de Registro y Control de Bienes Muebles del MINED, exonerando la responsabilidad al nivel central y departamental, así mismo superar cualquier observación posterior (Si en caso hubiese). Por lo tanto queda de manifiesto que el Centro Educativo: "+$F{NOMBRE_UNIDAD}.trim()+" código de infraestructura: "+$F{CODIGO_UNIDAD}.trim()+" del municipio de "+$F{NOMBRE_MUNICIPIO}.trim()+", no ha cumplido con la presentación del inventario escolar en el tiempo requerido estando PENDIENTE en los registros departamentales. Por lo tanto se solicita se actualice su inventario escolar a la mayor brevedad posible, así superar esta observación."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="420bf756-c9b8-47aa-a10b-333570688647" x="21" y="534" width="296" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA["Técnico de Activo Fijo"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

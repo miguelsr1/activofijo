@@ -9,23 +9,43 @@
         <ui:define name="content">
             <p:menubar id="barBtns" > 
                 <p:menuitem value="Buscar" icon="fa fa-search" action="#{bienesController.buscarEntidades}" update="barBtns pnlBienes"/>
-                <p:menuitem id="btnImp" value="Imprimir" icon="fa fa-print" ajax="false" action="#{bienesController.imprimirCorrelativos}"/>
+                <p:menuitem value="Reporte" icon="fa fa-file-excel-o" ajax="false" action="#{bienesController.generarXls_reporteSolvencias}" disabled="#{bienesController.activo}"/> 
+                <p:menuitem id="btnImp" value="Imprimir" icon="fa fa-print" ajax="false" action="#{bienesController.imprimirSolvenCE}" disabled="#{bienesController.activo}"/>
                 <p:menuitem value="Salir" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
 
             </p:menubar>
-            <p:panel id="pnlFiltros" header="Bienes Depreciables">
-                <h:panelGrid columns="2">
-                   
+            <p:panel id="pnlFiltros" header="Buscar Solvencias">
+                <h:panelGrid>
+                    <p:row>
+                        <p:column> <h:outputLabel  value="Tipo Unidad:      "/> </p:column> 
+                        <p:column>
+                            <h:selectOneMenu id="tipUni" value="#{bienesController.tipoUnidad}">
+                                <p:ajax update="uadm" listener="#{bienesController.filtrarUnidadesAdm}" process="@this,tipUni"/>
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItem itemLabel="Unidad Administrativa" itemValue="UA"/>
+                                <f:selectItem itemLabel="Centro Escolar" itemValue="CE"/>
+                            </h:selectOneMenu> 
+                        </p:column> 
+                    </p:row>  
                     <p:row>
                         <p:column>
                             <h:outputLabel value="Unidad Activo Fijo:       " />
                             <h:selectOneMenu id="uaf" value="#{bienesController.unidadAF}" disabled="#{bienesController.esAdm}">
-                                <p:ajax update="uadm" listener="#{bienesController.filtrarUnidades}" process="@this"/>
+                                <p:ajax update="uadm mun" listener="#{bienesController.filtrarUnidades}" process="@this"/>
                                  <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
                                 <f:selectItems value="#{bienesController.lstUnidadAF}" var="uAF" itemLabel="#{uAF.unidadActivoFijo} - #{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
                             </h:selectOneMenu> 
                         </p:column>
-                        
+                    </p:row> 
+                     <p:row>
+                          <p:column>
+                            <h:outputLabel value="Municipio:       " />
+                            <h:selectOneMenu id="mun" value="#{bienesController.municipio}">
+                                <p:ajax update="uadm" listener="#{bienesController.filtrarUnidadesMun}" process="@this"/>
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                 <f:selectItems value="#{bienesController.lstMunicipio}" var="mun" itemLabel="#{mun.nombreMunicipio}" itemValue="#{mun.codigoMunicipio}"/>
+                            </h:selectOneMenu> 
+                        </p:column>
                     </p:row>
                       <p:row>
                         <p:column>
@@ -35,6 +55,13 @@
                                 <f:selectItems value="#{bienesController.lstUnidadAdm}" var="uadm" itemLabel="#{uadm.afUnidadesAdministrativasPK.codigoUnidad} - #{uadm.nombreUnidad}" itemValue="#{uadm.afUnidadesAdministrativasPK.codigoUnidad}"/>
                             </h:selectOneMenu> 
                         </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column><h:outputLabel value="Fecha Adquisición:     "/>
+                            <p:calendar id="fechaAdq1" value="#{bienesController.fecAdq1}" pattern="dd/MM/yyyy"/></p:column>
+                        <p:column>
+                            <h:outputLabel value="   a         "/>
+                            <p:calendar id="fechaAdq2" value="#{bienesController.fecAdq2}" pattern="dd/MM/yyyy"/></p:column>
                     </p:row>
                      <p:row>
                         <p:column> <h:outputLabel  value="Estado:      "/> </p:column> 
@@ -49,12 +76,12 @@
                 </h:panelGrid>
             </p:panel> 
               <p:panel id="pnlBienes">
-                  <p:dataTable value="#{bienesController.lstSolvencia}" var="bien"  style="width: 100%"
-                       paginator="true" rows="25"  paginatorPosition="top"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                  <p:dataTable value="#{bienesController.lstSolvencia}" var="bien"  rowKey="#{bien.codigoEntidad}"  style="width: 100%"
+                       paginator="true" rows="25"  paginatorPosition="top"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" >
                       <p:column headerText="Unidad Activo Fijo">
                            <h:outputText value="#{bien.unidadActivoFijo}" />
                        </p:column>
-                       <p:column headerText="Municipio" width="30%" >
+                       <p:column headerText="Municipio" width="20%" >
                            <h:outputText value="#{bien.nombreMunicipio}"/>
                        </p:column>
                       <p:column headerText="C&oacute;digo Entidad" >
@@ -63,7 +90,7 @@
                       <p:column headerText="Nombre Centro Educativo" width="35%" >
                           <h:outputText value="#{bien.nombre}"/>
                       </p:column>
-                      <p:column headerText="Fecha Actualizaci&iacute;n" >
+                      <p:column headerText="Fecha Actualización" >
                            <h:outputLabel value="#{bien.fechaSolvencia}">
                             <f:convertDateTime pattern="dd/MM/yyyy"/>
                         </h:outputLabel>
@@ -76,11 +103,28 @@
                             <f:convertNumber pattern="#0.00" />
                         </h:outputText>   
                       </p:column>
-                      <p:column>
-                          <i class="far fa-envelope-open"></i>
+                     <p:column style="width: 30px">
+                         <p:commandButton icon="far fa-envelope-open" onclick="PF('dlgImprimir').show();">
+                             <f:setPropertyActionListener value="#{bien.codigoEntidad}" target="#{bienesController.codigoEntidad}"/>  
+                         </p:commandButton>
                       </p:column>
                    </p:dataTable>
             </p:panel>
+            <p:panel>
+             <p:dialog id="dlgImprimir" widgetVar="dlgImprimir" header="Numero de notificación" >
+                <p:panel>
+                    <p:outputLabel value="Fecha de generaci&oacute;n de reporte" escape="false"/>
+                    <h:panelGrid columns="2">
+                        <p:column> <h:outputLabel value="No. Notificacion:"/> </p:column>
+                        <p:column><p:inputText size="2" id="num" value="#{bienesController.numNotificacion}" /></p:column>
+                    </h:panelGrid>
+                </p:panel>
+                <f:facet name="footer">
+                    <p:commandButton value="Aceptar" onclick="this.form.target = PF('dlgImprimir').hide();" ajax="false" action="#{bienesController.imprimirNotificacion}"/>
+                    <p:commandButton value="Cancelar" ajax="true" onclick="PF('dlgImprimir').hide();"/>
+                </f:facet>
+            </p:dialog>
+            </p:panel>     
         </ui:define>
     </ui:composition>
 

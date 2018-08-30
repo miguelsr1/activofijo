@@ -752,7 +752,7 @@ public class TrasladoController implements Serializable {
         HashMap param = new HashMap();
         SimpleDateFormat formateador = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new Locale("es"));
 
-        Date fecRep = new Date();
+        Date fecRep = cejb.getFechaActual();
         
         param.put("CodUnidadDes",tras.getCodigoUnidadDest());
         param.put("UnidadDes",getNombreAdm(tras.getCodigoUnidadDest(),tipUniDes));

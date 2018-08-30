@@ -283,9 +283,11 @@
 							</staticText>
 						</jr:columnHeader>
 						<jr:columnFooter style="table_CH" height="21" rowSpan="1">
-							<textField pattern="$ #,##0.00">
+							<textField isStretchWithOverflow="true" pattern="$ #,##0.00">
 								<reportElement uuid="6b4c8237-cfad-4293-97a1-fb6321378acf" x="0" y="0" width="65" height="21"/>
-								<textElement/>
+								<textElement textAlignment="Right">
+									<font size="8"/>
+								</textElement>
 								<textFieldExpression><![CDATA[$V{sumTotal}]]></textFieldExpression>
 							</textField>
 						</jr:columnFooter>
