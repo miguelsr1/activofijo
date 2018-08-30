@@ -11,6 +11,7 @@
                 <p:menuitem value="Buscar" icon="fa fa-search" action="#{bienesController.buscarEntidades}" update="barBtns pnlBienes"/>
                 <p:menuitem value="Reporte" icon="fa fa-file-excel-o" ajax="false" action="#{bienesController.generarXls_reporteSolvencias}" disabled="#{bienesController.activo}"/> 
                 <p:menuitem id="btnImp" value="Imprimir" icon="fa fa-print" ajax="false" action="#{bienesController.imprimirSolvenCE}" disabled="#{bienesController.activo}"/>
+                <p:menuitem id="btnSol" value="Solvencias" icon="fa fa-file-pdf-o" ajax="false" action="#{bienesController.imprimirSolEmitidas}" disabled="#{bienesController.activo}"/>
                 <p:menuitem value="Salir" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
 
             </p:menubar>
@@ -72,7 +73,18 @@
                                 <f:selectItem itemLabel="No Actualizado" itemValue="2"/>
                             </h:selectOneMenu> 
                         </p:column> 
+                        <p:column> <h:outputLabel  value="A&ntilde;o:      "/> </p:column> 
+                        <p:column>
+                            <h:inputText id="anio" value="#{bienesController.anio}"/>
+                        </p:column> 
                     </p:row>  
+                     <p:row>
+                        <p:column><h:outputLabel value="Fecha Solvencia     "/>
+                            <p:calendar id="fecha1" value="#{bienesController.fecCrea1}" pattern="dd/MM/yyyy"/></p:column>
+                        <p:column>
+                            <h:outputLabel value="   a         "/>
+                            <p:calendar id="fecha2" value="#{bienesController.fecCrea2}" pattern="dd/MM/yyyy"/></p:column>
+                    </p:row>
                 </h:panelGrid>
             </p:panel> 
               <p:panel id="pnlBienes">
@@ -104,7 +116,7 @@
                         </h:outputText>   
                       </p:column>
                      <p:column style="width: 30px">
-                         <p:commandButton icon="far fa-envelope-open" onclick="PF('dlgImprimir').show();">
+                         <p:commandButton icon="fa fa-envelope-open-o" onclick="PF('dlgImprimir').show();">
                              <f:setPropertyActionListener value="#{bien.codigoEntidad}" target="#{bienesController.codigoEntidad}"/>  
                          </p:commandButton>
                       </p:column>

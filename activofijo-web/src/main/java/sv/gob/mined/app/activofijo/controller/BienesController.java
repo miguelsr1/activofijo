@@ -153,6 +153,7 @@ public class BienesController implements Serializable {
     private List<VwBienes> lstBienes = new ArrayList();
     private List<VwCorrelativos> lstCorrelativos = new ArrayList();
     private List<VwSolvencia> lstSolvencia=new ArrayList();
+    private List<VwSolvencia> lstSolEmitidas=new ArrayList();
     private List<VwMunicipio> lstMunicipio=new ArrayList();
     private List<VwDepreciaciones> lstDepreciaciones = new ArrayList();
     private List<VwDatosxCuentas> lstDatos = new ArrayList();
@@ -234,6 +235,14 @@ public class BienesController implements Serializable {
             codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
         }
 
+    }
+
+    public List<VwSolvencia> getLstSolEmitidas() {
+        return lstSolEmitidas;
+    }
+
+    public void setLstSolEmitidas(List<VwSolvencia> lstSolEmitidas) {
+        this.lstSolEmitidas = lstSolEmitidas;
     }
 
     public String getMunicipio() {
@@ -1214,6 +1223,24 @@ public class BienesController implements Serializable {
 
     }
 
+    public void imprimirSolEmitidas() throws IOException, JRException {
+      List<JasperPrint> jasperPrintList = new ArrayList();
+        HashMap param = new HashMap();
+        SimpleDateFormat formateador = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new Locale("es"));
+        if (fecRep == null) {
+            fecRep = cejb.getFechaActual();
+        }
+        
+        ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        param.put("p_RutaImg", ctx.getRealPath(PATH_IMAGENES));
+      
+         JasperPrint jp= reb.getRpt(param, BienesController.class.getClassLoader().getResourceAsStream(("reportes" + File.separator + "rep_sol_emitidas.jasper")),bejb.getLstSol(unidadAF, unidadAdm, formateador.format(fecRep), lstSolEmitidas, usuDao.getLogin()));
+       
+        jasperPrintList.add(jp);
+     
+        UtilReport.generarReporte(jasperPrintList, "rptSolEmitidas");
+    }
+    
     public void imprimirSolvenCE() throws IOException, JRException {
        List<JasperPrint> jasperPrintList = new ArrayList();
       String descripcion="";
@@ -1806,6 +1833,16 @@ public class BienesController implements Serializable {
              if (!municipio.equals("0")){
                  condicion = condicion +" codigo_municipio= '"+municipio+"' and ";
              }
+             if (anio!= null){
+                 condicion = condicion +" anio = '"+anio+"' and ";
+             }
+              if (fecCrea1 != null) {
+                 condicion = condicion +" FECHA_solvencia >= TO_DATE('" + sdf.format(fecCrea1) + "','DD/MM/YYYY') and ";
+             }
+             if (fecCrea2 != null) {
+                  condicion = condicion +" FECHA_solvencia <= TO_DATE('" + sdf.format(fecCrea2) + "','DD/MM/YYYY') and ";
+             }
+             
               if (fecAdq1 != null) {
                  valores = " b.FECHA_ADQUISICION >= TO_DATE('" + sdf.format(fecAdq1) + "','DD/MM/YYYY') ";
              }
@@ -1816,6 +1853,7 @@ public class BienesController implements Serializable {
                  valores = valores +  " b.FECHA_ADQUISICION <= TO_DATE('" + sdf.format(fecAdq2) + "','DD/MM/YYYY') ";
                   
              }
+             
             if (!valores.equals("")){
                condicion =condicion + " CODIGO_ENTIDAD in (select b.codigo_unidad from AF_BIENES_DEPRECIABLES b where "+valores+") AND ";
             }   
@@ -1825,7 +1863,9 @@ public class BienesController implements Serializable {
            }
             activo=false;
             lstSolvencia = bejb.buscarEntidades(condicion);
-           
+            
+            lstSolEmitidas = bejb.buscarSolEmitidas(condicion);
+            
          }else{
             JsfUtil.mensajeError("Seleccione Unidad de Activo Fijo");
         }    

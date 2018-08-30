@@ -86,5 +86,14 @@ Barra de herramientas
     padding:2px;
 }
 .ui-icon-check{
-    
+}
+.fa-file-alt::before {
+    font-size: 16px;
+    color: #33afde;
+    padding:2px;
+}
+.fa-envelope-open::before {
+    font-size: 16px;
+    color: #33afde;
+    padding:2px;
 }

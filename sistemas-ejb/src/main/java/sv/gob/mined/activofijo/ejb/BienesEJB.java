@@ -439,7 +439,7 @@ try{
     }
 
     public List<VwDepreciaciones> depreciacionAnio(String Anio, String mes) {
-        List<VwDepreciaciones> lstDepre = new ArrayList<VwDepreciaciones>();
+        List<VwDepreciaciones> lstDepre = new ArrayList();
         Query q = em.createNativeQuery("select a.* from vw_depreciaciones a where a.anio=" + Anio + " and mes=nvl(" + mes + ",mes) order by a.mes ");
         List lst = q.getResultList();
         for (Object object : lst) {
@@ -453,6 +453,15 @@ try{
         return lstDepre;
     }
 
+    public List<VwSolvencia> buscarSolEmitidas(String condicion){
+        String sql=" select   rownum as idRow, CODIGO_ENTIDAD as codigoEntidad, UNIDAD_ACTIVO_FIJO as unidadActivoFijo,NOMBRE_MUNICIPIO as nombreMunicipio,NOMBRE as nombre,"+
+                   " FECHA_SOLVENCIA as fechaSolvencia, ANIO as anio, nvl(NUMBIENES,0) as numBienes, nvl(COSTO,0) as costo,codigo_municipio as codigoMunicipio,fecha_actualizacion as fechaActualizacion,tipo_unidad as tipoUnidad "+
+                   " from  vw_solvencia "+condicion+" and fecha_solvencia is not null";
+         Query q = em.createNativeQuery(sql,VwSolvencia.class);
+        
+          return q.getResultList();
+    }
+    
     public List<VwSolvencia> buscarEntidades(String condicion){
         String sql=" select   rownum as idRow, CODIGO_ENTIDAD as codigoEntidad, UNIDAD_ACTIVO_FIJO as unidadActivoFijo,NOMBRE_MUNICIPIO as nombreMunicipio,NOMBRE as nombre,"+
                    " FECHA_SOLVENCIA as fechaSolvencia, ANIO as anio, nvl(NUMBIENES,0) as numBienes, nvl(COSTO,0) as costo,codigo_municipio as codigoMunicipio,fecha_actualizacion as fechaActualizacion,tipo_unidad as tipoUnidad "+
@@ -496,7 +505,7 @@ try{
 
     public List<AfDepreciaciones> buscarDepre(String condicion){
         
-         String sqlQuery = "select d.* from Af_depreciaciones d "+ condicion ;
+         String sqlQuery = "select d.* from Af_depreciaciones d "+ condicion+" order by d.anio,d.mes " ;
 
         Query q = em.createNativeQuery(sqlQuery, AfDepreciaciones.class);
         return q.getResultList();
