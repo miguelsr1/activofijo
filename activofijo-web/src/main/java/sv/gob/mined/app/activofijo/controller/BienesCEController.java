@@ -728,7 +728,7 @@ public class BienesCEController implements Serializable {
         BigDecimal pct = new BigDecimal(10);
         int i = 0;
         String co;
-      if (tipo!=0){
+       if (tipo>0 && tipo!=null) {
         String tipoBien = cejb.getTBien(tipo).getCodigoTipoBien();
 
         bd.setUnidadActivoFijo(unidadAF);

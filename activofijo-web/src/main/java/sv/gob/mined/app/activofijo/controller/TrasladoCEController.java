@@ -596,11 +596,11 @@ public class TrasladoCEController implements Serializable {
         
         if(!codigoTras.isEmpty()){ condicion=condicion +" a.codigo_traslado='"+codigoTras+"' and "; }
         if (fecTraslado!=null){ condicion=condicion+ " a.fecha_traslado= to_date('"+sdf.format(fecTraslado)+"','dd/mm/yyyy') and ";}
-        if (!unidadAFOrig.isEmpty()) { condicion=condicion+ " a.unidad_af_origen="+unidadAFOrig+" and ";}
-        if (!unidadAdmOrg.isEmpty()) { condicion=condicion+ " a.codigo_unidad_origen="+unidadAdmOrg+" and ";}
-        if (!unidadAfDest.isEmpty()) { condicion=condicion+ " a.unidad_af_dest="+unidadAfDest+" and ";}
-        if (unidadAdmDes!=null) { condicion=condicion+ " a.codigo_unidad_dest="+unidadAdmDes+" and ";}
-        if (estado!=null){ condicion=condicion+ " a.estado="+estado+" and ";   }
+        if (!unidadAFOrig.isEmpty()) { condicion=condicion+ " a.unidad_af_origen='"+unidadAFOrig+"' and ";}
+        if (!unidadAdmOrg.isEmpty()) { condicion=condicion+ " a.codigo_unidad_origen='"+unidadAdmOrg+"' and ";}
+        if (!unidadAfDest.isEmpty()) { condicion=condicion+ " a.unidad_af_dest='"+unidadAfDest+"' and ";}
+        if (unidadAdmDes!=null) { condicion=condicion+ " a.codigo_unidad_dest='"+unidadAdmDes+"' and ";}
+        if (estado!=null){ condicion=condicion+ " a.estado='"+estado+"' and ";   }
         
         
         if (!condicion.equals("")){

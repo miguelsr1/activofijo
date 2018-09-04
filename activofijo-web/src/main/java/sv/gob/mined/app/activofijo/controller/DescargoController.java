@@ -713,19 +713,19 @@ public class DescargoController implements Serializable {
     }
     
      public void buscarDescargos2(){
-        String condicion=" a.codigo_descargo is not null and ";
+        String condicion=" ";
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     
         if (!tipoUnidad.equals("0")){ condicion=condicion+" a.tipo_unidad='"+tipoUnidad +"' and ";}
         if (!unidadAdm.equals("0")) { condicion=condicion+ " a.codigo_unidad="+unidadAdm+" and ";}
         if (!unidadAF.equals("0")) { condicion=condicion+ " a.unidad_activo_fijo="+unidadAF+" and ";}
         if(!codigoInv.isEmpty()){ condicion=condicion +" a.codigo_inventario='"+codigoInv+"' and "; }
-        if (!estSolicitud.equals("Y")){ condicion = condicion + " a.estado='"+estSolicitud.trim()+"' and ";}
+        if (!estSolicitud.equals("Y")){ condicion = condicion + " a.estado_descargo='"+estSolicitud.trim()+"' and ";}
         if (cat!=0){condicion = condicion + "a.id_cat_bien="+cat+" and ";}
          if(!numSolicitud.isEmpty()){ condicion=condicion +" a.codigo_descargo='"+numSolicitud.trim()+"' and "; }
      
-        if (fec1!=null){ condicion=condicion+ " a.fecha_descargo>= '"+sdf.format(fec1)+"' and ";}
-        if (fec2!=null){ condicion=condicion+ " a.fecha_descargo<= '"+sdf.format(fec2)+"' and ";}
+        if (fec1!=null){ condicion=condicion+ " a.fecha_descargo>= to_date('"+sdf.format(fec1)+"','dd/mm/yyyy') and ";}
+        if (fec2!=null){ condicion=condicion+ " a.fecha_descargo<= to_date('"+sdf.format(fec2)+"','dd/mm/yyyy') and ";}
         if (!activo.equals("X")){
            condicion= condicion+ " trim(a.tipo_descargo)='"+activo+"' and ";
         }
@@ -777,7 +777,7 @@ public class DescargoController implements Serializable {
             bejb.actualizarEstadoBien(lstBienesDescargar,"P");
         }
         pnlTras=true;
-        JsfUtil.mensajeInformacion("Descargo enviado a Descargo");
+        JsfUtil.mensajeInformacion("Descargo enviado con éxito");
        // JsfUtil.redireccionar("buscarDescargos.mined?faces-redirect=true");
     }
     
@@ -951,8 +951,8 @@ public class DescargoController implements Serializable {
             Cell celda12 = fila.createCell((short) 9);
             celda12.setCellStyle(style2);
              Date getFechaDes = object.getFechaDescargo();
-             if (getFechaDes!=null){  celda12.setCellValue("");}
-             else {}
+             if (getFechaDes==null){  celda12.setCellValue("");}
+             else { celda12.setCellValue(sdf.format(getFechaDes));}
             
             Cell celda13 = fila.createCell((short) 10);
             celda13.setCellStyle(style2);

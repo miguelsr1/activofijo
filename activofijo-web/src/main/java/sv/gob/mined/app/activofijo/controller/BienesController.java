@@ -232,7 +232,21 @@ public class BienesController implements Serializable {
         if (!cejb.getBuscarCorrelativo(unidadAF, unidadAdm, tipo.toString(), correlativo)) {
             JsfUtil.mensajeCorrelativo();
         } else {
-            codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
+            if (bd.getIdBien()==null){
+               codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
+            }else {
+                if (!cejb.getBuscarBienTraslado(bd.getIdBien())){
+                     if (tipoUnidad.equals("CE")) {
+                          codigoInventario = bd.getCodigoInventario().substring(0, bd.getCodigoInventario().length() - 4)+ correlativo;
+                    } else {
+                        // co = String.format("%03d", correlativo);
+                        codigoInventario = bd.getCodigoInventario().substring(0, bd.getCodigoInventario().length() - 3)+ correlativo;
+                   }
+                }else{
+                    codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
+                }
+                
+            }   
         }
 
     }
@@ -814,13 +828,22 @@ public class BienesController implements Serializable {
     public void depreciacionAnio() {
         lstDepreciaciones = bejb.depreciacionAnio(anio, mes);
     }
+/* public void obtenerCorre() {
+        String tipoBien = cejb.getTBien(tipo).getCodigoTipoBien();
+        if (tipoUnidad.equals("UA")) {
+            correlativo = String.format("%03d", cejb.getCorrelativoCod(unidadAF, unidadAdm, tipo.toString()));
+        } else {
+            correlativo = String.format("%04d", cejb.getCorrelativoCod(unidadAF, unidadAdm, tipo.toString()));
+        }
 
+        codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
+    }*/
     public void obtenerCorre() {
         String tipoBien = cejb.getTBien(tipo).getCodigoTipoBien();
         if (tipoUnidad.equals("UA")) {
-            correlativo = String.format("%03d", cejb.getCorrelativo(unidadAF, unidadAdm, tipo.toString()));
+            correlativo = String.format("%03d", cejb.getCorrelativoCod(unidadAF, unidadAdm, tipoBien));
         } else {
-            correlativo = String.format("%04d", cejb.getCorrelativo(unidadAF, unidadAdm, tipo.toString()));
+            correlativo = String.format("%04d", cejb.getCorrelativoCod(unidadAF, unidadAdm, tipoBien));
         }
 
         codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
@@ -860,7 +883,7 @@ public class BienesController implements Serializable {
     public void guardarBien() {
         int i;
         String co;
-        if (tipo!=0) {
+        if (tipo>0 && tipo!=null) {
             String tipoBien = cejb.getTBien(tipo).getCodigoTipoBien();
             bd.setIdCatBien(cejb.getCatBien(cejb.getCategoria(tipo)));
             bd.setIdTipoBien(tipo);//CodigoTipoBien(cejb.getTBien(tipo).getCodigoTipoBien());
@@ -927,7 +950,7 @@ public class BienesController implements Serializable {
                 } else {
 
                     // obtenerCorre();
-                    if (!cejb.getBuscarCorrelativo(unidadAF, unidadAdm, tipo.toString(), correlativo)) {
+                    if (cejb.getBuscarCorrelativo(unidadAF, unidadAdm, tipo.toString(), correlativo)) {
                         bd.setCorrelativo(correlativo);
                         codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
                     } else {
@@ -1019,6 +1042,14 @@ public class BienesController implements Serializable {
         }
         if (fecAdq2 != null) {
             condicion = condicion + " A.FECHA_ADQUISICION <= TO_DATE('" + sdf.format(fecAdq2) + "','DD/MM/YYYY') AND";
+        }
+         if (actFijo != null && !actFijo.isEmpty()) {
+
+            if (actFijo.equals("S")) {
+                condicion = condicion + " A.VALOR_ADQUISICION >=600 AND";
+            } else {
+                condicion = condicion + " A.VALOR_ADQUISICION <600 AND";
+            }
         }
 
         if (!condicion.equals("")) {
@@ -1833,7 +1864,7 @@ public class BienesController implements Serializable {
              if (!municipio.equals("0")){
                  condicion = condicion +" codigo_municipio= '"+municipio+"' and ";
              }
-             if (anio!= null){
+             if (anio!= null && !anio.equals("")){
                  condicion = condicion +" anio = '"+anio+"' and ";
              }
               if (fecCrea1 != null) {

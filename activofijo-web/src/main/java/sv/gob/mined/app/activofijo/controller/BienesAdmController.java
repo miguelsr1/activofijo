@@ -712,7 +712,7 @@ public class BienesAdmController implements Serializable{
     public void guardarBien() {
         int i = 0;
         String co;
-        if (tipo!=null){
+       if (tipo>0 && tipo!=null) {
         String tBien = cejb.getTBien(tipo).getCodigoTipoBien();
 
         bd.setUnidadActivoFijo(unidadAF);

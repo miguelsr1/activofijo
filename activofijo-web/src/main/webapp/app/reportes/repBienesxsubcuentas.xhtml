@@ -35,6 +35,8 @@
                                 <f:selectItems value="#{bienesController.lstUnidadAF}" var="uAF" itemLabel="#{uAF.unidadActivoFijo} - #{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
                             </h:selectOneMenu> 
                         </p:column>
+                    </p:row>  
+                    <p:row>
                         <p:column>
                             <h:outputLabel value="Unidad Administrativa:     " />
                             <h:selectOneMenu  id="uadm" value="#{bienesController.unidadAdm}" >
@@ -57,7 +59,9 @@
                                 <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
                                 <f:selectItems value="#{bienesController.lstProyecto}" var="proy" itemLabel="#{proy.codigoProyecto} - #{proy.nombreProyecto}" itemValue="#{proy.idProyecto}"/> 
                             </h:selectOneMenu> 
-                        </p:column>  
+                        </p:column> 
+                     </p:row>  
+                    <p:row>
                           <p:column>
                             <h:outputLabel value="Categoria:      "/>
                             <h:selectOneMenu id="catbien" value="#{bienesController.cat}">
@@ -65,8 +69,15 @@
                                 <f:selectItems value="#{bienesController.lstCatBien}" var="cat" itemLabel="#{cat.idCatBien} - #{cat.descripcionCatBien}" itemValue="#{cat.idCatBien}"/>
                             </h:selectOneMenu> 
                         </p:column>  
-                        
-                    </p:row>    
+                    </p:row>   
+                    <p:row>  
+                        <p:column> <h:outputLabel for="est" value="Activo fijo? :"  />
+                            <h:selectOneRadio id="est" value="#{bienesController.actFijo}" label="Activo fijo? :" >
+                                <f:selectItem itemLabel="Si" itemValue="S" />
+                                <f:selectItem   itemLabel="No" itemValue="N" />
+                            </h:selectOneRadio>   
+                        </p:column>    
+                    </p:row>
                     <p:row >
                         <p:column><h:outputLabel value="Fecha Adquisición    Desde:"/>
                             <p:calendar id="fechacrea1" value="#{bienesController.fecAdq1}" pattern="dd/MM/yyyy"/></p:column>

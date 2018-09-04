@@ -123,15 +123,13 @@ public class BienesEJB {
             if (tras.getEstado()=='1'){
                 tras.setFechaAutoriza(new Date());
             }
-             if (tras.getEstado()=='2'){
-                tras.setFechaSolicitud(new Date());
-            }    
             tras.setUsuarioModifica(usu);
             tras.setFechaModifica(new Date());
             em.merge(tras);
         } else {
             tras.setUsuarioCrea(usu);
             tras.setFechaCreacion(new Date());
+            tras.setFechaSolicitud(new Date());
             em.persist(tras);
         }
      }catch( Exception e){

@@ -180,11 +180,11 @@ public class CatalogosEJB {
    
 
     public AfSolvencias getSolvencias(String Anio, String unidad) {
-        Query q = em.createQuery("select a from AfSolvencias a where a.anio=:anio and a.codigoUnidad=:unidad", AfSolvencias.class);
+        Query q = em.createQuery("select a from AfSolvencias a where a.anio=:anio and trim(a.codigoUnidad)=:unidad", AfSolvencias.class);
         q.setParameter("anio", Anio);
         q.setParameter("unidad", unidad);
         if (!q.getResultList().isEmpty()) {
-            return (AfSolvencias) q.getResultList();
+            return (AfSolvencias) q.getSingleResult();
         } else {
             return new AfSolvencias();
         }
@@ -246,6 +246,13 @@ public class CatalogosEJB {
 
     }
 
+    public Boolean getBuscarBienTraslado(Long id) {
+        Query q = em.createQuery("Select a from AfTrasladosDetalle a where a.idBien = :id" );
+        q.setParameter("id", id);
+        return q.getResultList().isEmpty(); 
+    }
+    
+    
     public Boolean getBuscarCorrelativo(String uaf, String uadm, String tipo, String correlativo) {
         Query q = em.createQuery("Select a from AfBienesDepreciables a where trim(a.unidadActivoFijo)=:uaf and trim(a.codigoUnidad)=:uadm and a.idTipoBien=:tipo and trim(a.correlativo)=:correlativo");
         q.setParameter("uaf", uaf.trim());
@@ -256,6 +263,21 @@ public class CatalogosEJB {
         return q.getResultList().isEmpty(); 
     }
 
+    public Integer getCorrelativoCod(String uaf, String uadm, String tipo) {
+        Query q = em.createNativeQuery("Select max(a.correlativo)+1 from Af_Bienes_Depreciables a inner join  AF_TIPO_BIENES b on b.ID_TIPO_BIEN=a.ID_TIPO_BIEN "+
+                                        " where trim(a.unidad_Activo_Fijo)='"+uaf+"' and trim(a.codigo_Unidad)='"+uadm+"' and b.CODIGO_TIPO_BIEN='"+tipo+"' "+
+                                        "  and id_bien not in (select id_bien from AF_TRASLADOS_DETALLE)");
+        if (!q.getResultList().isEmpty()) {
+            if (q.getSingleResult() == null) {
+                return 1;
+            } else {
+                return (Integer.parseInt(q.getSingleResult().toString()));
+            }
+        } else {
+            return 1;
+        }
+    }
+    
     public Integer getCorrelativo(String uaf, String uadm, String tipo) {
         Query q = em.createQuery("Select max(a.correlativo)+1 from AfBienesDepreciables a where trim(a.unidadActivoFijo)=:uaf and trim(a.codigoUnidad)=:uadm and a.idTipoBien=:tipo");
         q.setParameter("uaf", uaf);
@@ -310,7 +332,15 @@ public class CatalogosEJB {
         }
     }
     
-    
+    public String getCodigoBien(Long tipo) {
+        Query q = em.createQuery("select a.codigoTipoBien from AfTipoBienes a  where a.idTipoBien = :codigo", AfTipoBienes.class);
+        q.setParameter("codigo", tipo);
+        if (q.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return q.getSingleResult().toString();
+        }
+    }
     public String getDesBien(Long tipo) {
         Query q = em.createQuery("select a.nombreTipoBien from AfTipoBienes a  where a.idTipoBien = :codigo", AfTipoBienes.class);
         q.setParameter("codigo", tipo);
