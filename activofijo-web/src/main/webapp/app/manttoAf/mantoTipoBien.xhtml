@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+        <ui:define name="content">
+            <p:menubar id="barBtns" > 
+                <p:menuitem value="Guardar" icon="fa fa-save" action="#{tipoBienController.guardarTipo}" />
+                  <p:menuitem value="atras" icon="fa fa-arrow-circle-left" action="buscarTipoBien.mined" process="@this"/>
+                  <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+            </p:menubar>
+            <p:panel header="Mantenimiento Tipo Bienes">
+                    <p:outputLabel value="Tipo Bien" escape="false"/>
+                    <h:panelGrid columns="2">
+                        <p:column> <h:outputLabel value="C&oacute;digo:"/> </p:column>
+                        <p:column> <h:inputText id="cod" value="#{tipoBienController.codigo}" style="width:200px" /> </p:column>
+                        <p:column> <h:outputLabel value="Descripci&oacute;n"/> </p:column>
+                        <p:column> <h:inputText id="desTipo" value="#{tipoBienController.descripcion}" styleClass="textMayuscula" onkeyup="return cUpper(this);" style="width:400px" /> </p:column>
+                         <p:column> <h:outputLabel value="Clasificaci&oacute;n:  " />
+                            <h:selectOneMenu  id="clas" value="#{tipoBienController.clas}">
+                                <p:ajax update="catbien" listener="#{tipoBienController.filtrarCategoria}" process="@this,catbien"/>
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{tipoBienController.lstClasificacion}" var="cla" itemLabel="#{cla.idClasifBien} - #{cla.nombreClasifBien}" itemValue="#{cla.idClasifBien}"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel value="Categoria Bien:       " />
+                            <h:selectOneMenu id="catbien" value="#{tipoBienController.cat}" >
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{tipoBienController.lstCategoria}" var="cat" itemLabel="#{cat.idCatBien} - #{cat.descripcionCatBien}" itemValue="#{cat.idCatBien}"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                    </h:panelGrid>
+                </p:panel>
+      </ui:define>
+    </ui:composition>
+
+</html>
+

@@ -64,6 +64,7 @@ import sv.gob.mined.activofijo.model.VwDepreciaciones;
 import sv.gob.mined.activofijo.model.VwDatosxCuentas;
 import sv.gob.mined.activofijo.model.VwSolvencia;
 import sv.gob.mined.activofijo.model.VwMunicipio;
+import sv.gob.mined.activofijo.model.VwVehiculos;
 import sv.gob.mined.app.activofijo.util.JsfUtil;
 import sv.gob.mined.app.activofijo.util.UtilReport;
 import static sv.gob.mined.app.activofijo.util.UtilReport.PATH_IMAGENES;
@@ -107,6 +108,7 @@ public class BienesController implements Serializable {
     private String marcaV;
     private String marca;
     private String fuente;
+    private Date fecActualiza;
     private String responsable;
     private Long formaAdq;
     private String proyecto;
@@ -126,6 +128,9 @@ public class BienesController implements Serializable {
     private String mes;
     private String desBien;
     private String lote = "N";
+    private String motor;
+    private String chasis;
+    private String placa;
     private Integer numLote = 0;
     private Integer numNotificacion = 0;
     private Long idBien;
@@ -158,7 +163,7 @@ public class BienesController implements Serializable {
     private List<VwDepreciaciones> lstDepreciaciones = new ArrayList();
     private List<VwDatosxCuentas> lstDatos = new ArrayList();
     private List<VwBienes> lstBientmp = new ArrayList();
-
+    private List<VwVehiculos> lstVehiculos = new ArrayList();
     /**
      * Creates a new instance of BienesController
      */
@@ -236,12 +241,8 @@ public class BienesController implements Serializable {
                codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
             }else {
                 if (!cejb.getBuscarBienTraslado(bd.getIdBien())){
-                     if (tipoUnidad.equals("CE")) {
-                          codigoInventario = bd.getCodigoInventario().substring(0, bd.getCodigoInventario().length() - 4)+ correlativo;
-                    } else {
-                        // co = String.format("%03d", correlativo);
-                        codigoInventario = bd.getCodigoInventario().substring(0, bd.getCodigoInventario().length() - 3)+ correlativo;
-                   }
+                   codigoInventario= bd.getCodigoInventario().split("-")[0]+"-"+bd.getCodigoInventario().split("-")[1]+"-"+correlativo;
+               
                 }else{
                     codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
                 }
@@ -249,6 +250,14 @@ public class BienesController implements Serializable {
             }   
         }
 
+    }
+
+    public List<VwVehiculos> getLstVehiculos() {
+        return lstVehiculos;
+    }
+
+    public void setLstVehiculos(List<VwVehiculos> lstVehiculos) {
+        this.lstVehiculos = lstVehiculos;
     }
 
     public List<VwSolvencia> getLstSolEmitidas() {
@@ -263,6 +272,30 @@ public class BienesController implements Serializable {
         return municipio;
     }
 
+    public String getMotor() {
+        return motor;
+    }
+
+    public void setMotor(String motor) {
+        this.motor = motor;
+    }
+
+    public String getChasis() {
+        return chasis;
+    }
+
+    public void setChasis(String chasis) {
+        this.chasis = chasis;
+    }
+
+    public String getPlaca() {
+        return placa;
+    }
+
+    public void setPlaca(String placa) {
+        this.placa = placa;
+    }
+
     public void setMunicipio(String municipio) {
         this.municipio = municipio;
     }
@@ -273,6 +306,14 @@ public class BienesController implements Serializable {
 
     public void setEstadoSol(String estadoSol) {
         this.estadoSol = estadoSol;
+    }
+
+    public Date getFecActualiza() {
+        return fecActualiza;
+    }
+
+    public void setFecActualiza(Date fecActualiza) {
+        this.fecActualiza = fecActualiza;
     }
 
     public List<VwSolvencia> getLstSolvencia() {
@@ -946,7 +987,7 @@ public class BienesController implements Serializable {
                         bejb.guardarBien(bd, usuDao.getLogin());
                         correlativo = co;
                     }
-                    JsfUtil.mensajeInsertLote(i - 1);
+                  //  JsfUtil.mensajeInsertLote(i - 1);
                 } else {
 
                     // obtenerCorre();
@@ -977,6 +1018,25 @@ public class BienesController implements Serializable {
         }
     }
 
+    public void limpiarFiltroVeh() {
+        tipoUnidad = "UA";
+        unidadAdm = "0";
+        actFijo = null;
+        codigoInventario = null;
+        estatus = 0l;
+        fecAdq1 = null;
+        fecAdq2 = null;
+        motor = null;
+        chasis = null;
+        placa = null;
+        fuente = "0";
+        proyecto = "0";
+        fecCrea1 = null;
+        fecCrea2 = null;
+        lstBienesDepreciable = null;
+
+    }
+    
     public void limpiarFiltro() {
         tipoUnidad = "UA";
         unidadAdm = "0";
@@ -1060,6 +1120,7 @@ public class BienesController implements Serializable {
         activo = false;
     }
 
+    
     public void buscarBien() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -1140,6 +1201,76 @@ public class BienesController implements Serializable {
         condicion = condicion.substring(0, condicion.length() - 4);
 
         lstBienes = bejb.buscarBien(condicion);
+
+        activo = false;
+    }
+    
+    public void buscarVehiculos() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+        String condicion;
+        condicion = "A.CODIGO_UNIDAD in (select CODIGO_UNIDAD from AF_UNIDADES_ADMINISTRATIVAS ";
+
+        if (tipoUnidad.equals("0")) {
+            condicion = condicion + ") and ";
+        } else {
+            condicion = condicion + " where TIPO_UNIDAD='" + tipoUnidad + "') and ";
+        }
+        if (!unidadAF.equals("0")) {
+            condicion = condicion + " A.UNIDAD_ACTIVO_FIJO='" + unidadAF + "' and ";
+        }
+        if (!unidadAdm.equals("0")) {
+            condicion = condicion + " A.CODIGO_UNIDAD ='" + unidadAdm + "' and ";
+        }
+      
+        if (codigoInventario != null && !codigoInventario.isEmpty()) {
+            condicion = condicion + " A.CODIGO_INVENTARIO like '%" + codigoInventario + "%' and ";
+        }
+        if (estatus != 0) {
+            condicion = condicion + " A.ID_ESTATUS_BIEN =" + estatus + " and ";
+        }
+        if (actFijo != null && !actFijo.isEmpty()) {
+
+            if (actFijo.equals("S")) {
+                condicion = condicion + " A.VALOR_ADQUISICION >=600 AND";
+            } else {
+                condicion = condicion + " A.VALOR_ADQUISICION <600 AND";
+            }
+        }
+        if (valorAdquisicion != null && valorAdquisicion.intValue() != 0) {
+            condicion = condicion + "  A.VALOR_ADQUISICION=" + valorAdquisicion + " AND";
+        }
+        if (fuente != null && !fuente.isEmpty()) {
+            condicion = condicion + " A.ID_FUENTE =" + fuente + " and ";
+        }
+        if (proyecto != null && !proyecto.isEmpty()) {
+            condicion = condicion + " A.ID_PROYECTO =" + proyecto + " and ";
+        }
+        if (fecAdq1 != null) {
+            condicion = condicion + " A.FECHA_ADQUISICION >= TO_DATE('" + sdf.format(fecAdq1) + "','DD/MM/YYYY') AND";
+        }
+        if (fecAdq2 != null) {
+            condicion = condicion + " A.FECHA_ADQUISICION <= TO_DATE('" + sdf.format(fecAdq2) + "','DD/MM/YYYY') AND";
+        }
+        if (fecCrea1 != null) {
+            condicion = condicion + " A.FECHA_CREACION >= TO_DATE('" + sdf.format(fecCrea1) + "','DD/MM/YYYY') AND ";
+        }
+        if (fecCrea2 != null) {
+            condicion = condicion + " A.FECHA_CREACION <= TO_DATE('" + sdf.format(fecCrea2) + "','DD/MM/YYYY') AND";
+        }
+       if (motor != null && !motor.isEmpty()) {
+            condicion = condicion + " A.Numero_motor like '%" + motor + "%' and ";
+        }
+        if (chasis != null && !chasis.isEmpty()) {
+            condicion = condicion + " A.Numero_chasis like '%" + chasis + "%' and ";
+        } 
+        if (placa != null && !placa.isEmpty()) {
+            condicion = condicion + " A.Numero_placa like '%" + placa + "%' and ";
+        }
+        
+        condicion = condicion.substring(0, condicion.length() - 4);
+
+        lstVehiculos = bejb.buscarVehiculos(condicion);
 
         activo = false;
     }
@@ -1328,7 +1459,44 @@ public class BienesController implements Serializable {
             JsfUtil.mensajeError("Seleccione Unidad Administrativa");
         }
     }
+  public void impSolvenciaInventario() throws IOException, JRException {
+    String nomRep;    
+  
+        if (!periodo.equals("")) {
+            if (!unidadAdm.equals("0")) {
+                HashMap param = new HashMap();
+                SimpleDateFormat formateador = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new Locale("es"));
+                Calendar cal = Calendar.getInstance();
+                //String nomReporte="rep_solvencia.jasper";
+                String fecRep = formateador.format(cal.getTime());
+                String Responsable = usuDao.getNombres() + ' ' + usuDao.getApellidos();
+                ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+                 param.put("p_RutaImg", ctx.getRealPath(PATH_IMAGENES));
+        
+                param.put("p_periodo", periodo);
+                param.put("p_responsable", Responsable);
+                param.put("p_unidadAF", unidadAF);
+                param.put("p_unidadAdm", unidadAdm);
+                param.put("p_fecRep", fecRep);
+                if (tipoUnidad.equals("UA")){
+                   param.put("p_fecha_actualizacion", formateador.format(fecActualiza));
+                   nomRep="rep_solvencia_UA.jasper";
+                }else{
+                    nomRep="rep_solvencia_CE.jasper";
+                }   
+                guardarBitacoraSolvencia(periodo);
+                
+                UtilReport.rptGenerico((HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse(),
+                reb.getRpt(UtilReport.class.getClassLoader().getResourceAsStream("reportes" + File.separator + nomRep), param));
 
+                //UtilReport.rptGenerico((HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse(), param, "rep_solvencia.jasper", cejb.getEm());
+            } else {
+                JsfUtil.mensajeError("Seleccione Unidad Administrativa");
+            }
+        } else {
+            JsfUtil.mensajeError("Ingrese periodo");
+        }
+    }
     public void imprimirSolvencia() throws IOException, JRException {
         if (!periodo2.equals("")) {
             if (!unidadAdm.equals("0")) {
@@ -1360,7 +1528,27 @@ public class BienesController implements Serializable {
             JsfUtil.mensajeError("Ingrese periodo");
         }
     }
-    
+    public void imprimirVehiculos() throws IOException, JRException {
+       List<JasperPrint> jasperPrintList = new ArrayList();
+     
+        HashMap param = new HashMap();
+        SimpleDateFormat formateador = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new Locale("es"));
+        if (fecRep == null) {
+            fecRep = cejb.getFechaActual();
+        }
+        ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        param.put("p_RutaImg", ctx.getRealPath(PATH_IMAGENES));
+        
+         JasperPrint jp= reb.getRpt(param, BienesController.class.getClassLoader().getResourceAsStream(("reportes" + File.separator + "rep_af11.jasper")),bejb.getLista(unidadAF, unidadAdm, formateador.format(fecRep), lstVehiculos, usuDao.getLogin()));
+       
+        jasperPrintList.add(jp);
+     
+        UtilReport.generarReporte(jasperPrintList, "rptAF11");
+
+         //UtilReport.rptGenerico((HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse(), bejb.getLst(unidadAF, unidadAdm, formateador.format(fecRep), lstBienes, usuDao.getLogin()), param, "rep_mobiliario.jasper");
+
+          //UtilReport.rptGenerico((HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse(),param, "rep_mobiliario.jasper", cejb.getEm());
+    }
     public void imprimirBienes() throws IOException, JRException {
        List<JasperPrint> jasperPrintList = new ArrayList();
      
@@ -1850,8 +2038,10 @@ public class BienesController implements Serializable {
         String condicion = "";
         String valores="";
        
-        if (!unidadAF.equals("0")){ condicion= condicion+"where UNIDAD_ACTIVO_FIJO='" + unidadAF +"' AND " ;
-            if (!tipoUnidad.equals("0")){
+        if (!unidadAF.equals("0")){ 
+            condicion= condicion+" UNIDAD_ACTIVO_FIJO='" + unidadAF +"' AND " ;
+        } 
+        if (!tipoUnidad.equals("0")){
                 condicion = condicion+" tipo_unidad='"+tipoUnidad+"' and ";
             } 
             if(!unidadAdm.equals("0")){
@@ -1896,10 +2086,6 @@ public class BienesController implements Serializable {
             lstSolvencia = bejb.buscarEntidades(condicion);
             
             lstSolEmitidas = bejb.buscarSolEmitidas(condicion);
-            
-         }else{
-            JsfUtil.mensajeError("Seleccione Unidad de Activo Fijo");
-        }    
     }
 
      public void imprimirCorrelativos() throws IOException, JRException {

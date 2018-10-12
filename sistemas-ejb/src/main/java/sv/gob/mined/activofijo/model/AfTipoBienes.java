@@ -10,12 +10,15 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -45,7 +48,7 @@ public class AfTipoBienes implements Serializable {
     @Column(name = "NOMBRE_TIPO_BIEN")
     private String nombreTipoBien;
     @Column(name = "ID_CLASIF_BIEN")
-    private Character idClasifBien;
+    private Long idClasifBien;
     @Column(name = "FECHA_ADICION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaAdicion;
@@ -61,6 +64,8 @@ public class AfTipoBienes implements Serializable {
     @Id
     @Basic(optional = false)
     @Column(name = "ID_TIPO_BIEN")
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_TIPO_BIEN")
+    @SequenceGenerator(name="SEQ_TIPO_BIEN", sequenceName="SEQ_TIPO_BIEN",initialValue = 1,allocationSize = 1)
     private Long idTipoBien;
     @JoinColumn(name = "ID_CAT_BIEN", referencedColumnName = "ID_CAT_BIEN")
     @ManyToOne
@@ -94,14 +99,15 @@ public class AfTipoBienes implements Serializable {
         this.nombreTipoBien = nombreTipoBien;
     }
 
-    public Character getIdClasifBien() {
+    public Long getIdClasifBien() {
         return idClasifBien;
     }
 
-    public void setIdClasifBien(Character idClasifBien) {
+    public void setIdClasifBien(Long idClasifBien) {
         this.idClasifBien = idClasifBien;
     }
 
+   
     public Date getFechaAdicion() {
         return fechaAdicion;
     }

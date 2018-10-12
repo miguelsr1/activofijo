@@ -8,13 +8,13 @@
        <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
            <ui:define name="content">
                 <p:menubar id="barBtns" > 
-                    <p:menuitem value="Buscar" icon="fa fa-search" action="#{bienesCEController.buscarCorrelativo}" update="pnlBienes" />
-                    <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{bienesCEController.imprimirCorrelativos}" />
+                    <p:menuitem value="Buscar" icon="fa fa-search" action="#{bienesAdmController.buscarCorrelativo}" update="pnlBienes" />
+                    <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{bienesAdmController.imprimirCorrelativos}" />
                     <p:menuitem value="Salir" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
                 </p:menubar>
               
                <p:panel id="pnlBienes">
-                   <p:dataTable value="#{bienesCEController.lstCorrelativos}" var="bien"  style="width: 60%"
+                   <p:dataTable value="#{bienesAdmController.lstCorrelativos}" var="bien"  style="width: 60%"
                        paginator="true" rows="25"  paginatorPosition="top"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
                        <p:column headerText="Descripci&oacute;n Bien">
                            <h:outputText value="#{bien.codigoTipoBien} - #{bien.nombreTipoBien}" />

@@ -51,7 +51,7 @@
                       <p:row>
                         <p:column>
                             <h:outputLabel value="Unidad Administrativa:     " />
-                            <h:selectOneMenu  id="uadm" value="#{bienesController.unidadAdm}" disabled="#{bienesController.esAdm}">
+                            <h:selectOneMenu  id="uadm" value="#{bienesController.unidadAdm}" >
                                 <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
                                 <f:selectItems value="#{bienesController.lstUnidadAdm}" var="uadm" itemLabel="#{uadm.afUnidadesAdministrativasPK.codigoUnidad} - #{uadm.nombreUnidad}" itemValue="#{uadm.afUnidadesAdministrativasPK.codigoUnidad}"/>
                             </h:selectOneMenu> 

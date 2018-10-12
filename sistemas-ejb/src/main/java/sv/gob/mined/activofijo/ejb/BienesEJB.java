@@ -19,10 +19,13 @@ import sv.gob.mined.activofijo.model.AfBienesDepreciables;
 import sv.gob.mined.activofijo.model.AfDepreciaciones;
 import sv.gob.mined.activofijo.model.AfDescargos;
 import sv.gob.mined.activofijo.model.AfDescargosDetalle;
+import sv.gob.mined.activofijo.model.AfEmpleados;
 import sv.gob.mined.activofijo.model.AfEstatusBien;
 import sv.gob.mined.activofijo.model.AfSolvencias;
+import sv.gob.mined.activofijo.model.AfTipoBienes;
 import sv.gob.mined.activofijo.model.AfTraslados;
 import sv.gob.mined.activofijo.model.AfTrasladosDetalle;
+import sv.gob.mined.activofijo.model.AfUnidadesAdministrativas;
 import sv.gob.mined.activofijo.model.VwBienes;
 import sv.gob.mined.activofijo.model.VwDescargos;
 import sv.gob.mined.activofijo.model.VwCorrelativos;
@@ -30,10 +33,12 @@ import sv.gob.mined.activofijo.model.VwDatosxCuentas;
 import sv.gob.mined.activofijo.model.VwDepreciaciones;
 import sv.gob.mined.activofijo.model.VwMunicipio;
 import sv.gob.mined.activofijo.model.VwSolvencia;
+import sv.gob.mined.activofijo.model.VwVehiculos;
 import sv.gob.mined.activofijo.model.dto.DatosUnidad;
 import sv.gob.mined.activofijo.model.dto.DatosxCuentas;
 import sv.gob.mined.activofijo.model.dto.DatosDepreciacion;
 import sv.gob.mined.activofijo.model.dto.DatosSolvencia;
+import sv.gob.mined.activofijo.model.dto.DatosVehiculos;
 
 
 /**
@@ -48,6 +53,23 @@ public class BienesEJB {
     @PersistenceContext(unitName = "activoFijoPU", type = PersistenceContextType.TRANSACTION)
     public EntityManager em;
 
+    public AfEmpleados getEmpAdmin(String Id){
+        Query q = em.createNativeQuery("select * from  Af_empleados a where a.id_empleado=" + Id, AfEmpleados.class);
+        if (q.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return (AfEmpleados) q.getResultList().get(0);
+        }
+    }
+    public List<AfTipoBienes> getTipoxId(Long Id){
+        Query q = em.createNativeQuery("select * from  Af_Tipo_bienes a where a.id_tipo_bien=" + Id, AfTipoBienes.class);
+        if (q.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return q.getResultList();
+        }
+
+    }
     public AfTraslados getTraslado(Long Id) {
         Query q = em.createNativeQuery("select * from  Af_Traslados a where a.id_traslado=" + Id, AfTraslados.class);
         if (q.getResultList().isEmpty()) {
@@ -115,7 +137,76 @@ public class BienesEJB {
            System.out.println("Error al Almacenar el descargo "+ e);
       }
     }
+    
+    public void editarUnidadAdmin(AfUnidadesAdministrativas adm,String usu){
+       try{
+            adm.setUsuarioModifica(usu);
+            adm.setFechaModifica(new Date());
+            em.merge(adm);
+     }catch( Exception e){
+      System.out.println("Error al Almacenar Unidad administrativa "+ e);
+     }  
+    }  
+    
+    public void guardarUnidadAdmin(AfUnidadesAdministrativas adm,String usu){
+    try{
+        adm.setUsuarioAdicion(usu);
+        adm.setFechaAdicion(new Date());
+       em.persist(adm);
+    }catch( Exception e){
+      System.out.println("Error al Almacenar el empleado "+ e);
+     }    
+    } 
 
+    public void guardarEmpleado(AfEmpleados emp,String usu){
+    try{
+    
+        if(emp.getIdEmpleado()!=null){
+            emp.setUsuarioMod(usu);
+            emp.setFechaMod(new Date());
+            em.merge(emp);
+        }else{
+            emp.setUsuarioCrea(usu);
+            emp.setFechaCrea(new Date());
+            em.persist(emp);
+        }
+        
+    }catch( Exception e){
+      System.out.println("Error al Almacenar el empleado "+ e);
+     }    
+    } 
+    public void inactivarTipoBien(AfTipoBienes tipo,String usu){
+    try{
+        
+            tipo.setUsuarioModifica(usu);
+            tipo.setFechaModifica(new Date());
+            em.merge(tipo);
+        
+    }catch( Exception e){
+      System.out.println("Error al Almacenar el tipo de bien "+ e);
+     }    
+    }   
+    
+    
+    public void guardarTipoBien(AfTipoBienes tipo,String usu){
+    try{
+    
+        if(tipo.getIdTipoBien()!=null){
+            tipo.setUsuarioModifica(usu);
+            tipo.setFechaModifica(new Date());
+            em.merge(tipo);
+        }else{
+            tipo.setUsuarioAdicion(usu);
+            tipo.setFechaAdicion(new Date());
+            em.persist(tipo);
+        }
+        
+    }catch( Exception e){
+      System.out.println("Error al Almacenar el tipo de bien "+ e);
+     }    
+    }   
+    
+    
     public void guardarTraslado(AfTraslados tras, String usu) {
      //   em.getTransaction().begin();
      try {
@@ -452,18 +543,30 @@ try{
     }
 
     public List<VwSolvencia> buscarSolEmitidas(String condicion){
-        String sql=" select   rownum as idRow, CODIGO_ENTIDAD as codigoEntidad, UNIDAD_ACTIVO_FIJO as unidadActivoFijo,NOMBRE_MUNICIPIO as nombreMunicipio,NOMBRE as nombre,"+
+        String condicion2="";
+        
+       if (!condicion.equals("")) {
+           condicion2 = "where "+condicion+" and fecha_solvencia is not null";
+        }else{
+           condicion2 = "where  fecha_solvencia is not null";
+        }
+        String sql=" select rownum as idRow, CODIGO_ENTIDAD as codigoEntidad, UNIDAD_ACTIVO_FIJO as unidadActivoFijo,NOMBRE_MUNICIPIO as nombreMunicipio,NOMBRE as nombre,"+
                    " FECHA_SOLVENCIA as fechaSolvencia, ANIO as anio, nvl(NUMBIENES,0) as numBienes, nvl(COSTO,0) as costo,codigo_municipio as codigoMunicipio,fecha_actualizacion as fechaActualizacion,tipo_unidad as tipoUnidad "+
-                   " from  vw_solvencia "+condicion+" and fecha_solvencia is not null";
+                   " from  vw_solvencia "+condicion2;
          Query q = em.createNativeQuery(sql,VwSolvencia.class);
         
           return q.getResultList();
     }
     
     public List<VwSolvencia> buscarEntidades(String condicion){
+        String condicion2="";
+        
+        if (!condicion.equals("")) {
+           condicion2 = "where "+condicion;
+        }
         String sql=" select   rownum as idRow, CODIGO_ENTIDAD as codigoEntidad, UNIDAD_ACTIVO_FIJO as unidadActivoFijo,NOMBRE_MUNICIPIO as nombreMunicipio,NOMBRE as nombre,"+
                    " FECHA_SOLVENCIA as fechaSolvencia, ANIO as anio, nvl(NUMBIENES,0) as numBienes, nvl(COSTO,0) as costo,codigo_municipio as codigoMunicipio,fecha_actualizacion as fechaActualizacion,tipo_unidad as tipoUnidad "+
-                   " from  vw_solvencia "+condicion;
+                   " from  vw_solvencia "+condicion2;
          Query q = em.createNativeQuery(sql,VwSolvencia.class);
         
           return q.getResultList();
@@ -481,7 +584,7 @@ try{
     
     public List<VwCorrelativos> buscarCorrelativos(String condicion) {
         List<VwCorrelativos> lstCorrelativos = new ArrayList();
-        Query q = em.createNativeQuery("select A.* from Vw_Correlativos A " + condicion + " order by A.id_tipo_bien");
+        Query q = em.createNativeQuery("select A.* from Vw_Correlativos A " + condicion + " order by A.codigo_tipo_bien");
         List lst = q.getResultList();
         for (Object object : lst) {
             Object[] datos = (Object[]) object;
@@ -550,6 +653,69 @@ try{
            lstBienes.add(datPlan);
         }
            return lstBienes;
+    }
+    
+    public List<VwVehiculos> buscarVehiculos(String condicion){
+        String condicion2 = "";
+       // System.out.println(condicion);
+        if (!condicion.equals("")) {
+            condicion2 = " where " + condicion;
+        }
+        String sql=" select rownum as idRow,a.CODIGO_INVENTARIO as codigoInventario,a.DESCRIPCION_BIEN as descripcionBien,a.MARCA as marca, " +
+                   "      a.NUMERO_PLACA as numeroPlaca,a.NUMERO_MOTOR as numeroMotor,a.NUMERO_CHASIS as numeroChasis,a.COLOR_CARROCERIA as colorCarroceria, " +
+                   "      a.CALIDAD as calidad,a.FECHA_ADQUISICION as fechaAdquisicion,a.VALOR_ADQUISICION as valorAdquisicion,a.NOMBRE_UNIDAD as nombreUnidad, " +
+                   "      a.ASIGNADO as asignado  from vw_Vehiculos a "+condicion2;
+         Query q = em.createNativeQuery(sql,VwVehiculos.class);
+        
+      // Query q = em.createNativeQuery("select a.* from vw_Vehiculos a " + condicion2 ,VwVehiculos.class);
+       return q.getResultList();
+    }
+    public List<AfTipoBienes> buscarTipoBien(String condicion){
+         String condicion2 = "";
+       // System.out.println(condicion);
+        if (!condicion.equals("")) {
+            condicion2 = " where " + condicion;
+        }
+        
+        String Sql ="select * from af_tipo_bienes a "+condicion2;
+        Query q = em.createNativeQuery(Sql,AfTipoBienes.class);
+        if (!q.getResultList().isEmpty()){
+            return q.getResultList();
+        }else{
+            return null;
+        }
+    }
+    
+    public List<AfUnidadesAdministrativas> buscarUnidadesAdmin(String condicion){
+         String condicion2 = "";
+       // System.out.println(condicion);
+        if (!condicion.equals("")) {
+            condicion2 = " where " + condicion;
+        }
+        
+        String Sql ="select * from af_unidades_administrativas a "+condicion2;
+        Query q = em.createNativeQuery(Sql,AfUnidadesAdministrativas.class);
+        if (!q.getResultList().isEmpty()){
+            return q.getResultList();
+        }else{
+            return null;
+        }
+    }
+    
+    public List<AfEmpleados> buscarEmpleados(String condicion){
+         String condicion2 = "";
+       // System.out.println(condicion);
+        if (!condicion.equals("")) {
+            condicion2 = " where " + condicion;
+        }
+        
+        String Sql ="select * from af_Empleados a "+condicion2;
+        Query q = em.createNativeQuery(Sql,AfEmpleados.class);
+        if (!q.getResultList().isEmpty()){
+            return q.getResultList();
+        }else{
+            return null;
+        }
     }
     
     public List<VwBienes> buscarBien(String condicion) {
@@ -830,7 +996,12 @@ try{
         }
 
     }
-
+   
+    public List<AfEmpleados> empId(Long id) {
+        Query q = em.createNativeQuery("select * from af_empleados where id_empleado=?1", AfEmpleados.class);
+        q.setParameter(1, id);
+        return q.getResultList();
+    }
     public List<AfBienesDepreciables> bienId(Long id) {
         Query q = em.createNativeQuery("select * from af_bienes_depreciables where id_bien=?1", AfBienesDepreciables.class);
         q.setParameter(1, id);
@@ -894,9 +1065,63 @@ try{
         }
 
     }
+public List<DatosVehiculos> getLista(String UnidadAF,String codUnidad, String fecReporte, List<VwVehiculos> lstBienes, String usuario) {
+        List<DatosVehiculos> lst = new ArrayList();
+        String Sql;
+        if (codUnidad.equals("0")) {
+            if (!UnidadAF.equals("0")){  
+                 Sql = "select '' institucion,af.NOMBRE_UNIDAD_AF DIRECCION "
+                    + "from AF_UNIDADES_ACTIVO_FIJO af "
+                    + "where trim(UNIDAD_ACTIVO_FIJO)='" + UnidadAF + "'";
+              
+                    Query q = em.createNativeQuery(Sql);
+
+                    for (Object dato : q.getResultList()) {
+                        Object[] ob = (Object[]) dato;
+
+                        DatosVehiculos d = new DatosVehiculos();
+                        d.setInstitucion(null);
+                        d.setUnidad(ob[1].toString());
+                        d.setFecReporte(fecReporte);
+                        d.setUsuario(usuario);
+
+                        d.setLstDatos(lstBienes);
+                        lst.add(d);
+                        }
+            }
+            else{
+                   DatosVehiculos d = new DatosVehiculos();
+                        d.setInstitucion(null);
+                        d.setUnidad(null);
+                        d.setFecReporte(fecReporte);
+                        d.setUsuario(usuario);
+
+                        d.setLstDatos(lstBienes);
+                        lst.add(d);
+            }
+        } else {
+            Sql = "select trim(ua.CODIGO_UNIDAD)||' - '||ua.NOMBRE_UNIDAD institucion,af.NOMBRE_UNIDAD_AF DIRECCION "
+                    + "from AF_UNIDADES_ADMINISTRATIVAS ua inner join AF_UNIDADES_ACTIVO_FIJO af on af.UNIDAD_ACTIVO_FIJO=ua.UNIDAD_ACTIVO_FIJO "
+                    + "where trim(CODIGO_UNIDAD)='" + codUnidad + "'";
+            Query q = em.createNativeQuery(Sql);
+
+            for (Object dato : q.getResultList()) {
+                Object[] ob = (Object[]) dato;
+                DatosVehiculos d = new DatosVehiculos();
+                d.setInstitucion(ob[0].toString());
+                d.setUnidad(ob[1].toString());
+                d.setFecReporte(fecReporte);
+                d.setUsuario(usuario);
+
+                d.setLstDatos(lstBienes);
+                lst.add(d);
+            }
+        }
+        return lst;
+    }
 
     public List<DatosUnidad> getLst(String UnidadAF,String codUnidad, String fecReporte, List<VwBienes> lstBienes, String usuario) {
-        List<DatosUnidad> lst = new ArrayList<DatosUnidad>();
+        List<DatosUnidad> lst = new ArrayList();
         String Sql;
         if (codUnidad.equals("0")) {
             if (!UnidadAF.equals("0")){  

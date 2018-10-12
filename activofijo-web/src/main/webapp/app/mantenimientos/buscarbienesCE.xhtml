@@ -100,9 +100,9 @@
             </p:dialog>
                <p:panel id="pnlBienes">
                    <p:dataTable value="#{bienesCEController.lstBienes}" var="bien" rowKey="#{bien.idBien}" selectionMode="single" 
-                       paginator="true" rows="25"  paginatorPosition="top"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                                paginator="true" style="width: 80%" rows="25"  paginatorPosition="top"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
                      <p:ajax event="rowSelect" listener="#{bienesCEController.bienesId}"/>
-                      <p:column  style="width: 30px">
+                      <p:column  style="width: 5%">
                        <p:commandButton  action="#{bienesCEController.ingresaBienes}" icon="fa fa-edit" disabled="false">
                            <f:setPropertyActionListener value="#{bien.idBien}" target="#{bienesCEController.idBien}" />
                            <f:setPropertyActionListener value="#{plan}" target="#{bienesCEController.lstBienesDepreciable}"/>  
@@ -116,7 +116,7 @@
                                 </p:panel>   
                         </p:column>   
                      
-                        <p:column headerText="C&oacute;digo Inventario" style="width: 200px">
+                        <p:column headerText="C&oacute;digo Inventario" style="width: 100px">
                            <h:outputText value="#{bien.codigoInventario}"/>
                        </p:column>
                        <p:column headerText="Descripci&oacute;n" style="width: 200px" >

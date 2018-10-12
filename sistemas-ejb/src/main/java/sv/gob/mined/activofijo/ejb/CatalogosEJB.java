@@ -14,6 +14,7 @@ import javax.persistence.Query;
 import sv.gob.mined.activofijo.model.AfBienesDepreciables;
 import sv.gob.mined.activofijo.model.AfCalidadBien;
 import sv.gob.mined.activofijo.model.AfCategoriasBien;
+import sv.gob.mined.activofijo.model.AfClasificacionBien;
 import sv.gob.mined.activofijo.model.AfEstatusBien;
 import sv.gob.mined.activofijo.model.AfFormaAdquisicion;
 import sv.gob.mined.activofijo.model.AfFuenteFinanciamiento;
@@ -25,6 +26,7 @@ import sv.gob.mined.activofijo.model.AfTipoDescargo;
 import sv.gob.mined.activofijo.model.AfTipoTraslados;
 import sv.gob.mined.activofijo.model.AfUnidadesActivoFijo;
 import sv.gob.mined.activofijo.model.AfUnidadesAdministrativas;
+import sv.gob.mined.activofijo.model.AfUnidadesAdministrativasPK;
 import sv.gob.mined.activofijo.model.VwBienes;
 
 /**
@@ -84,6 +86,23 @@ public class CatalogosEJB {
         }
     }
     
+    public String nomClasificacion(Long codigo) {
+        Query q = em.createNativeQuery("Select nombre_clasif_bien from AF_clasificacion_bien a where a.id_clasif_bien=" + codigo + "");
+        if (q.getSingleResult() != null) {
+            return q.getSingleResult().toString();
+        } else {
+            return null;
+        }
+    }
+    
+     public String nomCategoria(Long clas,Long id ) {
+        Query q = em.createNativeQuery("Select descripcion_cat_bien from AF_categorias_bien a where a.id_clasif_bien=" + clas + " and a.id_cat_bien="+id);
+        if (q.getSingleResult() != null) {
+            return q.getSingleResult().toString();
+        } else {
+            return null;
+        }
+    }
     
     public String nomUnidadAf(String codigo) {
         Query q = em.createNativeQuery("Select NOMBRE_UNIDAD_AF from AF_UNIDADES_ACTIVO_FIJO a where a.UNIDAD_ACTIVO_FIJO='" + codigo + "'");
@@ -94,7 +113,34 @@ public class CatalogosEJB {
             return null;
         }
     }
+    public AfUnidadesAdministrativas getUnidadAdmin(String unidad,String adm){
+        Query q = em.createNativeQuery("Select * from Af_Unidades_Administrativas a where a.codigo_Unidad='"+adm+"' and a.unidad_activo_fijo='"+unidad+"'", AfUnidadesAdministrativas.class);
+        if (q.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return (AfUnidadesAdministrativas) q.getSingleResult();
+        }
+    }
     
+    public List<AfUnidadesAdministrativas> getLstUnidadPk(AfUnidadesAdministrativasPK pk){
+        Query q = em.createQuery("Select a from AfUnidadesAdministrativas a where a.afUnidadesAdministrativasPK ="+pk, AfUnidadesAdministrativas.class);
+        if (q.getResultList().isEmpty()) {
+            return q.getResultList();
+        } else {
+            return null;
+        }
+    }
+    
+    public AfUnidadesAdministrativas getUnidadPk(String codigo,String adm){
+        Query q = em.createQuery("Select a from AfUnidadesAdministrativas a where trim(a.afUnidadesAdministrativasPK.unidadActivoFijo)='"+codigo+"' and trim(a.afUnidadesAdministrativasPK.codigoUnidad)='"+adm+"' ", AfUnidadesAdministrativas.class);
+        if (q.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return (AfUnidadesAdministrativas) q.getSingleResult();
+        }
+    }
+    
+        
     public List<AfUnidadesActivoFijo> getUnidadAf() {
 
         Query q = em.createQuery("Select a from AfUnidadesActivoFijo a order by a.unidadActivoFijo", AfUnidadesActivoFijo.class);
@@ -294,6 +340,15 @@ public class CatalogosEJB {
         }
     }
 
+    public List<AfCategoriasBien> getCategoriaxCla(Long id) {
+        Query q = em.createQuery("Select a from AfCategoriasBien a where a.idClasifBien.idClasifBien="+id+" order by a.idCatBien", AfCategoriasBien.class);
+        if (q.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return q.getResultList();
+        }
+    }
+    
     public List<AfCategoriasBien> getCategoria() {
         Query q = em.createQuery("Select a from AfCategoriasBien a order by a.idCatBien", AfCategoriasBien.class);
         if (q.getResultList().isEmpty()) {
@@ -302,6 +357,15 @@ public class CatalogosEJB {
             return q.getResultList();
         }
     }
+    public List<AfClasificacionBien> getClasificacion() {
+        Query q = em.createQuery("Select a from AfClasificacionBien a order by a.idClasifBien", AfClasificacionBien.class);
+        if (q.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return q.getResultList();
+        }
+    }
+
 
     public Long getCategoria(Long tipoBien) {
         Query q = em.createQuery("Select a.idCatBien.idCatBien from AfTipoBienes  a where a.idTipoBien=:tipo order by a.idTipoBien");
@@ -313,6 +377,16 @@ public class CatalogosEJB {
         }
     }
 
+    public AfClasificacionBien getClasBien(Long id) {
+        Query q = em.createQuery("Select a from AfClasificacionBien a where a.idClasifBien="+id, AfClasificacionBien.class);
+        if (q.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return (AfClasificacionBien) q.getSingleResult();
+        }
+    }
+    
+    
     public AfCategoriasBien getCatBien(Long id) {
         Query q = em.createQuery("Select a from AfCategoriasBien a where a.idCatBien=:id", AfCategoriasBien.class);
         q.setParameter("id", id);
@@ -525,6 +599,15 @@ public class CatalogosEJB {
             return null;
         } 
     }
+    public Date getFechaActualizacion(String unidad){
+        Query q = em.createNativeQuery("select max(FECHA_SOLVENCIA) from AF_SOLVENCIAS where CODIGO_UNIDAD='"+unidad+"'");
+        if (q.getSingleResult() != null) {
+            return (Date) q.getSingleResult();
+        } else {
+            return getFechaActual();
+        }
+    }
+    
     public List<AfProyectos> getProyectos() {
         Query q = em.createQuery("select a from AfProyectos a order by a.idProyecto desc", AfProyectos.class);
         return q.getResultList();

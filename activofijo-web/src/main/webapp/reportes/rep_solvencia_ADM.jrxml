@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rep_solvencia_CE" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1d144560-d0f7-4c01-b914-98c363eec987">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rep_solvencia_ADM" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1d144560-d0f7-4c01-b914-98c363eec987">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="393"/>
 	<parameter name="p_periodo" class="java.lang.String">
 		<defaultValueExpression><![CDATA[2017]]></defaultValueExpression>
 	</parameter>
@@ -17,27 +17,19 @@
 	<parameter name="p_RutaImg" class="java.lang.String">
 		<defaultValueExpression><![CDATA["C:\\Java\\sistemas\\activofijo-web\\src\\main\\webapp\\resources\\images\\"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="p_representanteAF" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[Select a.unidad_activo_fijo,af.nombre_unidad_af, a.codigo_unidad, a.nombre_unidad,e.codigo_departamento, e.codigo_municipio, m.nombre_municipio,d.NOMBRE_DEPARTAMENTO
+		<![CDATA[Select a.unidad_activo_fijo,af.nombre_unidad_af, a.codigo_unidad, a.nombre_unidad
 from af_unidades_administrativas a
 LEFT OUTER join af_unidades_activo_fijo af on
 a.unidad_activo_fijo = af.unidad_activo_fijo
-LEFT OUTER join silcerri.entidad_educativa e on
-a.codigo_unidad = e.codigo_entidad
-Left OUTER join silcerri.municipio m on m.codigo_departamento = e.codigo_departamento and m.codigo_municipio = e.codigo_municipio
-left OUTER JOIN SILCERRI.DEPARTAMENTO d on d.CODIGO_DEPARTAMENTO=e.CODIGO_DEPARTAMENTO
-where e.codigo_departamento is not null
-and trim(a.unidad_activo_fijo) =$P{p_unidadAF}
+where trim(a.unidad_activo_fijo) =$P{p_unidadAF}
 and trim(a.codigo_unidad)=$P{p_unidadAdm}]]>
 	</queryString>
 	<field name="UNIDAD_ACTIVO_FIJO" class="java.lang.String"/>
 	<field name="NOMBRE_UNIDAD_AF" class="java.lang.String"/>
 	<field name="CODIGO_UNIDAD" class="java.lang.String"/>
 	<field name="NOMBRE_UNIDAD" class="java.lang.String"/>
-	<field name="CODIGO_DEPARTAMENTO" class="java.lang.String"/>
-	<field name="CODIGO_MUNICIPIO" class="java.lang.String"/>
-	<field name="NOMBRE_MUNICIPIO" class="java.lang.String"/>
-	<field name="NOMBRE_DEPARTAMENTO" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -53,7 +45,7 @@ and trim(a.codigo_unidad)=$P{p_unidadAdm}]]>
 	<detail>
 		<band height="724" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="426" y="310" width="123" height="16"/>
+				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="436" y="14" width="123" height="16"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
@@ -63,19 +55,19 @@ and trim(a.codigo_unidad)=$P{p_unidadAdm}]]>
 				<reportElement uuid="456ee7f9-4817-4518-8bc3-b5c9c77bc1b8" x="5" y="362" width="567" height="1"/>
 			</line>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="10" y="223" width="551" height="14"/>
+				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="8" y="201" width="551" height="14"/>
 				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["Y no habiendo más que hacer constar firmo la presente en "+$F{NOMBRE_MUNICIPIO}.trim()+" a los "+$P{p_fecRep}+"."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["No habiendo más que hacer constar firmamos la presente a los "+$P{p_fecRep}+"."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="8" y="298" width="322" height="14"/>
+				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="8" y="298" width="210" height="14"/>
 				<textElement textAlignment="Justified"/>
 				<textFieldExpression><![CDATA["Firma___________________________"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="8" y="327" width="322" height="16"/>
+				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="8" y="327" width="210" height="16"/>
 				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["DIRECTOR (A) DE LA INSTITUCION"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["DIRECTOR (A)/ JEFE (A) DE LA UNIDAD"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="244" y="254" width="49" height="18"/>
@@ -93,7 +85,7 @@ and trim(a.codigo_unidad)=$P{p_unidadAdm}]]>
 				<imageExpression><![CDATA[$P{p_RutaImg}+File.separator+"escudo.png"]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement uuid="d56b5475-1d1d-4f80-b417-344f2cef759f" x="8" y="312" width="322" height="14"/>
+				<reportElement uuid="d56b5475-1d1d-4f80-b417-344f2cef759f" x="8" y="312" width="210" height="14"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$P{p_responsable}]]></textFieldExpression>
 			</textField>
@@ -105,27 +97,12 @@ and trim(a.codigo_unidad)=$P{p_unidadAdm}]]>
 				<text><![CDATA[Declaración Jurada]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="f8f3501b-e0fd-4e9b-b873-5e5657492af7" x="10" y="196" width="551" height="16"/>
-				<textElement/>
-				<text><![CDATA[Información presentada es de mi responsabilidad y esta sujeta a verificación física por parte de Activo Fijo.]]></text>
-			</staticText>
-			<staticText>
-				<reportElement uuid="f8f3501b-e0fd-4e9b-b873-5e5657492af7" x="10" y="572" width="551" height="16"/>
-				<textElement/>
-				<text><![CDATA[Información presentada es de mi responsabilidad y esta sujeta a verificación física por parte de Activo Fijo.]]></text>
-			</staticText>
-			<staticText>
-				<reportElement uuid="aaaf3de2-b724-448c-a5d1-45e6eb641d1b" x="86" y="435" width="395" height="17"/>
+				<reportElement uuid="aaaf3de2-b724-448c-a5d1-45e6eb641d1b" x="86" y="436" width="395" height="17"/>
 				<textElement textAlignment="Center" markup="none">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Declaración Jurada]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="8" y="460" width="553" height="102"/>
-				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["Yo :"+$P{p_responsable}.trim()+" Director(a) del: "+$F{NOMBRE_UNIDAD}.trim()+" código de infraestructura: "+$F{CODIGO_UNIDAD}.trim()+" que pertenece al municipio de: "+$F{NOMBRE_MUNICIPIO}.trim() +". Hago constar que: En atención al literal ''n'' inciso segundo, del capítulo II, del Instructivo del Sistema de Registro y Control de los Bienes Muebles del Ministerio de Educación, no haber comprado mobiliario y equipo escolar con Fondos del Presupuesto Escolar, ni con otros ingresos o fuentes de financiamiento; no se han recibido donaciones ni regalías que permitan acrecentar dicho Inventario, por tal razón manifiesto que en el presente año lectivo no se realizaron adiciones al Sistema de Activo Fijo. Con la presente quedamos solventes como Organismo de Administración Escolar con la presentación de Inventario Escolar del año "+$P{p_periodo}.trim()+"."]]></textFieldExpression>
-			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="244" y="627" width="49" height="18"/>
 				<textElement textAlignment="Justified">
@@ -134,36 +111,71 @@ and trim(a.codigo_unidad)=$P{p_unidadAdm}]]>
 				<textFieldExpression><![CDATA["(SELLO)"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="426" y="683" width="123" height="16"/>
+				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="440" y="382" width="123" height="16"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["COPIA. DIRECTOR"]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="10" y="596" width="551" height="14"/>
-				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["Y no habiendo más que hacer constar firmo la presente en "+$F{NOMBRE_MUNICIPIO}.trim()+" a los "+$P{p_fecRep}+"."]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="8" y="700" width="322" height="16"/>
-				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["DIRECTOR (A) DE LA INSTITUCION"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["COPIA. UNIDAD"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="d56b5475-1d1d-4f80-b417-344f2cef759f" x="8" y="685" width="322" height="14"/>
+				<reportElement uuid="d56b5475-1d1d-4f80-b417-344f2cef759f" x="8" y="685" width="225" height="14"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$P{p_responsable}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="8" y="671" width="322" height="14"/>
+				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="8" y="671" width="225" height="14"/>
 				<textElement textAlignment="Justified"/>
 				<textFieldExpression><![CDATA["Firma___________________________"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="10" y="83" width="553" height="102"/>
+				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="10" y="83" width="553" height="87"/>
 				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["Yo :"+$P{p_responsable}.trim()+" Director(a) del: "+$F{NOMBRE_UNIDAD}.trim()+" código de infraestructura: "+$F{CODIGO_UNIDAD}.trim()+" que pertenece al municipio de: "+$F{NOMBRE_MUNICIPIO}.trim() +". Hago constar que: En atención al literal ''n'' inciso segundo, del capítulo II, del Instructivo del Sistema de Registro y Control de los Bienes Muebles del Ministerio de Educación, no haber comprado mobiliario y equipo escolar con Fondos del Presupuesto Escolar, ni con otros ingresos o fuentes de financiamiento; no se han recibido donaciones ni regalías que permitan acrecentar dicho Inventario, por tal razón manifiesto que en el presente año lectivo no se realizaron adiciones al Sistema de Activo Fijo. Con la presente quedamos solventes como Organismo de Administración Escolar con la presentación de Inventario Escolar del año "+$P{p_periodo}.trim()+"."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Yo :"+$P{p_responsable}.trim()+" Director(a)/ Jefe de la Unidad Administrativa Central: "+$F{NOMBRE_UNIDAD}.trim()+" con código : "+$F{CODIGO_UNIDAD}.trim()+" hago constar que en atención al literal “n” inciso segundo del capítulo II, del Instructivo del Sistema de Registro y Control de Bienes del Ministerio de Educación, no haber adquirido mediante cualquier fuente de financiamiento Mobiliario, equipo o vehículos que permitan acrecentar el inventario, por tal razón manifiesto que en el presente año no se realizaron adiciones al Sistema de Activo Fijo. Con la presente se hace cumplimiento como unidad administrativa con la presentación del Inventario anual del año "+$P{p_periodo}.trim()+"."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="10" y="469" width="553" height="87"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["Yo :"+$P{p_responsable}.trim()+" Director(a)/ Jefe de la Unidad Administrativa Central: "+$F{NOMBRE_UNIDAD}.trim()+" con código : "+$F{CODIGO_UNIDAD}.trim()+" hago constar que en atención al literal “n” inciso segundo del capítulo II, del Instructivo del Sistema de Registro y Control de Bienes del Ministerio de Educación, no haber adquirido mediante cualquier fuente de financiamiento Mobiliario, equipo o vehículos que permitan acrecentar el inventario, por tal razón manifiesto que en el presente año no se realizaron adiciones al Sistema de Activo Fijo. Con la presente se hace cumplimiento como unidad administrativa con la presentación del Inventario anual del año "+$P{p_periodo}.trim()+"."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="8" y="587" width="551" height="14"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["No habiendo más que hacer constar firmamos la presente a los "+$P{p_fecRep}+"."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="8" y="699" width="225" height="16"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["DIRECTOR (A)/ JEFE (A) DE LA UNIDAD"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="330" y="327" width="229" height="16"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["DELEGADO DE ACTIVO FIJO DE LA UNIDAD"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="330" y="298" width="229" height="14"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["Firma___________________________"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b75d8091-0ff4-41e6-8ce0-c9f8c1dd6347" x="330" y="312" width="229" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{p_representanteAF}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="330" y="700" width="229" height="16"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["DELEGADO DE ACTIVO FIJO DE LA UNIDAD"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b75d8091-0ff4-41e6-8ce0-c9f8c1dd6347" x="330" y="685" width="229" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{p_representanteAF}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="330" y="671" width="229" height="14"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["Firma___________________________"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

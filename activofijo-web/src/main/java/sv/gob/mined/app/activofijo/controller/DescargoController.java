@@ -699,8 +699,8 @@ public class DescargoController implements Serializable {
         
         if (!estSolicitud.equals("Y")){ condicion = condicion + " a.estado='"+estSolicitud.trim()+"' and ";}
         if(!numSolicitud.isEmpty()){ condicion=condicion +" a.codigo_descargo='"+numSolicitud.trim()+"' and "; }
-        if (fec1!=null){ condicion=condicion+ " a.fecha_descargo>= '"+sdf.format(fec1)+"' and ";}
-        if (fec2!=null){ condicion=condicion+ " a.fecha_descargo<= '"+sdf.format(fec2)+"' and ";}
+        if (fec1!=null){ condicion=condicion+ " a.fecha_descargo>= to_date('"+sdf.format(fec1)+"','dd/mm/yyyy') and ";}
+        if (fec2!=null){ condicion=condicion+ " a.fecha_descargo<= to_date('"+sdf.format(fec2)+"','dd/mm/yyyy') and ";}
         if (!activo.equals("0")){ condicion= condicion+ " trim(a.tipo_descargo)='"+activo+"' and "; }
         if (!tipoUnidad.equals("0")){ condicion=condicion+" a.tipo_unidad='"+tipoUnidad +"' and ";}
        if (!unidadAdm.equals("0")) { condicion=condicion+ " a.codigo_unidad="+unidadAdm+" and ";}

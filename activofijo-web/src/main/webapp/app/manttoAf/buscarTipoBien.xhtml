@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+        <ui:define name="content">
+            <p:menubar id="barBtns" > 
+                <p:menuitem value="Buscar" icon="fa fa-search" action="#{tipoBienController.buscarTipo}" update="barBtns pnlTipoBien"/>
+                <p:menuitem value="Nuevo" icon="fa fa-file-o" ajax="true" action="#{tipoBienController.nuevoTipoBien}" />
+                <p:menuitem value="Limpiar" icon="fa fa-trash-o" action="#{tipoBienController.limpiarFiltro}" update="pnlFiltros pnlTipoBien"/>
+                <p:menuitem value="Salir" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+            </p:menubar>
+            <p:panel id="pnlFiltros" header="Tipo de Bienes">
+                <h:panelGrid >
+                    <p:row>
+                        <p:column>  <h:outputLabel value="Codigo Tipo" /> </p:column>
+                        <p:column>  <h:inputText id="tipoBien" value="#{tipoBienController.codigo}" styleClass="textMayuscula" /> </p:column>
+                        <p:column> <h:outputLabel value="Descripcion Tipo" /></p:column>
+                        <p:column> <h:inputText id="desTipo" value="#{tipoBienController.descripcion}" styleClass="textMayuscula" onkeyup="return cUpper(this);"/>  </p:column>
+                   </p:row>    
+                    <p:row>    
+                        <p:column> <h:outputLabel value="Clasificaci&oacute;n:  " />
+                            <h:selectOneMenu  id="clas" value="#{tipoBienController.clas}">
+                                <p:ajax update="catbien" listener="#{tipoBienController.filtrarCategoria}" process="@this,catbien"/>
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{tipoBienController.lstClasificacion}" var="cla" itemLabel="#{cla.idClasifBien} - #{cla.nombreClasifBien}" itemValue="#{cla.idClasifBien}"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel value="Categoria Bien:       " />
+                            <h:selectOneMenu id="catbien" value="#{tipoBienController.cat}" >
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{tipoBienController.lstCategoria}" var="cat" itemLabel="#{cat.idCatBien} - #{cat.descripcionCatBien}" itemValue="#{cat.idCatBien}"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                    <p:column>
+                            <h:outputLabel value="Estado Tipo:       " />
+                            <h:selectOneMenu id="estTipo" value="#{tipoBienController.estadoTipo}" >
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="2"/>
+                                 <f:selectItem itemLabel="Activo" itemValue="1"/>
+                                 <f:selectItem itemLabel="Inactivo" itemValue="0"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                    </p:row>
+                </h:panelGrid> 
+               </p:panel> 
+               <p:panel id="pnlTipoBien">
+                   <p:dataTable id="tBienes" value="#{tipoBienController.lstTipoBien}"  var="tipo" rowKey="#{tipo.idTipoBien}" 
+                         style="width: 100%"    paginator="true" rows="20"  paginatorPosition="top" scrollable="true"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                          <p:column style="width: 30px">
+                              <p:commandButton  action="#{tipoBienController.editarTipoBien}" icon="fa fa-pencil" disabled="false">
+                                  <f:setPropertyActionListener value="#{tipo.idTipoBien}" target="#{tipoBienController.idTipoBien}" />
+                                  <p:ajax event="dialogReturn" listener="#{tipoBienController.tipoId}"/>  
+                        </p:commandButton>
+                        <p:panel visible="false">
+                            <p:commandButton id="btnmodMet" actionListener="#{tipoBienController.editarTipoBien}" value="mod" >
+                                <p:ajax event="dialogReturn" listener="#{tipoBienController.tipoId}"/>
+                            </p:commandButton>
+                        </p:panel>   
+                    </p:column> 
+                    
+                     <p:column style="width: 30px">
+                         <p:commandButton  action="#{tipoBienController.abrirDialog}" icon="fa fa-times" disabled="false">
+                                  <f:setPropertyActionListener value="#{tipo.idTipoBien}" target="#{tipoBienController.idTipoBien}" />
+                                  <p:ajax event="dialogReturn" listener="#{tipoBienController.tipoId}"/>  
+                        </p:commandButton>
+                        <p:panel visible="false">
+                            <p:commandButton id="btnmodRem" actionListener="#{tipoBienController.abrirDialog}" value="del" >
+                                <p:ajax event="dialogReturn" listener="#{tipoBienController.tipoId}"/>
+                            </p:commandButton>
+                        </p:panel>   
+                    </p:column>    
+                       
+                       
+                       <p:column headerText="C&oacute;digo">
+                        <p:outputLabel value="#{tipo.codigoTipoBien}"/>
+                    </p:column>
+                       <p:column headerText="descripci&oacute;n">
+                       <p:outputLabel value="#{tipo.nombreTipoBien}"/>
+                   </p:column> 
+                       <p:column headerText="Clasificaci&oacute;n">
+                           <p:outputLabel value="#{tipoBienController.obtenerClasificacion(tipo.idClasifBien)}"/>
+                   </p:column>  
+                       <p:column headerText="Categoria">
+                           <p:outputLabel value="#{tipoBienController.obtenerCategoria(tipo.idClasifBien,tipo.idCatBien.idCatBien)}"/>
+                   </p:column>      
+                   </p:dataTable>
+                   
+               </p:panel>
+               <p:dialog id="dlg1" header="Eliminar Tipo de bien" widgetVar="dlg1" minHeight="40" modal="true" closable="false">
+                <h:outputText value="Esta seguro de Eliminar" />
+                <p:spacer width="8"/>
+                <p:commandButton value="Si" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" action="#{tipoBienController.eliminar}" update="tBienes"/>
+                <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('dlg1').hide();"/> 
+            </p:dialog>
+      </ui:define>
+    </ui:composition>
+
+</html>
+

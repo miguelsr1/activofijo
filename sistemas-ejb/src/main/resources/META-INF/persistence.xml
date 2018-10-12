@@ -30,6 +30,7 @@
         <class>sv.gob.mined.activofijo.model.AfCalidadBien</class>
         <class>sv.gob.mined.activofijo.model.AfCategoriasBien</class>
         <class>sv.gob.mined.activofijo.model.AfClasificacionBien</class>
+        <class>sv.gob.mined.activofijo.model.AfEmpleados</class>
         <class>sv.gob.mined.activofijo.model.AfDepreciaciones</class>
         <class>sv.gob.mined.activofijo.model.AfDescargos</class>
         <class>sv.gob.mined.activofijo.model.AfDescargosDetalle</class>
@@ -53,6 +54,7 @@
         <class>sv.gob.mined.activofijo.model.VwDatosxCuentas</class>
         <class>sv.gob.mined.activofijo.model.VwSolvencia</class>
         <class>sv.gob.mined.activofijo.model.VwMunicipio</class>
+        <class>sv.gob.mined.activofijo.model.VwVehiculos</class>
         <class>sv.gob.mined.activofijo.model.dto.DatosDepreciacion</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>

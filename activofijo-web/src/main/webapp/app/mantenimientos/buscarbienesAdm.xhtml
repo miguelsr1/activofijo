@@ -24,21 +24,12 @@
                             <p:column> <h:outputLabel value="a  "/> <p:calendar id="fechaAdq2" value="#{bienesAdmController.fecAdq2}" pattern="dd/MM/yyyy" /> </p:column>
                             <p:column>&nbsp;</p:column>
                         </p:row>
-                        <p:row>
-                            <p:column> <h:outputLabel value="Fuente Financiamiento:"/></p:column>
-                            <p:column>  
-                                <h:selectOneMenu value="#{bienesAdmController.fuente}"> 
-                                    <f:selectItem itemLabel="--Seleccione--" itemValue="0"/>
-                                    <f:selectItems value="#{bienesAdmController.lstFuente}" var="forma" itemLabel="#{forma.nombre}" itemValue="#{forma.idFuente}"/>
-                                </h:selectOneMenu>
-                            </p:column>    
-                        </p:row>
                          <p:row>
-                            <p:column> <h:outputLabel value="Proyecto:"/></p:column>
+                            <p:column> <h:outputLabel value="Forma Adquisici&oacute;n:"/></p:column>
                             <p:column>  
-                                <h:selectOneMenu value="#{bienesAdmController.proyecto}"> 
+                                <h:selectOneMenu value="#{bienesAdmController.formaAdq}"> 
                                     <f:selectItem itemLabel="--Seleccione--" itemValue="0"/>
-                                    <f:selectItems value="#{bienesAdmController.lstProyectos}" var="forma" itemLabel="#{forma.nombreProyecto}" itemValue="#{forma.idProyecto}"/>
+                                    <f:selectItems value="#{bienesAdmController.lstFormaAdq}" var="forma" itemLabel="#{forma.nombreFormaAdquisicion}" itemValue="#{forma.idFormaAdquisicion}"/>
                                 </h:selectOneMenu>
                             </p:column>    
                         </p:row>
@@ -100,6 +91,8 @@
                         <p:column> <h:inputText id="periodo" value="#{bienesAdmController.periodo}" style="width:80px" maxlength="4"/> </p:column>
                         <p:column> <h:outputLabel value="responsable:"/> </p:column>
                         <p:column> <h:inputText value="#{bienesAdmController.responsable}" style="width:200px" styleClass="textMayuscula" onkeyup="return cUpper(this);"/> </p:column>
+                        <p:column> <h:outputLabel value="responsable Activo Fijo:"/> </p:column>
+                        <p:column> <h:inputText value="#{bienesAdmController.responsableAF}" style="width:200px" styleClass="textMayuscula" onkeyup="return cUpper(this);"/> </p:column>
                     </h:panelGrid>
                 </p:panel>
                 <f:facet name="footer">
@@ -109,9 +102,9 @@
             </p:dialog>
                <p:panel id="pnlBienes">
                    <p:dataTable value="#{bienesAdmController.lstBienes}" var="bien" rowKey="#{bien.idBien}" selectionMode="single" 
-                       paginator="true" rows="25"  paginatorPosition="top"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                                paginator="true" rows="25"  style="width: 80%" paginatorPosition="top"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
                      <p:ajax event="rowSelect" listener="#{bienesAdmController.bienesId}"/>
-                         <p:column style="width: 200px">
+                         <p:column style="width: 5%">
                        <p:commandButton  action="#{bienesAdmController.ingresaBienes}" icon="fa fa-edit" disabled="false">
                            <f:setPropertyActionListener value="#{bien.idBien}" target="#{bienesAdmController.idBien}" />
                            <f:setPropertyActionListener value="#{plan}" target="#{bienesAdmController.lstBienesDepreciable}"/>  
@@ -124,7 +117,7 @@
                                     </p:commandButton>
                                 </p:panel>   
                         </p:column>   
-                       <p:column headerText="C&oacute;digo Inventario" style="width: 200px">
+                       <p:column headerText="C&oacute;digo Inventario" style="width: 100px">
                            <h:outputText value="#{bien.codigoInventario}"/>
                        </p:column>
                        <p:column headerText="Descripci&oacute;n" style="width: 200px" >

@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rep_af9" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="772" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="9bf798d0-25a3-457a-9503-15cf72214b94">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="123"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -103,14 +103,14 @@
 				<text><![CDATA[FORMULARIO DE TRASLADO DE MOBILIARIO Y EQUIPO (AF-9)]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="346418c2-d029-47c4-986e-8cebe7a9abf3" x="15" y="13" width="390" height="16"/>
+				<reportElement uuid="346418c2-d029-47c4-986e-8cebe7a9abf3" x="15" y="13" width="357" height="16"/>
 				<textElement>
 					<font size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{unidad}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="325f1daa-0a10-4113-9441-65336b038d8a" x="15" y="29" width="495" height="15"/>
+				<reportElement uuid="325f1daa-0a10-4113-9441-65336b038d8a" x="15" y="29" width="396" height="15"/>
 				<textElement>
 					<font size="9" isBold="true"/>
 				</textElement>
@@ -124,7 +124,7 @@
 				<text><![CDATA[MINISTERIO DE EDUCACIÓN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="9a00531e-dc2d-4982-9c79-a7bb7bddbd9c" x="425" y="9" width="112" height="15"/>
+				<reportElement uuid="9a00531e-dc2d-4982-9c79-a7bb7bddbd9c" x="411" y="9" width="95" height="15"/>
 				<textElement markup="none"/>
 				<text><![CDATA[Fecha de Solicitud]]></text>
 			</staticText>
@@ -138,8 +138,10 @@
 				<textFieldExpression><![CDATA["Destino: "+ $P{UnidadDes} +" Código "+$P{CodUnidadDes}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="fb0cb0e9-d512-4e68-9d2e-480e910c0bb8" x="542" y="9" width="100" height="15"/>
-				<textElement/>
+				<reportElement uuid="fb0cb0e9-d512-4e68-9d2e-480e910c0bb8" x="506" y="9" width="195" height="15"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{fecSolicitud}]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -390,7 +392,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="34be1a4c-e6a8-4656-8c39-022d74e73702" x="9" y="26" width="225" height="14"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$P{nomAutoriza}]]></textFieldExpression>
@@ -415,7 +417,7 @@
 				</textElement>
 				<text><![CDATA[FIRMA:]]></text>
 			</staticText>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="34be1a4c-e6a8-4656-8c39-022d74e73702" x="513" y="26" width="225" height="14"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$P{nomRecibe}]]></textFieldExpression>
@@ -430,12 +432,12 @@
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[Vo. Unidad de Activo Fijo Central o Departamental]]></text>
 			</staticText>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="dae3bea5-8729-4d82-b966-4f66a8e417fd" x="13" y="41" width="221" height="19"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$P{cargoAutoriza}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="3b3b24b7-ca95-4ad5-8018-ed0197d2dcc9" x="513" y="41" width="225" height="19"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$P{cargoRecibe}]]></textFieldExpression>

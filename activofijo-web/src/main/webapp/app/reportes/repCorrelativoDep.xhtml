@@ -50,7 +50,7 @@
                    <p:dataTable value="#{bienesController.lstCorrelativos}" var="bien"  style="width: 60%"
                        paginator="true" rows="25"  paginatorPosition="top"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
                        <p:column headerText="Descripci&oacute;n Bien">
-                           <h:outputText value="#{bien.idTipoBien} - #{bien.nombreTipoBien}" />
+                           <h:outputText value="#{bien.codigoTipoBien} - #{bien.nombreTipoBien}" />
                        </p:column>
                        <p:column headerText="Correlativo" >
                            <h:outputText value="#{bien.correlativo}"/>

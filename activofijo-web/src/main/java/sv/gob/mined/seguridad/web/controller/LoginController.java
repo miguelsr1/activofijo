@@ -236,8 +236,8 @@ public class LoginController implements Serializable {
 
     public void guardarContrasena() {
         if (clave1.equals(clave2)) {
-            if (seguridadBean.cambiarContrasena(login.toUpperCase(), clave1)) {
-                usuario.setLogin(login.toUpperCase());
+            if (seguridadBean.cambiarContrasena(usuario.getLogin().toUpperCase(), clave1)) {
+                usuario.setLogin(usuario.getLogin().toUpperCase());
                 usuario.setClaveAcceso(clave1);
                 JsfUtil.redireccionar(validarUsuario());
             }

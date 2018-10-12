@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+        <ui:define name="content">
+            <p:menubar id="barBtns" > 
+                <p:menuitem value="Guardar" icon="fa fa-save" action="#{empleadosController.guardarEmpleado}" />
+                  <p:menuitem value="atras" icon="fa fa-arrow-circle-left" action="EmpleadosAdministrativos.mined" process="@this"/>
+                  <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+            </p:menubar>
+            <p:panel header="Mantenimiento Empleados">
+                    <p:outputLabel value="Datos Empleado" escape="false"/>
+                    <h:panelGrid columns="2">
+                        <p:column> <h:outputLabel value="Nombres:"/> </p:column>
+                        <p:column> <h:inputText id="nom" value="#{empleadosController.nombres}" styleClass="textMayuscula" onkeyup="return cUpper(this);" style="width:400px" /> </p:column>
+                        <p:column> <h:outputLabel value="Apellidos:"/> </p:column>
+                        <p:column> <h:inputText id="ape" value="#{empleadosController.apellidos}" styleClass="textMayuscula" onkeyup="return cUpper(this);" style="width:400px" /> </p:column>
+                        <p:column> <h:outputLabel value="Cargo:"/> </p:column>
+                        <p:column> <h:inputText id="car" value="#{empleadosController.cargo}" styleClass="textMayuscula" onkeyup="return cUpper(this);" style="width:400px" /> </p:column>
+                        <p:column>
+                            <h:outputLabel value="Unidad Activo Fijo:       " />
+                            <h:selectOneMenu id="uaf" value="#{empleadosController.unidadAF}" disabled="#{empleadosController.actAF}">
+                                <p:ajax update="uadm" listener="#{empleadosController.filtrarUnidadesAdm}" process="@this"/>
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{empleadosController.lstUnidadAF}" var="uAF" itemLabel="#{uAF.unidadActivoFijo} - #{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel value="Unidad Administrativa:     " />
+                            <h:selectOneMenu  id="uadm" value="#{empleadosController.unidadAdm}"  disabled="#{empleadosController.actAd}">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{empleadosController.lstUnidadAdm}" var="uadm" itemLabel="#{uadm.afUnidadesAdministrativasPK.codigoUnidad} - #{uadm.nombreUnidad}" itemValue="#{uadm.afUnidadesAdministrativasPK.codigoUnidad}"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                    </h:panelGrid>
+                </p:panel>
+      </ui:define>
+    </ui:composition>
+
+</html>
+

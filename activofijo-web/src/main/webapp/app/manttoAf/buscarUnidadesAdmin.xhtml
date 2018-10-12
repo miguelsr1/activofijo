@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+        <ui:define name="content">
+            <p:menubar id="barBtns" > 
+                <p:menuitem value="Buscar" icon="fa fa-search" action="#{unidadAdministrativaController.buscarUnidad}" update="barBtns pnlUnidades"/>
+                <p:menuitem value="Nuevo" icon="fa fa-file-o" ajax="true" action="#{unidadAdministrativaController.nuevoUnidad}" />
+                <p:menuitem value="Limpiar" icon="fa fa-trash-o" action="#{unidadAdministrativaController.limpiarFiltro}" update="pnlFiltros pnlUnidades"/>
+                <p:menuitem value="Salir" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+            </p:menubar>
+            <p:panel id="pnlFiltros" header="Unidades Administrativas">
+                <h:panelGrid  columns="4">
+                    <h:outputLabel value="Unidad Activo Fijo:       " />
+                            <h:selectOneMenu id="uaf" value="#{unidadAdministrativaController.unidadAF}" disabled="#{unidadAdministrativaController.actAF}">
+                               <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{unidadAdministrativaController.lstUnidadAF}" var="uAF" itemLabel="#{uAF.unidadActivoFijo} - #{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
+                            </h:selectOneMenu> 
+                    <h:outputLabel value="codigo Unidad" />   <h:inputText id="codigoUnidad" value="#{unidadAdministrativaController.codigoUnidad}" />
+                    <h:outputLabel value="Apellidos" />
+                    <h:inputText id="nomUnidad" value="#{unidadAdministrativaController.nombreUnidad}" styleClass="textMayuscula" onkeyup="return cUpper(this);"/> 
+                    <h:outputLabel value="Nombre Director" />
+                    <h:inputText id="director" value="#{unidadAdministrativaController.nombreDir}" styleClass="textMayuscula" onkeyup="return cUpper(this);"/> 
+                    <h:outputLabel value="Cargo Director" />
+                    <h:inputText id="cargo" value="#{unidadAdministrativaController.cargoDir}" styleClass="textMayuscula" onkeyup="return cUpper(this);"/> 
+                    <h:outputLabel value="Telefono:" />
+                    <h:inputText id="tel" value="#{unidadAdministrativaController.telefono}"/> 
+                    <h:outputLabel value="Nombre Responsable " />
+                    <h:inputText id="nomRes" value="#{unidadAdministrativaController.nomResponsable}" styleClass="textMayuscula" onkeyup="return cUpper(this);"/> 
+                    <h:outputLabel value="Tipo Unidad:" />
+                    <h:selectOneMenu id="tipUni" value="#{unidadAdministrativaController.tipoUni}" required="true" requiredMessage="Ingrese tipo de unidad a crear">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="PR"/>
+                                <f:selectItem itemLabel="Unidad Administrativa" itemValue="UA"/>
+                                <f:selectItem itemLabel="Centro Escolar" itemValue="CE"/>
+                            </h:selectOneMenu>
+                </h:panelGrid> 
+               </p:panel> 
+               <p:panel id="pnlUnidades">
+                   <p:dataTable id="tBienes" value="#{unidadAdministrativaController.lstUnidadAdm}"  var="unidad" rowKey="#{unidad.afUnidadesAdministrativasPK}" 
+                         style="width: 100%"    paginator="true" rows="20"  paginatorPosition="top" scrollable="true"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                          <p:column style="width: 30px">
+                              <p:commandButton  action="#{unidadAdministrativaController.editarUnidad}" icon="fa fa-pencil" disabled="false">
+                                  <f:setPropertyActionListener value="#{unidad.afUnidadesAdministrativasPK.codigoUnidad}" target="#{unidadAdministrativaController.paramUadmin}" />
+                                  <f:setPropertyActionListener value="#{unidad.afUnidadesAdministrativasPK.unidadActivoFijo}" target="#{unidadAdministrativaController.paramUAF}" />
+                                  <p:ajax event="dialogReturn" listener="#{unidadAdministrativaController.unidadId}"/>  
+                        </p:commandButton>
+                        <p:panel visible="false">
+                            <p:commandButton id="btnmodMet" actionListener="#{unidadAdministrativaController.editarUnidad}" value="mod" >
+                                <p:ajax event="dialogReturn" listener="#{unidadAdministrativaController.unidadId}"/>
+                            </p:commandButton>
+                        </p:panel>  
+                    </p:column> 
+                   
+                    <p:column headerText="Unidad Activo Fijo">
+                        <p:outputLabel value="#{unidadAdministrativaController.getNombreUnidad(unidad.afUnidadesAdministrativasPK.unidadActivoFijo)}"/>
+                    </p:column>   
+                    <p:column headerText="codigo" style="width: 80px">
+                        <p:outputLabel value="#{unidad.afUnidadesAdministrativasPK.codigoUnidad}"/>
+                    </p:column>
+                   <p:column headerText="Nombre Unidad">
+                       <p:outputLabel value="#{unidadAdministrativaController.obtenerNombreUnidad(unidad.afUnidadesAdministrativasPK.codigoUnidad)}"/>
+                   </p:column> 
+                    <p:column headerText="Nombre Responsable">
+                        <p:outputLabel value="#{unidad.nombreResponsable}"/>
+                   </p:column>  
+                   </p:dataTable>
+               </p:panel>
+      </ui:define>
+    </ui:composition>
+
+</html>
+

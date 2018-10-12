@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+        <ui:define name="content">
+            <p:menubar id="barBtns" > 
+                <p:menuitem value="Buscar" icon="fa fa-search" action="#{bienesController.buscarVehiculos}" update="barBtns pnlBienes"/>
+                <p:menuitem value="Limpiar" icon="fa fa-trash-o" action="#{bienesController.limpiarFiltroVeh}" update="pnlFiltros pnlBienes"/>
+                <p:menuitem id="btnImp" value="Imprimir" icon="fa fa-print" ajax="true" onclick="PF('dlgImprimir').show();" disabled="#{bienesController.activo}"/>
+                
+                <p:menuitem value="Salir" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+            </p:menubar>
+            <p:panel id="pnlFiltros" header="Reporte de Vehiculos">
+                <h:panelGrid columns="2">
+                    <p:row>
+                        <p:column> <h:outputLabel  value="Tipo Unidad:      "/> </p:column> 
+                        <p:column>
+                            <h:selectOneMenu id="tipUni" value="#{bienesController.tipoUnidad}">
+                                <p:ajax update="uadm" listener="#{bienesController.filtrarUnidadesAdm}" process="@this,tipUni"/>
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItem itemLabel="Unidad Administrativa" itemValue="UA"/>
+                                <f:selectItem itemLabel="Centro Escolar" itemValue="CE"/>
+                            </h:selectOneMenu> 
+                        </p:column> 
+                    </p:row>  
+                    <p:row>  
+                        <p:column> <h:outputLabel for="est" value="Activo fijo? :"  />
+                            <h:selectOneRadio id="est" value="#{bienesController.actFijo}" label="Activo fijo? :" >
+                                <f:selectItem itemLabel="Si" itemValue="S" />
+                                <f:selectItem   itemLabel="No" itemValue="N" />
+                            </h:selectOneRadio>   
+                        </p:column>    
+                    </p:row>
+                    <p:row>
+                        <p:column><h:outputLabel value="C&oacute;digo Inventario:           "/></p:column>
+                        <p:column><h:inputText id="inv" value="#{bienesController.codigoInventario}"/></p:column>   
+                    </p:row>
+                    <p:row>
+                        <p:column><h:outputLabel value="Estado:         "/>
+                            <h:selectOneMenu value="#{bienesController.estatus}">
+                                <f:selectItem itemLabel="--Seleccione--" itemValue="0"/>
+                                <f:selectItems value="#{bienesController.estatuBien}" var="est" itemLabel="#{est.nombreEstatusBien}" itemValue="#{est.idEstatusBien}"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Unidad Activo Fijo:       " />
+                            <h:selectOneMenu id="uaf" value="#{bienesController.unidadAF}" disabled="#{bienesController.esAdm}">
+                                <p:ajax update="uadm" listener="#{bienesController.filtrarUnidadesAdm}" process="@this,tipUni"/>
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{bienesController.lstUnidadAF}" var="uAF" itemLabel="#{uAF.unidadActivoFijo} - #{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Unidad Administrativa:     " />
+                            <h:selectOneMenu  id="uadm" value="#{bienesController.unidadAdm}">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{bienesController.lstUnidadAdm}" var="uadm" itemLabel="#{uadm.afUnidadesAdministrativasPK.codigoUnidad} - #{uadm.nombreUnidad}" itemValue="#{uadm.afUnidadesAdministrativasPK.codigoUnidad}"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column><h:outputLabel value="Fecha Adquisici&oacute;n:     "/>
+                            <p:calendar id="fechaAdq1" value="#{bienesController.fecAdq1}" pattern="dd/MM/yyyy"/></p:column>
+                        <p:column>
+                            <h:outputLabel value="   a         "/>
+                            <p:calendar id="fechaAdq2" value="#{bienesController.fecAdq2}" pattern="dd/MM/yyyy"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>  <h:outputLabel value="Fuente:"/>
+                            <h:selectOneMenu value="#{bienesController.fuente}"> 
+                                <f:selectItem itemLabel="--Seleccione--" itemValue=""/>
+                                <f:selectItems value="#{bienesController.lstFuente}" var="fuente" itemLabel="#{fuente.nombre}" itemValue="#{fuente.idFuente}"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column> 
+                            <h:outputLabel value="Proyecto:      "/>
+                            <h:selectOneMenu value="#{bienesController.proyecto}"> 
+                                <f:selectItem itemLabel="--Seleccione--" itemValue=""/>
+                                <f:selectItems value="#{bienesController.lstProyecto}" var="proy" itemLabel="#{proy.nombreProyecto}" itemValue="#{proy.idProyecto}"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Fecha Creaci&oacute;n:"/>
+                            <p:calendar id="fechacrea1" value="#{bienesController.fecCrea1}" pattern="dd/MM/yyyy"/>
+                        </p:column>
+                        <p:column><h:outputLabel value="   a        "/>
+                            <p:calendar id="fechaCrea2" value="#{bienesController.fecCrea2}" pattern="dd/MM/yyyy"/></p:column>
+                    </p:row>
+                    <p:row>
+                         <p:column><h:outputLabel value="Motor:           "/></p:column> 
+                       <p:column><h:inputText id="motor" value="#{bienesController.motor}"/></p:column>   
+                    </p:row>
+                    <p:row>
+                         <p:column><h:outputLabel value="Chasis:           "/></p:column> 
+                       <p:column><h:inputText id="chasis" value="#{bienesController.chasis}"/></p:column>   
+                    </p:row>
+                      <p:row>
+                         <p:column><h:outputLabel value="Placa:           "/></p:column> 
+                       <p:column><h:inputText id="placa" value="#{bienesController.placa}"/></p:column>   
+                    </p:row>
+                </h:panelGrid>                        
+            </p:panel>   
+            <p:dialog id="dlgImprimir" widgetVar="dlgImprimir" header="Tipo de documento" modal="true" >
+                <p:panel>
+                    <p:outputLabel value="Fecha de generaci&oacute;n de reporte" escape="false"/>
+                    <h:panelGrid columns="2">
+                        <p:column> <h:outputLabel value="Fecha Reporte:"/> </p:column>
+                        <p:column><p:calendar id="fechaRep" value="#{bienesController.fecRep}" pattern="dd/MM/yyyy"/></p:column>
+
+                    </h:panelGrid>
+                </p:panel>
+                <f:facet name="footer">
+                    <p:commandButton value="Aceptar" onclick="this.form.target = PF('dlgImprimir').hide();" ajax="false" action="#{bienesController.imprimirVehiculos}"/>
+                    <p:commandButton value="Cancelar" ajax="true" onclick="PF('dlgImprimir').hide();"/>
+                </f:facet>
+            </p:dialog>
+
+            <p:panel id="pnlBienes">
+                <p:dataTable id="tBienes" value="#{bienesController.lstVehiculos}" var="bien" rowKey="#{bien.idBien}" 
+                         style="width: 100%"    paginator="true" rows="20"  paginatorPosition="top" scrollable="true"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+              
+                     <p:column headerText="C&oacute;digo Inventario" style="width: 80px">
+                         <h:outputText value="#{bien.codigoInventario}"/>
+                    </p:column>
+                    <p:column headerText="Descripci&oacute;n" style="width: 160px">
+                        <h:outputText value="#{bien.descripcionBien}"/>
+                    </p:column>
+                    <p:column headerText="Marca" style="width: 100px">
+                        <h:outputText value="#{bien.marca}"/>
+                    </p:column>
+                     <p:column headerText="Placa" style="width: 60px">
+                         <h:outputText value="#{bien.numeroPlaca}"/>
+                    </p:column>
+                    <p:column headerText="Motor" style="width: 60px">
+                         <h:outputText value="#{bien.numeroMotor}"/>
+                    </p:column>
+                    <p:column headerText="Chasis" style="width: 60px">
+                        <h:outputText value="#{bien.numeroChasis}"/>
+                    </p:column>
+                    <p:column headerText="Color" style="width: 60px">
+                        <h:outputText value="#{bien.colorCarroceria}"/>
+                    </p:column>
+                    <p:column headerText="Calidad" style="width: 60px">
+                        <h:outputText value="#{bien.calidad}"/>
+                    </p:column>
+                    <p:column headerText="Fecha Adquisici&oacute;n" style="width: 50px">
+                        <h:outputLabel value="#{bien.fechaAdquisicion}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputLabel>        
+                    </p:column>
+                  <p:column headerText="Valor Adquisici&oacute;n" style="width: 60px">
+                        <h:outputText value="#{bien.valorAdquisicion}" >
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText>    
+                    </p:column>
+                    <p:column headerText="Unidad Administrativa" style="width: 100px">
+                        <h:outputText value="#{bien.nombreUnidad}"/>
+                    </p:column>
+                    <p:column headerText="Asignado a" style="width: 100px">
+                        <h:outputText value="#{bien.asignado}"/>
+                     </p:column>
+                </p:dataTable>
+            </p:panel>
+        </ui:define>
+    </ui:composition>
+
+</html>
+

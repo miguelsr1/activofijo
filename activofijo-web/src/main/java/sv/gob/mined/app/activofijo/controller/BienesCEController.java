@@ -710,17 +710,32 @@ public class BienesCEController implements Serializable {
 
     public void existeCorre(AjaxBehaviorEvent event) {
         String tipoBien = cejb.getTBien(tipo).getCodigoTipoBien();
-        if (cejb.getBuscarCorrelativo(unidadAF, unidadAdm, tipoBien, correlativo)) {
+        if (!cejb.getBuscarCorrelativo(unidadAF, unidadAdm, tipo.toString(), correlativo)) {
             JsfUtil.mensajeCorrelativo();
         } else {
-            codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
+            if (bd.getIdBien()==null){
+               codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
+            }else {
+                if (!cejb.getBuscarBienTraslado(bd.getIdBien())){
+                   codigoInventario= bd.getCodigoInventario().split("-")[0]+"-"+bd.getCodigoInventario().split("-")[1]+"-"+correlativo;
+               
+                }else{
+                    codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
+                }
+                
+            }   
         }
 
     }
-
-    public void obtenerCorre() {
+ 
+  /*  public void obtenerCorre() {
         String tipoBien = cejb.getTBien(tipo).getCodigoTipoBien();
         correlativo = String.format("%04d", cejb.getCorrelativo(unidadAF, unidadAdm, tipo.toString()));
+        codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
+    }*/
+    public void obtenerCorre() {
+        String tipoBien = cejb.getTBien(tipo).getCodigoTipoBien();
+        correlativo = String.format("%04d", cejb.getCorrelativoCod(unidadAF, unidadAdm, tipoBien));
         codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
     }
 
@@ -733,6 +748,7 @@ public class BienesCEController implements Serializable {
 
         bd.setUnidadActivoFijo(unidadAF);
         bd.setCodigoUnidad(unidadAdm);
+     
         bd.setIdCatBien(cejb.getCatBien(cejb.getCategoria(tipo)));
 
         bd.setIdTipoBien(tipo); //.getCodigoTipoBien());
@@ -765,7 +781,8 @@ public class BienesCEController implements Serializable {
         }
         bd.setValorResidual(bd.getValorAdquisicion().multiply(new BigDecimal(0.1)));
         if (bd.getIdBien() == null) {
-            if (lote.equals("S")) {
+              if (lote.equals("S")) {
+                 
                 for (i = 1; i <= numLote; i++) {
                     bd.setIdBien(null);
                     if (i == 1) {
@@ -775,7 +792,7 @@ public class BienesCEController implements Serializable {
                         co = String.format("%04d", sum);
                     }
 
-                    if (!cejb.getBuscarCorrelativo(unidadAF, unidadAdm, tipo.toString(), co)) {
+                    if (cejb.getBuscarCorrelativo(unidadAF, unidadAdm, tipo.toString(), co)) {
                         bd.setCorrelativo(co);
                         codigoInventario = unidadAdm + "-" + tipoBien + "-" + co;
                     } else {
@@ -785,28 +802,29 @@ public class BienesCEController implements Serializable {
                     }
                     bd.setCodigoInventario(codigoInventario);
                     bejb.guardarBien(bd, usuDao.getLogin());
+                    correlativo = co;
                 }
                 JsfUtil.mensajeInsertLote(i - 1);
             } else {
 
                 // obtenerCorre();
-                if (!cejb.getBuscarCorrelativo(unidadAF, unidadAdm, tipo.toString(), correlativo)) {
+                if (cejb.getBuscarCorrelativo(unidadAF, unidadAdm, tipo.toString(), correlativo)) {
                     bd.setCorrelativo(correlativo);
                     codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
                 } else {
                     obtenerCorre();
-                    co = correlativo;
-                    bd.setCorrelativo(co);
+                    //co = correlativo;
+                    //bd.setCorrelativo(co);
                 }
                 bd.setCodigoInventario(codigoInventario);
                 bejb.guardarBien(bd, usuDao.getLogin());
                 JsfUtil.mensajeInsert();
             }
         } else {
-          /*  bd.setCorrelativo(correlativo);
-            codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
-            bd.setCodigoInventario(codigoInventario);*/
-            bejb.guardarBien(bd, usuDao.getLogin());
+             bd.setCorrelativo(correlativo);
+             bd.setCodigoInventario(codigoInventario);
+
+             bejb.guardarBien(bd, usuDao.getLogin());
             JsfUtil.mensajeInsert();
         }
         //  JsfUtil.mensajeAlerta("Bien Guardado satisfactoriamente");
@@ -946,7 +964,7 @@ public class BienesCEController implements Serializable {
         param.put("p_unidadAdm", unidadAdm);
         param.put("p_fecRep", fecRep);
         
-          JasperPrint jp= reb.getRpt(param, DescargoController.class.getClassLoader().getResourceAsStream(("reportes" + File.separator + "rep_solvencia_CE.jasper")));
+          JasperPrint jp= reb.getRpt(param, BienesCEController.class.getClassLoader().getResourceAsStream(("reportes" + File.separator + "rep_solvencia_CE.jasper")));
        
         jasperPrintList.add(jp);
      

@@ -94,6 +94,7 @@ public class BienesAdmController implements Serializable{
     private String serie;
     private String actFijo;
     private String responsable;
+    private String responsableAF;
     private Date fecAdq1;
     private Date fecLimit = new Date();
     private Date fecAdq2;
@@ -226,6 +227,14 @@ public class BienesAdmController implements Serializable{
 
     public String getUnidadAF() {
         return unidadAF;
+    }
+
+    public String getResponsableAF() {
+        return responsableAF;
+    }
+
+    public void setResponsableAF(String responsableAF) {
+        this.responsableAF = responsableAF;
     }
 
     public boolean isPnlLote() {
@@ -653,8 +662,11 @@ public class BienesAdmController implements Serializable{
     public void imprimirBienes() throws IOException, JRException {
         HashMap param = new HashMap();
         SimpleDateFormat formateador = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new Locale("es"));
+        if (fecRep == null) {
+            fecRep =cejb.getFechaActual();
+        }
 
-        UtilReport.rptGenerico((HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse(), bejb.getLst(unidadAF,unidadAdm, formateador.format(fecRep), lstBienes, usuDao.getLogin()), param, "rep_mobiliario.jasper");
+        UtilReport.rptGenerico((HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse(), bejb.getLst(unidadAF, unidadAdm, formateador.format(fecRep), lstBienes, usuDao.getLogin()), param, "rep_mobiliario.jasper");
 
         //  UtilReport.rptGenerico((HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse(),param, "rep_mobiliario.jasper", cejb.getEm());
     }
@@ -702,18 +714,19 @@ public class BienesAdmController implements Serializable{
         }
 
     }
-
+ 
     public void obtenerCorre() {
-        String tBien = cejb.getTBien(tipo).getCodigoTipoBien();
-        correlativo = String.format("%03d", cejb.getCorrelativo(unidadAF, unidadAdm, tipo.toString()));
-        codigoInventario = unidadAdm + "-" + tBien + "-" + correlativo;
+        String tipoBien = cejb.getTBien(tipo).getCodigoTipoBien();
+        correlativo = String.format("%03d", cejb.getCorrelativoCod(unidadAF, unidadAdm, tipoBien));
+        codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
     }
+
 
     public void guardarBien() {
         int i = 0;
         String co;
        if (tipo>0 && tipo!=null) {
-        String tBien = cejb.getTBien(tipo).getCodigoTipoBien();
+        String tipoBien = cejb.getTBien(tipo).getCodigoTipoBien();
 
         bd.setUnidadActivoFijo(unidadAF);
         bd.setCodigoUnidad(unidadAdm);
@@ -723,7 +736,11 @@ public class BienesAdmController implements Serializable{
         bd.setCodigoCalidadBien(cejb.getCalidadBien(calidad));
         bd.setIdEstatusBien(cejb.getEstatusBien(estatus));
         bd.setDescripcionBien(desBien);
-        bd.setIdFuente(fuente);
+        if (fuente == null) {
+            bd.setIdFuente(0l);
+        } else {
+            bd.setIdFuente(fuente);
+        }
         bd.setEsValorEstimado(bd.getEsValorEstimado());
         if (marcaM != null) {
             bd.setMarca(marcaM);
@@ -755,9 +772,9 @@ public class BienesAdmController implements Serializable{
                         co = String.format("%03d", sum);
                     }
 
-                    if (!cejb.getBuscarCorrelativo(unidadAF, unidadAdm, tipo.toString(), co)) {
+                    if (cejb.getBuscarCorrelativo(unidadAF, unidadAdm, tipo.toString(), co)) {
                         bd.setCorrelativo(co);
-                        codigoInventario = unidadAdm + "-" + tBien + "-" + co;
+                        codigoInventario = unidadAdm + "-" + tipoBien + "-" + co;
                     } else {
                         obtenerCorre();
                         co = correlativo;
@@ -765,16 +782,19 @@ public class BienesAdmController implements Serializable{
                     }
                     bd.setCodigoInventario(codigoInventario);
                     bejb.guardarBien(bd, usuDao.getLogin());
+                    correlativo = co;
                 }
                 JsfUtil.mensajeInsertLote(i - 1);
             } else {
 
                 // obtenerCorre();
-                if (!cejb.getBuscarCorrelativo(unidadAF, unidadAdm, tipo.toString(), correlativo)) {
+                if (cejb.getBuscarCorrelativo(unidadAF, unidadAdm, tipo.toString(), correlativo)) {
                     bd.setCorrelativo(correlativo);
-                    codigoInventario = unidadAdm + "-" + tBien + "-" + correlativo;
+                    codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
                 } else {
                     obtenerCorre();
+                    co = correlativo;
+                    bd.setCorrelativo(co);
                 }
                 bd.setCodigoInventario(codigoInventario);
                 bejb.guardarBien(bd, usuDao.getLogin());
@@ -782,7 +802,6 @@ public class BienesAdmController implements Serializable{
             }
         } else {
             bd.setCorrelativo(correlativo);
-            codigoInventario = unidadAdm + "-" + tBien + "-" + correlativo;
             bd.setCodigoInventario(codigoInventario);
             bejb.guardarBien(bd, usuDao.getLogin());
             JsfUtil.mensajeInsert();
@@ -801,15 +820,14 @@ public class BienesAdmController implements Serializable{
     }
 
     public void buscarBien() {
-        String condicion;
+           String condicion;
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
         condicion = " A.UNIDAD_ACTIVO_FIJO='" + unidadAF + "' AND A.CODIGO_UNIDAD= '" + unidadAdm + "' AND";
-        
         if (estatus != 0) {
             condicion = condicion + " A.ID_ESTATUS_BIEN =" + estatus + " and ";
         }
-        
+
         if (tipo != 0) {
             condicion = condicion + " A.id_TIPO_BIEN = " + tipo + " AND";
         }
@@ -821,7 +839,7 @@ public class BienesAdmController implements Serializable{
                 condicion = condicion + " A.VALOR_ADQUISICION <600 AND";
             }
         }
-       if (codigoInventario != null && !codigoInventario.isEmpty()) {
+        if (codigoInventario != null && !codigoInventario.isEmpty()) {
             condicion = condicion + " A.CODIGO_INVENTARIO like '%" + codigoInventario + "%' and ";
         }
         if (fecAdq1 != null) {
@@ -830,15 +848,13 @@ public class BienesAdmController implements Serializable{
         if (fecAdq2 != null) {
             condicion = condicion + " A.FECHA_ADQUISICION <= TO_DATE('" + sdf.format(fecAdq2) + "','DD/MM/YYYY') AND";
         }
-        if (fuente != 0) {
-            condicion = condicion + " A.ID_FUENTE =" + fuente + " AND";
-        }
-        if (proyecto != 0) {
-            condicion = condicion + " A.ID_proyecto =" + proyecto + " AND";
+        if (formaAdq != 0) {
+            condicion = condicion + " A.ID_FORMA_ADQUISICION =" + formaAdq + " AND";
         }
         condicion = condicion.substring(0, condicion.length() - 4);
 
         lstBienes = bejb.buscarBien(condicion);
+        
     }
 
     public void ingresaBienes() {
@@ -911,6 +927,7 @@ public class BienesAdmController implements Serializable{
     }
 
     public void imprimirSolvencia() throws IOException, JRException {
+        
          List<JasperPrint> jasperPrintList = new ArrayList();
         HashMap param = new HashMap();
         SimpleDateFormat formateador = new SimpleDateFormat("dd 'dias del mes de' MMMM 'del año' yyyy", new Locale("es"));
@@ -919,7 +936,7 @@ public class BienesAdmController implements Serializable{
         //    String  year= String.valueOf(cal.get(Calendar.YEAR)); 
         String fechaRep = formateador.format(cal.getTime());
         // String Responsable= usuDao.getNombres()+' '+usuDao.getApellidos();
-ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
         param.put("p_RutaImg", ctx.getRealPath(PATH_IMAGENES));
         
         param.put("p_periodo", periodo);
@@ -927,8 +944,9 @@ ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExter
         param.put("p_unidadAF", unidadAF);
         param.put("p_unidadAdm", unidadAdm);
         param.put("p_fecRep", fechaRep);
+        param.put("p_representanteAF", responsableAF);
 
-         JasperPrint jp= reb.getRpt(param, BienesAdmController.class.getClassLoader().getResourceAsStream(("reportes" + File.separator + "rep_solvencia_CE.jasper")));
+        JasperPrint jp= reb.getRpt(param, BienesAdmController.class.getClassLoader().getResourceAsStream(("reportes" + File.separator + "rep_solvencia_ADM.jasper")));
        
         jasperPrintList.add(jp);
      

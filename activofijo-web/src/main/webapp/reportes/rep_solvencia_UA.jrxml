@@ -17,6 +17,7 @@
 	<parameter name="p_RutaImg" class="java.lang.String">
 		<defaultValueExpression><![CDATA["C:\\Java\\sistemas\\activofijo-web\\src\\main\\webapp\\resources\\images\\"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="p_fecha_actualizacion" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[Select af.unidad_activo_fijo,af.NOMBRE_UNIDAD_AF,a.codigo_unidad, a.nombre_unidad
 from af_unidades_administrativas a LEFT OUTER join af_unidades_activo_fijo af on a.unidad_activo_fijo = af.unidad_activo_fijo
@@ -32,11 +33,11 @@ order by a.codigo_unidad]]>
 		<groupHeader>
 			<band height="56">
 				<textField>
-					<reportElement uuid="bccab9f2-6710-4cd4-882c-fbf94ef2961e" x="115" y="30" width="457" height="20"/>
+					<reportElement uuid="bccab9f2-6710-4cd4-882c-fbf94ef2961e" x="69" y="23" width="457" height="20"/>
 					<textElement textAlignment="Center">
 						<font size="14" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["CONSTANCIA DE ENTREGA DE INVENTARIO"]]></textFieldExpression>
+					<textFieldExpression><![CDATA["CONSTANCIA DE ACTUALIZACIÓN DE INVENTARIO"]]></textFieldExpression>
 				</textField>
 				<image>
 					<reportElement uuid="abfdfa5a-36c3-42ae-9ae1-38f883925bca" x="5" y="0" width="55" height="56"/>
@@ -65,25 +66,20 @@ order by a.codigo_unidad]]>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="10" y="10" width="539" height="56"/>
 				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["EL SUSCRITO(A) DEPARTAMENTO DE ACTIVO FIJO DEL NIVEL CENTRAL HACE CONSTAR: QUE "+$F{NOMBRE_UNIDAD}.trim()+ " CON CODIGO N° "+$F{CODIGO_UNIDAD}.trim()+" SE ENCUENTRA SOLVENTE CON LA PRESENTACION DEL INVENTARIO DE MOBILIARIO Y EQUIPO, POR MEDIO DEL SISTEMA INFORMATICO DE ACTIVO FIJO PARA EL AÑO " +$P{p_periodo}.trim()+ " EL CUAL QUEDA SUJETO A REVISION. "]]></textFieldExpression>
+				<textFieldExpression><![CDATA["EL DEPARTAMENTO DE ACTIVO FIJO CENTRAL HACE CONSTAR: QUE LA UNIDAD ADMINISTRATIVA "+$F{NOMBRE_UNIDAD}.trim()+ " CON CODIGO DE ACTIVO FIJO "+$F{CODIGO_UNIDAD}.trim()+" SE ENCUENTRA SOLVENTE CON LA PRESENTACION DEL INVENTARIO DE MOBILIARIO,EQUIPO Y VEHICULOS AL "+$P{p_fecha_actualizacion} +" POR MEDIO DEL SISTEMA INFORMATICO DE ACTIVO FIJO PARA EL AÑO " +$P{p_periodo}.trim()+ " EL CUAL QUEDA SUJETO A REVISION. "]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="10" y="85" width="539" height="32"/>
+				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="10" y="85" width="539" height="40"/>
 				<textElement textAlignment="Justified"/>
 				<textFieldExpression><![CDATA["CUMPLIENDO CON LA NORMATIVA N) DEL INSTRUCTIVO DE ACTIVO FIJO LA CUAL DETERMINA PRESENTAR EL INVENTARIO A MAS TARDAR EL ÚLTIMO DÍA HÁBIL DEL MES DE NOVIEMBRE DE CADA AÑO. "]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="9" y="117" width="539" height="53"/>
-				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["NOTA: Es el Jefe de la Unidad Administrativa central o departamental el único responsable de dar cumplimiento al Instructivo del Sistema de Registro y Control de Bienes Muebles del MINED, exonerando de responsabilidad a nivel central, así mismo superar cualquier observación o corrección posterior (si en caso hubiese), y para usos que el interesado estime conveniente se extiende la presente."]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="11" y="193" width="539" height="17"/>
+				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="10" y="135" width="539" height="17"/>
 				<textElement textAlignment="Justified"/>
 				<textFieldExpression><![CDATA["Al "+$P{p_fecRep}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="13" y="243" width="375" height="16"/>
+				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="13" y="243" width="271" height="16"/>
 				<textElement textAlignment="Justified"/>
 				<textFieldExpression><![CDATA["TÉCNICO DE ACTIVO FIJO"]]></textFieldExpression>
 			</textField>
@@ -97,15 +93,8 @@ order by a.codigo_unidad]]>
 			<line>
 				<reportElement uuid="456ee7f9-4817-4518-8bc3-b5c9c77bc1b8" x="4" y="315" width="567" height="1"/>
 			</line>
-			<textField>
-				<reportElement uuid="bccab9f2-6710-4cd4-882c-fbf94ef2961e" x="94" y="342" width="457" height="20"/>
-				<textElement textAlignment="Center">
-					<font size="14" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["CONSTANCIA DE ENTREGA DE INVENTARIO"]]></textFieldExpression>
-			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="10" y="629" width="375" height="16"/>
+				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="12" y="622" width="269" height="16"/>
 				<textElement textAlignment="Justified"/>
 				<textFieldExpression><![CDATA["TÉCNICO DE ACTIVO FIJO"]]></textFieldExpression>
 			</textField>
@@ -117,17 +106,17 @@ order by a.codigo_unidad]]>
 				<textFieldExpression><![CDATA["COPIA"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="612f2161-85cc-4acf-9eef-aea76e3c759c" x="15" y="224" width="371" height="20"/>
+				<reportElement uuid="612f2161-85cc-4acf-9eef-aea76e3c759c" x="15" y="224" width="269" height="20"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$P{p_responsable}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="10" y="569" width="539" height="17"/>
+				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="14" y="523" width="539" height="17"/>
 				<textElement textAlignment="Justified"/>
 				<textFieldExpression><![CDATA["Al "+$P{p_fecRep}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="612f2161-85cc-4acf-9eef-aea76e3c759c" x="13" y="610" width="371" height="20"/>
+				<reportElement uuid="612f2161-85cc-4acf-9eef-aea76e3c759c" x="13" y="601" width="268" height="20"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$P{p_responsable}.toUpperCase()]]></textFieldExpression>
 			</textField>
@@ -136,20 +125,38 @@ order by a.codigo_unidad]]>
 				<imageExpression><![CDATA[$P{p_RutaImg}+File.separator+"escudo.png"]]></imageExpression>
 			</image>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="15" y="404" width="539" height="56"/>
-				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["EL SUSCRITO(A) DEPARTAMENTO DE ACTIVO FIJO DEL NIVEL CENTRAL HACE CONSTAR: QUE "+$F{NOMBRE_UNIDAD}.trim()+ " CON CODIGO N° "+$F{CODIGO_UNIDAD}.trim()+" SE ENCUENTRA SOLVENTE CON LA PRESENTACION DEL INVENTARIO DE MOBILIARIO Y EQUIPO, POR MEDIO DEL SISTEMA INFORMATICO DE ACTIVO FIJO PARA EL AÑO " +$P{p_periodo}.trim()+ " EL CUAL QUEDA SUJETO A REVISION. "]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="15" y="505" width="539" height="53"/>
-				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["NOTA: Es el Jefe de la Unidad Administrativa central o departamental el único responsable de dar cumplimiento al Instructivo del Sistema de Registro y Control de Bienes Muebles del MINED, exonerando de responsabilidad a nivel central, así mismo superar cualquier observación o corrección posterior (si en caso hubiese), y para usos que el interesado estime conveniente se extiende la presente."]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="16" y="473" width="539" height="32"/>
 				<textElement textAlignment="Justified"/>
 				<textFieldExpression><![CDATA["CUMPLIENDO CON LA NORMATIVA N) DEL INSTRUCTIVO DE ACTIVO FIJO LA CUAL DETERMINA PRESENTAR EL INVENTARIO A MAS TARDAR EL ÚLTIMO DÍA HÁBIL DEL MES DE NOVIEMBRE DE CADA AÑO. "]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement uuid="bccab9f2-6710-4cd4-882c-fbf94ef2961e" x="91" y="339" width="457" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CONSTANCIA DE ACTUALIZACIÓN DE INVENTARIO"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement uuid="e4e3b1b8-2b0b-4ce0-bb83-09bdf078167b" x="16" y="405" width="539" height="56"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["EL DEPARTAMENTO DE ACTIVO FIJO CENTRAL HACE CONSTAR: QUE LA UNIDAD ADMINISTRATIVA "+$F{NOMBRE_UNIDAD}.trim()+ " CON CODIGO DE ACTIVO FIJO "+$F{CODIGO_UNIDAD}.trim()+" SE ENCUENTRA SOLVENTE CON LA PRESENTACION DEL INVENTARIO DE MOBILIARIO,EQUIPO Y VEHICULOS AL"+$P{p_fecha_actualizacion} +" POR MEDIO DEL SISTEMA INFORMATICO DE ACTIVO FIJO PARA EL AÑO " +$P{p_periodo}.trim()+ " EL CUAL QUEDA SUJETO A REVISION. "]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="164dd022-7476-4d6d-b441-a345222ffcfe" x="18" y="598" width="263" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="89213455-a97c-4189-a920-d782b7c02dca" x="15" y="581" width="31" height="20"/>
+				<textElement/>
+				<text><![CDATA[F.]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="164dd022-7476-4d6d-b441-a345222ffcfe" x="21" y="221" width="263" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="89213455-a97c-4189-a920-d782b7c02dca" x="18" y="204" width="31" height="20"/>
+				<textElement/>
+				<text><![CDATA[F.]]></text>
+			</staticText>
 		</band>
 	</detail>
 	<columnFooter>

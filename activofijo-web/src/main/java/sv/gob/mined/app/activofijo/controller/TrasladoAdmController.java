@@ -16,6 +16,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.JRException;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import sv.gob.mined.activofijo.ejb.BienesEJB;
 import sv.gob.mined.activofijo.ejb.CatalogosEJB;
@@ -37,7 +38,7 @@ import sv.gob.mined.seguridad.web.controller.LoginController;
  */
 @ManagedBean
 @ViewScoped
-public class TrasladoDepController implements Serializable {
+public class TrasladoAdmController implements Serializable {
 
     @EJB
     public CatalogosEJB cejb;
@@ -89,7 +90,7 @@ public class TrasladoDepController implements Serializable {
     public String codigoTras;
     public Long idTraslado;
     private Usuario usuDao = new Usuario();
-    public TrasladoDepController() {
+    public TrasladoAdmController() {
 
     }
 
@@ -108,7 +109,8 @@ public class TrasladoDepController implements Serializable {
         unidadAF = cejb.getUnidadAf(usuDao.getCodigoEntidad(), tipoUnidad);  
         
         unidadAFOrig=unidadAF;
-         tipUniOrg=tipoUnidad;
+        unidadAdmOrg=unidadAdm;
+        tipUniOrg=tipoUnidad;
          lstAFOrg =cejb.getUnidadAf();
          
          lstAFDes =cejb.getUnidadAf();
@@ -592,14 +594,13 @@ public class TrasladoDepController implements Serializable {
         String condicion="";
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         
-        if(!codigoTras.isEmpty() && codigoTras !=null){ condicion=condicion +" a.codigo_traslado='"+codigoTras+"' and "; }
+        if(!codigoTras.isEmpty() && codigoTras!=null){ condicion=condicion +" a.codigo_traslado='"+codigoTras+"' and "; }
         if (fecTraslado!=null){ condicion=condicion+ " a.fecha_traslado= to_date('"+sdf.format(fecTraslado)+"','dd/mm/yyyy') and ";}
         if (!unidadAFOrig.equals("0")) { condicion=condicion+ " a.unidad_af_origen='"+unidadAFOrig+"' and ";}
         if (!unidadAdmOrg.equals("0")) { condicion=condicion+ " a.codigo_unidad_origen='"+unidadAdmOrg+"' and ";}
         if (!unidadAfDest.equals("0")) { condicion=condicion+ " a.unidad_af_dest='"+unidadAfDest+"' and ";}
         if (!unidadAdmDes.equals("0")) { condicion=condicion+ " a.codigo_unidad_dest='"+unidadAdmDes+"' and ";}
         if (!estado.equals("3")){ condicion=condicion+ " a.estado='"+estado+"' and ";   }
-        
         
         if (!condicion.equals("")){
             condicion=" where "+condicion;
@@ -610,8 +611,6 @@ public class TrasladoDepController implements Serializable {
     }
     
     public void limpiarFiltro(){
-           tipUniOrg="UA";
-           unidadAdmOrg="0";
            tipUniDes="UA";
            unidadAfDest="0";
            unidadAdmDes="0";
@@ -637,17 +636,17 @@ public class TrasladoDepController implements Serializable {
         tras.setObservacion(observacion);
         bejb.guardarTraslado(tras, JsfUtil.getVariableSession("usuario").toString());
        
-        JsfUtil.redireccionar("buscarTrasladosDep.mined?faces-redirect=true");   
+        JsfUtil.redireccionar("buscarTrasladosAdm.mined?faces-redirect=true");   
     }
     
     public void guardarTraslado(){
-        if(!lstBienesTrasladar.isEmpty()){
-            if (tras.getIdTraslado()==null){
-                tras.setUnidadAfOrigen(unidadAFOrig);
-                tras.setCodigoUnidadOrigen(unidadAdmOrg);
-                tras.setIdTipoTraslado(tipTraslado);
-                tras.setEstado('0');
-
+        if (!lstBienesTrasladar.isEmpty()){
+        if (tras.getIdTraslado()==null){
+            tras.setUnidadAfOrigen(unidadAFOrig);
+            tras.setCodigoUnidadOrigen(unidadAdmOrg);
+            tras.setIdTipoTraslado(tipTraslado);
+            tras.setEstado('0');
+        
             if (tipTraslado.equals('3')){
                 tras.setUnidadAfDest(unidadAfDest);
                 tras.setCodigoUnidadDest(unidadAdmDes);
@@ -661,11 +660,12 @@ public class TrasladoDepController implements Serializable {
                 bejb.guardarTrasladoDetalle(lstBienesTrasladar,tras);
             }
            JsfUtil.mensajeAlerta("Traslado Almacenado");
-           JsfUtil.redireccionar("/app/mantenimientos/trasladoBienesDep.mined?faces-redirect=true&idTraslado="+tras.getIdTraslado());
-        }else{
+           JsfUtil.redireccionar("/app/mantenimientos/trasladoBienesAdm.mined?faces-redirect=true&idTraslado="+tras.getIdTraslado());
+       //   JsfUtil.redireccionar("buscarTrasladosCE.mined?faces-redirect=true");
+        }
+        else{
             JsfUtil.mensajeError("Traslado sin bienes asociados");
         }
-        
     }
 
     public List<VwBienes> dropBienesTrasladar() {
@@ -688,7 +688,7 @@ public class TrasladoDepController implements Serializable {
             bejb.actualizarBienTraslado(lstBienesTrasladar,tras.getCodigoUnidadDest(),tras.getUnidadAfDest());
         }
         
-       JsfUtil.redireccionar("buscarTrasladosDep.mined?faces-redirect=true");
+       JsfUtil.redireccionar("buscarTrasladosAdm.mined?faces-redirect=true");
         
         
     }
@@ -726,9 +726,9 @@ public class TrasladoDepController implements Serializable {
 
       public void nuevoTraslado() {
         
-        JsfUtil.redireccionar("/app/mantenimientos/trasladoBienesDep.mined?faces-redirect=true");
+        JsfUtil.redireccionar("/app/mantenimientos/trasladoBienesAdm.mined?faces-redirect=true");
     }
     public void ingresaTraslado() {
-        JsfUtil.redireccionar("/app/mantenimientos/trasladoBienesDep.mined?faces-redirect=true&idTraslado="+idTraslado);
+        JsfUtil.redireccionar("/app/mantenimientos/trasladoBienesAdm.mined?faces-redirect=true&idTraslado="+idTraslado);
     }
 }

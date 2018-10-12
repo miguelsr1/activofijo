@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -42,7 +43,7 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "AfUnidadesAdministrativas.findByFechaModifica", query = "SELECT a FROM AfUnidadesAdministrativas a WHERE a.fechaModifica = :fechaModifica"),
     @NamedQuery(name = "AfUnidadesAdministrativas.findByUsuarioModifica", query = "SELECT a FROM AfUnidadesAdministrativas a WHERE a.usuarioModifica = :usuarioModifica")})
 public class AfUnidadesAdministrativas implements Serializable {
-    private static final long serialVersionUID = 1L;
+
     @EmbeddedId
     protected AfUnidadesAdministrativasPK afUnidadesAdministrativasPK;
     @Column(name = "NOMBRE_UNIDAD")
@@ -75,7 +76,7 @@ public class AfUnidadesAdministrativas implements Serializable {
     private String usuarioModifica;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "afUnidadesAdministrativas")
     private List<AfSeccionesUnidad> afSeccionesUnidadList;
-
+    
     public AfUnidadesAdministrativas() {
     }
 
@@ -228,5 +229,5 @@ public class AfUnidadesAdministrativas implements Serializable {
     public String toString() {
         return nombreUnidad ;
     }
-    
+  
 }

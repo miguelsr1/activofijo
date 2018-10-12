@@ -21,7 +21,8 @@
         <param-name>javax.faces.FACELETS_BUFFER_SIZE</param-name>
         <param-value>500000</param-value>
     </context-param> 
-    
+      
+
     <filter>
         <filter-name>FilterWeb</filter-name>
         <filter-class>sv.gob.mined.seguridad.web.util.FilterWeb</filter-class>
