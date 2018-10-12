@@ -1,6 +1,5 @@
 package sv.gob.mined.app.activofijo.controller;
 
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -36,8 +35,8 @@ public class UnidadAdministrativaController implements Serializable {
     @EJB
     public BienesEJB bejb;
     //public List<AfUnidadesAdministrativas> lstUnidadAdm = new ArrayList<AfUnidadesAdministrativas>();
-    public AfUnidadesAdministrativas unidad= new AfUnidadesAdministrativas();
-    
+    public AfUnidadesAdministrativas unidad = new AfUnidadesAdministrativas();
+
     private int rowDrop = 0;
     private String unidadAdm;
     private String codigoUnidad;
@@ -49,16 +48,17 @@ public class UnidadAdministrativaController implements Serializable {
     private String nomResponsable;
     private String tipoUni;
     private String unidadAF;
-    private String tipoUnidad="UA";
+    private String tipoUnidad = "UA";
     private String tipoUsu;
     private String paramUadmin;
     private String paramUAF;
-    
-    private boolean actAF=false;
-    private boolean actAd=false;
+
+    private boolean actAF = false;
+    private boolean actAd = false;
     private Usuario usuDao = new Usuario();
     private List<AfUnidadesAdministrativas> lstUnidadAdm = new ArrayList();
     private AfUnidadesAdministrativasPK pk = new AfUnidadesAdministrativasPK();
+
     public UnidadAdministrativaController() {
 
     }
@@ -69,53 +69,52 @@ public class UnidadAdministrativaController implements Serializable {
 
     @PostConstruct
     public void cargarUnidad() {
-        
-         usuDao = ((LoginController) FacesContext.getCurrentInstance().getApplication().getELResolver().
+
+        usuDao = ((LoginController) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "loginController")).getUsuario();
         tipoUsu = usuDao.getTipoUsuario().toString();
-        if (tipoUsu.equals("I")){
-              actAF = false;
-              actAd=false;
-              tipoUnidad="UA";
-            
-          }else {
-            if (tipoUsu.equals("D")){
+        if (tipoUsu.equals("I")) {
+            actAF = false;
+            actAd = false;
+            tipoUnidad = "UA";
+
+        } else {
+            if (tipoUsu.equals("D")) {
                 actAF = true;
-                actAd=false;
-                tipoUnidad="UA";
-            }else{
-                if (tipoUsu.equals("A")){
+                actAd = false;
+                tipoUnidad = "UA";
+            } else {
+                if (tipoUsu.equals("A")) {
                     actAF = true;
-                    actAd=true;
-                    tipoUnidad="UA";
-                }
-                else{
+                    actAd = true;
+                    tipoUnidad = "UA";
+                } else {
                     actAF = true;
-                    actAd=true;
-                    tipoUnidad="CE";
+                    actAd = true;
+                    tipoUnidad = "CE";
                 }
-          }
+            }
         }
-       
-     /*   unidadAdm = usuDao.getCodigoEntidad();
+
+        /*   unidadAdm = usuDao.getCodigoEntidad();
         unidadAF = cejb.getUnidadAf(usuDao.getCodigoEntidad(), tipoUnidad); 
         lstUnidadAdm = cejb.getUnidadAdm(unidadAF, tipoUnidad);
-       */ 
-        if (JsfUtil.getRequestParameter("paramUAF")!=null){ 
-            paramUAF =JsfUtil.getRequestParameter("paramUAF");
-            paramUadmin=JsfUtil.getRequestParameter("paramUadmin");
-            unidad= cejb.getUnidadAdmin(paramUAF, paramUadmin);
-            unidadAF =unidad.getAfUnidadesAdministrativasPK().getUnidadActivoFijo();
-            codigoUnidad =unidad.getAfUnidadesAdministrativasPK().getCodigoUnidad();
+         */
+        if (JsfUtil.getRequestParameter("paramUAF") != null) {
+            paramUAF = JsfUtil.getRequestParameter("paramUAF");
+            paramUadmin = JsfUtil.getRequestParameter("paramUadmin");
+            unidad = bejb.getUnidadPk(paramUAF, paramUadmin);
+            /*unidadAF = unidad.getAfUnidadesAdministrativasPK().getUnidadActivoFijo();
+            codigoUnidad = unidad.getAfUnidadesAdministrativasPK().getCodigoUnidad();
             nombreUnidad = unidad.getNombreUnidad();
             direccion = unidad.getDireccion();
             nombreDir = unidad.getNombreDirector();
             cargoDir = unidad.getCargoDirector();
             telefono = unidad.getTelefono();
             nomResponsable = unidad.getNombreResponsable();
-            tipoUni = unidad.getTipoUnidad();
+            tipoUni = unidad.getTipoUnidad();*/
         }
-      
+
     }
 
     public String getParamUadmin() {
@@ -141,7 +140,6 @@ public class UnidadAdministrativaController implements Serializable {
     public void setPk(AfUnidadesAdministrativasPK pk) {
         this.pk = pk;
     }
-   
 
     public boolean isActAF() {
         return actAF;
@@ -159,8 +157,6 @@ public class UnidadAdministrativaController implements Serializable {
         this.actAd = actAd;
     }
 
-  
-   
     public String getTipoUsu() {
         return tipoUsu;
     }
@@ -169,25 +165,22 @@ public class UnidadAdministrativaController implements Serializable {
         this.tipoUsu = tipoUsu;
     }
 
-  
+    public String getNombreUnidad(String codigo) {
+        return (cejb.nomUnidadAf(codigo));
+    }
 
-   public String getNombreUnidad(String codigo){
-        return (cejb.nomUnidadAf(codigo)) ;   
-   }
-   
-   public String getTipoTraslado(String codigo){
-       return (cejb.tipoTraslado(codigo));
-   }
-   
-   public String getNombreAdm(String codigo,String tipo){
-          return cejb.NomUnidad(codigo,tipo);
-   }
-   
-   public String getTipoUnidad(String codigo){
-       return cejb.getTipoUnidad(codigo);
-   }
-   
-  
+    public String getTipoTraslado(String codigo) {
+        return (cejb.tipoTraslado(codigo));
+    }
+
+    public String getNombreAdm(String codigo, String tipo) {
+        return cejb.NomUnidad(codigo, tipo);
+    }
+
+    public String getTipoUnidad(String codigo) {
+        return cejb.getTipoUnidad(codigo);
+    }
+
     public String getTipoUnidad() {
         return tipoUnidad;
     }
@@ -195,9 +188,6 @@ public class UnidadAdministrativaController implements Serializable {
     public void setTipoUnidad(String tipoUnidad) {
         this.tipoUnidad = tipoUnidad;
     }
-
-    
-
 
     public int getRowDrop() {
         return rowDrop;
@@ -207,8 +197,7 @@ public class UnidadAdministrativaController implements Serializable {
         this.rowDrop = rowDrop;
     }
 
-  
- public List<AfUnidadesActivoFijo> getLstUnidadAF() {
+    public List<AfUnidadesActivoFijo> getLstUnidadAF() {
         return cejb.getUnidadAf();
     }
 
@@ -216,7 +205,7 @@ public class UnidadAdministrativaController implements Serializable {
         //   activo=true;
         return lstUnidadAdm;
     }
-   
+
     public String getUnidadAF() {
         return unidadAF;
     }
@@ -297,8 +286,6 @@ public class UnidadAdministrativaController implements Serializable {
         this.tipoUni = tipoUni;
     }
 
-   
-
     public String getUnidadAdm() {
         return unidadAdm;
     }
@@ -307,91 +294,102 @@ public class UnidadAdministrativaController implements Serializable {
         this.unidadAdm = unidadAdm;
     }
 
-    public void filtrarUnidadesAdm(){
-       lstUnidadAdm=cejb.getUnidadAdm(unidadAF,tipoUnidad);
+    public void filtrarUnidadesAdm() {
+        lstUnidadAdm = cejb.getUnidadAdm(unidadAF, tipoUnidad);
     }
-
-   
 
     public void unidadId(SelectEvent event) {
         lstUnidadAdm = cejb.getUnidadAdm(paramUadmin, JsfUtil.getVariableSession("usuario").toString());
     }
-   
-    
-    
-    public void buscarUnidad(){
-        String condicion="";
+
+    public void buscarUnidad() {
+        String condicion = "";
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        
-         if (!unidadAF.equals("0")) { condicion=condicion+ " a.unidad_activo_fijo='"+unidadAF+"' and ";}
-        if (!codigoUnidad.isEmpty() && !codigoUnidad.equals("")) { condicion=condicion+ " a.codigo_unidad='"+codigoUnidad+"' and ";}
-        if (!nombreUnidad.isEmpty() && !nombreUnidad.equals("")) { condicion=condicion+ " a.nombre_unidad like '%"+nombreUnidad+"%' and ";}
-        if (!cargoDir.isEmpty() && !cargoDir.equals("")) { condicion=condicion+ " a.cargo_director='"+cargoDir+"' and ";}
-        if (!nombreDir.isEmpty() && !nombreDir.equals("")) { condicion=condicion+ " a.nombre_director like '%"+nombreDir+"%' and ";}
-        if (!telefono.isEmpty() && !telefono.equals("")) { condicion=condicion+ " a.telefono like '%"+telefono+"%' and ";}
-        if (!nomResponsable.isEmpty() && !nomResponsable.equals("")) { condicion=condicion+ " a.nombre_responsable like '%"+nomResponsable+"%' and ";}
-        if (!tipoUni.isEmpty() && !tipoUni.equals("PR")) { condicion=condicion+ " a.tipo_Unidad like '"+tipoUni+"' and ";}
-        
-        if (!condicion.equals("")){
-            condicion =condicion.substring(0,condicion.length()-4);
+
+        if (!unidadAF.equals("0")) {
+            condicion = condicion + " a.unidad_activo_fijo='" + unidadAF + "' and ";
         }
-        
+        if (!codigoUnidad.isEmpty() && !codigoUnidad.equals("")) {
+            condicion = condicion + " a.codigo_unidad='" + codigoUnidad + "' and ";
+        }
+        if (!nombreUnidad.isEmpty() && !nombreUnidad.equals("")) {
+            condicion = condicion + " a.nombre_unidad like '%" + nombreUnidad + "%' and ";
+        }
+        if (!cargoDir.isEmpty() && !cargoDir.equals("")) {
+            condicion = condicion + " a.cargo_director='" + cargoDir + "' and ";
+        }
+        if (!nombreDir.isEmpty() && !nombreDir.equals("")) {
+            condicion = condicion + " a.nombre_director like '%" + nombreDir + "%' and ";
+        }
+        if (!telefono.isEmpty() && !telefono.equals("")) {
+            condicion = condicion + " a.telefono like '%" + telefono + "%' and ";
+        }
+        if (!nomResponsable.isEmpty() && !nomResponsable.equals("")) {
+            condicion = condicion + " a.nombre_responsable like '%" + nomResponsable + "%' and ";
+        }
+        if (!tipoUni.isEmpty() && !tipoUni.equals("PR")) {
+            condicion = condicion + " a.tipo_Unidad like '" + tipoUni + "' and ";
+        }
+
+        if (!condicion.equals("")) {
+            condicion = condicion.substring(0, condicion.length() - 4);
+        }
+
         lstUnidadAdm = bejb.buscarUnidadesAdmin(condicion);
     }
-    
-    public void limpiarFiltro(){
-        codigoUnidad="";
-        nombreUnidad="";
-        cargoDir="";
-        direccion="";
-        nombreDir="";
-        telefono="";
-        nomResponsable="";
-        tipoUni="";
-    }    
-    
-    public String obtenerNombreUnidad(String codigo){
-        return cejb.NomUnidad(codigo,"UA");
+
+    public void limpiarFiltro() {
+        codigoUnidad = "";
+        nombreUnidad = "";
+        cargoDir = "";
+        direccion = "";
+        nombreDir = "";
+        telefono = "";
+        nomResponsable = "";
+        tipoUni = "";
     }
-    
-  
-    
-    public void guardarUnidadAdm(){
-     
-        pk.setCodigoUnidad(codigoUnidad);
-        pk.setUnidadActivoFijo(unidadAF);
-        unidad = cejb.getUnidadPk(pk.getUnidadActivoFijo(),pk.getCodigoUnidad());
-         if ( unidad != null){
-              unidad.setNombreUnidad(nombreUnidad);
-              unidad.setDireccion(direccion);
-              unidad.setNombreDirector(nombreDir);
-              unidad.setCargoDirector(cargoDir);
-              unidad.setTelefono(telefono);
-              unidad.setNombreResponsable(nomResponsable);
-              unidad.setTipoUnidad(tipoUnidad);     
-        
-             bejb.editarUnidadAdmin(unidad, JsfUtil.getVariableSession("usuario").toString());
-         }   else { 
-                unidad.setAfUnidadesAdministrativasPK(pk);
-                unidad.setNombreUnidad(nombreUnidad);
-                unidad.setDireccion(direccion);
-                unidad.setNombreDirector(nombreDir);
-                unidad.setCargoDirector(cargoDir);
-                unidad.setTelefono(telefono);
-                unidad.setNombreResponsable(nomResponsable);
-                unidad.setTipoUnidad(tipoUnidad);     
-        
-                bejb.guardarUnidadAdmin(unidad, JsfUtil.getVariableSession("usuario").toString());
-         }
-         JsfUtil.redireccionar("/app/manttoAf/buscarUnidadesAdmin.mined?faces-redirect=true");
-       //   JsfUtil.redireccionar("buscarTrasladosCE.mined?faces-redirect=true");
-     }
-        
-     public void nuevoUnidad() {
-       
+
+    public String obtenerNombreUnidad(String codigo) {
+        return cejb.NomUnidad(codigo, "UA");
+    }
+
+    public void guardarUnidadAdm() {
+
+        //pk.setCodigoUnidad(codigoUnidad);
+        //pk.setUnidadActivoFijo(unidadAF);
+        //unidad = cejb.getUnidadPk(pk.getUnidadActivoFijo(), pk.getCodigoUnidad());
+        if (unidad.getAfUnidadesAdministrativasPK() != null) {
+//              unidad.setNombreUnidad(nombreUnidad);
+//              unidad.setDireccion(direccion);
+//              unidad.setNombreDirector(nombreDir);
+//              unidad.setCargoDirector(cargoDir);
+//              unidad.setTelefono(telefono);
+//              unidad.setNombreResponsable(nomResponsable);
+//              unidad.setTipoUnidad(tipoUnidad);     
+
+            bejb.editarUnidadAdmin(unidad, JsfUtil.getVariableSession("usuario").toString());
+        } else {
+            /*unidad.setAfUnidadesAdministrativasPK(pk);
+            unidad.setNombreUnidad(nombreUnidad);
+            unidad.setDireccion(direccion);
+            unidad.setNombreDirector(nombreDir);
+            unidad.setCargoDirector(cargoDir);
+            unidad.setTelefono(telefono);
+            unidad.setNombreResponsable(nomResponsable);
+            unidad.setTipoUnidad(tipoUnidad);*/
+
+            bejb.guardarUnidadAdmin(unidad, JsfUtil.getVariableSession("usuario").toString());
+        }
+        JsfUtil.redireccionar("/app/manttoAf/buscarUnidadesAdmin.mined?faces-redirect=true");
+        //   JsfUtil.redireccionar("buscarTrasladosCE.mined?faces-redirect=true");
+    }
+
+    public void nuevoUnidad() {
+
         JsfUtil.redireccionar("/app/manttoAf/nuevaUnidad.mined?faces-redirect=true");
     }
+
     public void editarUnidad() {
-        JsfUtil.redireccionar("/app/manttoAf/nuevaUnidad.mined?faces-redirect=true&paramUAF="+paramUAF+"&paramUadmin="+paramUadmin);
+        JsfUtil.redireccionar("/app/manttoAf/nuevaUnidad.mined?faces-redirect=true&paramUAF=" + paramUAF + "&paramUadmin=" + paramUadmin);
     }
 }

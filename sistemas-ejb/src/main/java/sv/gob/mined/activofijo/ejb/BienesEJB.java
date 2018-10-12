@@ -40,7 +40,6 @@ import sv.gob.mined.activofijo.model.dto.DatosDepreciacion;
 import sv.gob.mined.activofijo.model.dto.DatosSolvencia;
 import sv.gob.mined.activofijo.model.dto.DatosVehiculos;
 
-
 /**
  *
  * @author JISTorres
@@ -53,7 +52,7 @@ public class BienesEJB {
     @PersistenceContext(unitName = "activoFijoPU", type = PersistenceContextType.TRANSACTION)
     public EntityManager em;
 
-    public AfEmpleados getEmpAdmin(String Id){
+    public AfEmpleados getEmpAdmin(String Id) {
         Query q = em.createNativeQuery("select * from  Af_empleados a where a.id_empleado=" + Id, AfEmpleados.class);
         if (q.getResultList().isEmpty()) {
             return null;
@@ -61,7 +60,8 @@ public class BienesEJB {
             return (AfEmpleados) q.getResultList().get(0);
         }
     }
-    public List<AfTipoBienes> getTipoxId(Long Id){
+
+    public List<AfTipoBienes> getTipoxId(Long Id) {
         Query q = em.createNativeQuery("select * from  Af_Tipo_bienes a where a.id_tipo_bien=" + Id, AfTipoBienes.class);
         if (q.getResultList().isEmpty()) {
             return null;
@@ -70,6 +70,7 @@ public class BienesEJB {
         }
 
     }
+
     public AfTraslados getTraslado(Long Id) {
         Query q = em.createNativeQuery("select * from  Af_Traslados a where a.id_traslado=" + Id, AfTraslados.class);
         if (q.getResultList().isEmpty()) {
@@ -121,7 +122,6 @@ public class BienesEJB {
     public void guardarDescargo(AfDescargos tras, String usu) {
         //em.getTransaction().begin();
         try {
-            
 
             if (tras.getDescargoId() != null) {
                 tras.setUsuarioModifica(usu);
@@ -134,99 +134,123 @@ public class BienesEJB {
                 em.persist(tras);
             }
         } catch (Exception e) {
-           System.out.println("Error al Almacenar el descargo "+ e);
-      }
+            System.out.println("Error al Almacenar el descargo " + e);
+        }
     }
-    
-    public void editarUnidadAdmin(AfUnidadesAdministrativas adm,String usu){
-       try{
-            adm.setUsuarioModifica(usu);
-            adm.setFechaModifica(new Date());
-            em.merge(adm);
-     }catch( Exception e){
-      System.out.println("Error al Almacenar Unidad administrativa "+ e);
-     }  
-    }  
-    
-    public void guardarUnidadAdmin(AfUnidadesAdministrativas adm,String usu){
-    try{
-        adm.setUsuarioAdicion(usu);
-        adm.setFechaAdicion(new Date());
-       em.persist(adm);
-    }catch( Exception e){
-      System.out.println("Error al Almacenar el empleado "+ e);
-     }    
-    } 
 
-    public void guardarEmpleado(AfEmpleados emp,String usu){
-    try{
-    
-        if(emp.getIdEmpleado()!=null){
-            emp.setUsuarioMod(usu);
-            emp.setFechaMod(new Date());
-            em.merge(emp);
-        }else{
-            emp.setUsuarioCrea(usu);
-            emp.setFechaCrea(new Date());
-            em.persist(emp);
+    public void editarUnidadAdmin(AfUnidadesAdministrativas adm, String usu) {
+        try {
+            Query q = em.createNativeQuery("UPDATE AF_UNIDADES_ADMINISTRATIVAS SET CARGO_DIRECTOR = ?1, DIRECCION = ?2, NOMBRE_DIRECTOR = ?3, "
+                    + "NOMBRE_RESPONSABLE = ?4, NOMBRE_UNIDAD = ?5, TELEFONO = ?6, TIPO_UNIDAD = ?7, USUARIO_MODIFICA = ?8, FECHA_MODIFICA = ?9 WHERE ((TRIM(UNIDAD_ACTIVO_FIJO) = ?10) AND (TRIM(CODIGO_UNIDAD) = ?11))");
+            q.setParameter(1, adm.getCargoDirector());
+            q.setParameter(2, adm.getDireccion());
+            q.setParameter(3, adm.getNombreDirector());
+            q.setParameter(4, adm.getNombreResponsable());
+            q.setParameter(5, adm.getNombreUnidad());
+            q.setParameter(6, adm.getTelefono());
+            q.setParameter(7, adm.getTipoUnidad());
+            q.setParameter(8, usu);
+            q.setParameter(9, new Date());
+            q.setParameter(10, adm.getAfUnidadesAdministrativasPK().getCodigoUnidad());
+            q.setParameter(11, adm.getAfUnidadesAdministrativasPK().getUnidadActivoFijo());
+            
+            System.out.println(q.executeUpdate());
+            
+        } catch (Exception e) {
+            System.out.println("Error al Almacenar Unidad administrativa " + e);
         }
-        
-    }catch( Exception e){
-      System.out.println("Error al Almacenar el empleado "+ e);
-     }    
-    } 
-    public void inactivarTipoBien(AfTipoBienes tipo,String usu){
-    try{
-        
-            tipo.setUsuarioModifica(usu);
-            tipo.setFechaModifica(new Date());
-            em.merge(tipo);
-        
-    }catch( Exception e){
-      System.out.println("Error al Almacenar el tipo de bien "+ e);
-     }    
-    }   
-    
-    
-    public void guardarTipoBien(AfTipoBienes tipo,String usu){
-    try{
-    
-        if(tipo.getIdTipoBien()!=null){
-            tipo.setUsuarioModifica(usu);
-            tipo.setFechaModifica(new Date());
-            em.merge(tipo);
-        }else{
-            tipo.setUsuarioAdicion(usu);
-            tipo.setFechaAdicion(new Date());
-            em.persist(tipo);
+    }
+
+    public void guardarUnidadAdmin(AfUnidadesAdministrativas adm, String usu) {
+        try {
+            adm.setUsuarioAdicion(usu);
+            adm.setFechaAdicion(new Date());
+            em.persist(adm);
+        } catch (Exception e) {
+            System.out.println("Error al Almacenar el empleado " + e);
         }
-        
-    }catch( Exception e){
-      System.out.println("Error al Almacenar el tipo de bien "+ e);
-     }    
-    }   
-    
-    
-    public void guardarTraslado(AfTraslados tras, String usu) {
-     //   em.getTransaction().begin();
-     try {
-        if (tras.getIdTraslado() != null) {
-            if (tras.getEstado()=='1'){
-                tras.setFechaAutoriza(new Date());
-            }
-            tras.setUsuarioModifica(usu);
-            tras.setFechaModifica(new Date());
-            em.merge(tras);
+    }
+
+    public AfUnidadesAdministrativas getUnidadPk(String codigo, String adm) {
+        Query q = em.createQuery("Select a from AfUnidadesAdministrativas a where trim(a.afUnidadesAdministrativasPK.unidadActivoFijo)=:codigo and trim(a.afUnidadesAdministrativasPK.codigoUnidad)=:adm ", AfUnidadesAdministrativas.class);
+        q.setParameter("codigo", codigo);
+        q.setParameter("adm", adm);
+
+        if (q.getResultList().isEmpty()) {
+            return null;
         } else {
-            tras.setUsuarioCrea(usu);
-            tras.setFechaCreacion(new Date());
-            tras.setFechaSolicitud(new Date());
-            em.persist(tras);
+            return (AfUnidadesAdministrativas) q.getSingleResult();
         }
-     }catch( Exception e){
-      System.out.println("Error al Almacenar el traslado "+ e);
-     }
-     //   em.getTransaction().commit();
+    }
+
+    public void guardarEmpleado(AfEmpleados emp, String usu) {
+        try {
+
+            if (emp.getIdEmpleado() != null) {
+                emp.setUsuarioMod(usu);
+                emp.setFechaMod(new Date());
+                em.merge(emp);
+            } else {
+                emp.setUsuarioCrea(usu);
+                emp.setFechaCrea(new Date());
+                em.persist(emp);
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error al Almacenar el empleado " + e);
+        }
+    }
+
+    public void inactivarTipoBien(AfTipoBienes tipo, String usu) {
+        try {
+
+            tipo.setUsuarioModifica(usu);
+            tipo.setFechaModifica(new Date());
+            em.merge(tipo);
+
+        } catch (Exception e) {
+            System.out.println("Error al Almacenar el tipo de bien " + e);
+        }
+    }
+
+    public void guardarTipoBien(AfTipoBienes tipo, String usu) {
+        try {
+
+            if (tipo.getIdTipoBien() != null) {
+                tipo.setUsuarioModifica(usu);
+                tipo.setFechaModifica(new Date());
+                em.merge(tipo);
+            } else {
+                tipo.setUsuarioAdicion(usu);
+                tipo.setFechaAdicion(new Date());
+                em.persist(tipo);
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error al Almacenar el tipo de bien " + e);
+        }
+    }
+
+    public void guardarTraslado(AfTraslados tras, String usu) {
+        //   em.getTransaction().begin();
+        try {
+            if (tras.getIdTraslado() != null) {
+                if (tras.getEstado() == '1') {
+                    tras.setFechaAutoriza(new Date());
+                }
+                tras.setUsuarioModifica(usu);
+                tras.setFechaModifica(new Date());
+                em.merge(tras);
+            } else {
+                tras.setUsuarioCrea(usu);
+                tras.setFechaCreacion(new Date());
+                tras.setFechaSolicitud(new Date());
+                em.persist(tras);
+            }
+        } catch (Exception e) {
+            System.out.println("Error al Almacenar el traslado " + e);
+        }
+        //   em.getTransaction().commit();
     }
 
     public AfEstatusBien obtenerEstatus(Long idEstatus) {
@@ -238,22 +262,22 @@ public class BienesEJB {
         }
 
     }
-    public List<VwDepreciaciones> repDepreciacion(String condicion){
-        
-        Query q = em.createNativeQuery("select d.anio,d.id_bien from af_depreciaciones d  "+condicion+" order by d.id_bien,d.anio,d.mes",VwDepreciaciones.class);
+
+    public List<VwDepreciaciones> repDepreciacion(String condicion) {
+
+        Query q = em.createNativeQuery("select d.anio,d.id_bien from af_depreciaciones d  " + condicion + " order by d.id_bien,d.anio,d.mes", VwDepreciaciones.class);
         if (q.getResultList() == null) {
             return null;
         } else {
             return q.getResultList();
         }
-  
-         
+
     }
 
     public Integer calcularDepreciacion(String idBien, String Anio, String mes, String fuente, String proyecto) {
         Integer bienes = 0;
         try {
-        //    em.getTransaction().begin();
+            //    em.getTransaction().begin();
             java.sql.Connection connection = em.unwrap(java.sql.Connection.class);
 
             CallableStatement cstmt = connection.prepareCall("{call PRD_DEPRECIACION(?1, ?2, ?3, ?4, ?5,?6)}");
@@ -265,266 +289,264 @@ public class BienesEJB {
             cstmt.registerOutParameter("pBienes", java.sql.Types.INTEGER);
             cstmt.execute();
             bienes = cstmt.getInt("pBienes");
-          //  System.out.println("NumBienes: " + bienes);
+            //  System.out.println("NumBienes: " + bienes);
 
-          //  em.getTransaction().commit();
+            //  em.getTransaction().commit();
             cstmt.close();
-            
+
         } catch (Exception e) {
-             System.out.println("Error al realizar cálculo de Depreciación "+ e);
+            System.out.println("Error al realizar cálculo de Depreciación " + e);
         }
-       return bienes;
+        return bienes;
     }
-    public void removeTraslado(Long idTd){
-         AfTraslados td;
-         AfTrasladosDetalle tdet ;
-         
-        try{
+
+    public void removeTraslado(Long idTd) {
+        AfTraslados td;
+        AfTrasladosDetalle tdet;
+
+        try {
             Query q = em.createNativeQuery("select * from af_traslados where id_traslado=" + idTd, AfTraslados.class);
             if (!q.getResultList().isEmpty() && q.getResultList() != null) {
                 td = (AfTraslados) q.getResultList().get(0);
-                
+
                 q = em.createNativeQuery("select * from af_traslados_detalle where id_traslado=" + idTd, AfTrasladosDetalle.class);
                 if (!q.getResultList().isEmpty() && q.getResultList() != null) {
-                     tdet = (AfTrasladosDetalle) q.getResultList().get(0);
-                   try {
-                      em.remove(tdet);
-                      em.remove(td);
-                    }catch(Exception e){
-                        System.out.println("Error al eliminar traslados "+ e);
-                    } 
+                    tdet = (AfTrasladosDetalle) q.getResultList().get(0);
+                    try {
+                        em.remove(tdet);
+                        em.remove(td);
+                    } catch (Exception e) {
+                        System.out.println("Error al eliminar traslados " + e);
+                    }
                 } else {
-                    try{
-                       em.remove(td);
-                    }catch(Exception e){
-                        System.out.println("Error al eliminar traslado detalle "+ e);
-                    }       
+                    try {
+                        em.remove(td);
+                    } catch (Exception e) {
+                        System.out.println("Error al eliminar traslado detalle " + e);
+                    }
                 }
             }
-           }catch(Exception e){
-             System.out.println("Error al eliminar traslado "+ e);
-           }   
+        } catch (Exception e) {
+            System.out.println("Error al eliminar traslado " + e);
+        }
     }
 
     public void removeBien(Long idBien) {
-        AfBienesDepreciables bd ;
-        AfDescargosDetalle dd ;
-        AfDescargos d ;
-        AfTraslados t ;
-        AfTrasladosDetalle td ;
+        AfBienesDepreciables bd;
+        AfDescargosDetalle dd;
+        AfDescargos d;
+        AfTraslados t;
+        AfTrasladosDetalle td;
         AfDepreciaciones depre;
-try{
-        Query q = em.createNativeQuery("select * from af_bienes_depreciables A  where a.id_bien=" + idBien, AfBienesDepreciables.class);
-        bd = (AfBienesDepreciables) q.getResultList().get(0);
+        try {
+            Query q = em.createNativeQuery("select * from af_bienes_depreciables A  where a.id_bien=" + idBien, AfBienesDepreciables.class);
+            bd = (AfBienesDepreciables) q.getResultList().get(0);
 
-        q = em.createNativeQuery("select * from af_descargos_detalle where id_bien=" + idBien, AfDescargosDetalle.class);
-        if (!q.getResultList().isEmpty() && q.getResultList() != null) {
-            dd = (AfDescargosDetalle) q.getResultList().get(0);
+            q = em.createNativeQuery("select * from af_descargos_detalle where id_bien=" + idBien, AfDescargosDetalle.class);
+            if (!q.getResultList().isEmpty() && q.getResultList() != null) {
+                dd = (AfDescargosDetalle) q.getResultList().get(0);
 
-            q = em.createNativeQuery("select * from af_descargos where descargo_id=" + dd.getDescargoId().getDescargoId(), AfDescargos.class);
-            d = (AfDescargos) q.getResultList().get(0);
+                q = em.createNativeQuery("select * from af_descargos where descargo_id=" + dd.getDescargoId().getDescargoId(), AfDescargos.class);
+                d = (AfDescargos) q.getResultList().get(0);
 
-            q = em.createNativeQuery("select count(*) from af_descargos_detalle where descargo_id=" + dd.getDescargoId().getDescargoId());
-            if (Integer.valueOf(q.getSingleResult().toString()) == 1) {
-               try{ 
-                em.remove(dd);
-                em.remove(d);
-               }catch(Exception e){
-                System.out.println("Error al eliminar descargos "+ e);
-            } 
-            } else {
-              try{
-                em.remove(dd);
-              }catch(Exception e){
-                System.out.println("Error al eliminar descargos detalle "+ e);
-            } 
+                q = em.createNativeQuery("select count(*) from af_descargos_detalle where descargo_id=" + dd.getDescargoId().getDescargoId());
+                if (Integer.valueOf(q.getSingleResult().toString()) == 1) {
+                    try {
+                        em.remove(dd);
+                        em.remove(d);
+                    } catch (Exception e) {
+                        System.out.println("Error al eliminar descargos " + e);
+                    }
+                } else {
+                    try {
+                        em.remove(dd);
+                    } catch (Exception e) {
+                        System.out.println("Error al eliminar descargos detalle " + e);
+                    }
+                }
             }
-        }
-        q = em.createNativeQuery("select * from af_traslados_detalle where id_bien=" + idBien, AfTrasladosDetalle.class);
-        if (!q.getResultList().isEmpty() && q.getResultList() != null) {
-            td = (AfTrasladosDetalle) q.getResultList().get(0);
+            q = em.createNativeQuery("select * from af_traslados_detalle where id_bien=" + idBien, AfTrasladosDetalle.class);
+            if (!q.getResultList().isEmpty() && q.getResultList() != null) {
+                td = (AfTrasladosDetalle) q.getResultList().get(0);
 
-            q = em.createNativeQuery("select * from af_traslados where id_traslado=" + td.getIdTraslado(), AfTraslados.class);
-            t = (AfTraslados) q.getResultList().get(0);
+                q = em.createNativeQuery("select * from af_traslados where id_traslado=" + td.getIdTraslado(), AfTraslados.class);
+                t = (AfTraslados) q.getResultList().get(0);
 
-            q = em.createNativeQuery("select count(*) from af_traslados_detalle where id_traslado=" + td.getIdTraslado());
-            if (Integer.valueOf(q.getSingleResult().toString()) >= 1) {
-               try {
-                em.remove(td);
-                    em.remove(t);
-              }catch(Exception e){
-                System.out.println("Error al eliminar traslados "+ e);
-               } 
-                    
-            } else {
-                try{
-                em.remove(td);
-              }catch(Exception e){
-                System.out.println("Error al eliminar traslado detalle "+ e);
-               } 
-             
+                q = em.createNativeQuery("select count(*) from af_traslados_detalle where id_traslado=" + td.getIdTraslado());
+                if (Integer.valueOf(q.getSingleResult().toString()) >= 1) {
+                    try {
+                        em.remove(td);
+                        em.remove(t);
+                    } catch (Exception e) {
+                        System.out.println("Error al eliminar traslados " + e);
+                    }
 
+                } else {
+                    try {
+                        em.remove(td);
+                    } catch (Exception e) {
+                        System.out.println("Error al eliminar traslado detalle " + e);
+                    }
+
+                }
             }
+            q = em.createNativeQuery("delete af_Depreciaciones where id_bien= " + idBien);
+            q.executeUpdate();
+
+            em.remove(bd);
+        } catch (Exception e) {
+            System.out.println("Error al eliminar bien " + e);
         }
-        q = em.createNativeQuery("delete af_Depreciaciones where id_bien= "+idBien);
-        q.executeUpdate();
-        
-       em.remove(bd);
-    }catch( Exception e){
-    System.out.println("Error al eliminar bien "+ e);
-}
     }
 
     public void removeDetalleTraslado(Long idTras, Long idBien) {
-      try{
-        AfTrasladosDetalle td = new AfTrasladosDetalle();
-        Query q = em.createNativeQuery("select * from af_traslados_detalle A  where a.id_traslado=" + idTras + " and id_Bien=" + idBien, AfTrasladosDetalle.class);
-        td = (AfTrasladosDetalle) q.getResultList().get(0);
-        em.remove(td);
-        }catch(Exception e){
-                System.out.println("Error al eliminar traslados detalle "+ e);
-        } 
+        try {
+            AfTrasladosDetalle td = new AfTrasladosDetalle();
+            Query q = em.createNativeQuery("select * from af_traslados_detalle A  where a.id_traslado=" + idTras + " and id_Bien=" + idBien, AfTrasladosDetalle.class);
+            td = (AfTrasladosDetalle) q.getResultList().get(0);
+            em.remove(td);
+        } catch (Exception e) {
+            System.out.println("Error al eliminar traslados detalle " + e);
+        }
     }
 
     public void removeDetalleDescargo(Long idDes, Long idBien) {
-      try{
-        AfDescargosDetalle td = new AfDescargosDetalle();
-        Query q = em.createNativeQuery("select * from af_descargos_detalle A  where a.descargo_id=" + idDes + " and id_Bien=" + idBien, AfDescargosDetalle.class);
-        td = (AfDescargosDetalle) q.getResultList().get(0);
-        em.remove(td);
-       }catch(Exception e){
-                System.out.println("Error al eliminar descargos detalle "+ e);
-      } 
-             
+        try {
+            AfDescargosDetalle td = new AfDescargosDetalle();
+            Query q = em.createNativeQuery("select * from af_descargos_detalle A  where a.descargo_id=" + idDes + " and id_Bien=" + idBien, AfDescargosDetalle.class);
+            td = (AfDescargosDetalle) q.getResultList().get(0);
+            em.remove(td);
+        } catch (Exception e) {
+            System.out.println("Error al eliminar descargos detalle " + e);
+        }
+
     }
 
     public void actualizarEstadoBien(List<VwBienes> vb, String estado) {
-    try{
-        for (VwBienes object : vb) {
-            AfBienesDepreciables b = buscarBien(object.getIdBien());
-            if (estado.equals("P")) {
-                b.setIdEstatusBien(obtenerEstatus(Long.parseLong("2")));
-            } else {
-                if (estado.equals("D")) {
-                    b.setIdEstatusBien(obtenerEstatus(Long.parseLong("3")));
+        try {
+            for (VwBienes object : vb) {
+                AfBienesDepreciables b = buscarBien(object.getIdBien());
+                if (estado.equals("P")) {
+                    b.setIdEstatusBien(obtenerEstatus(Long.parseLong("2")));
                 } else {
-                    if (!estado.equals("S")) {
-                         b.setIdEstatusBien(obtenerEstatus(Long.parseLong("1")));
-                    }     
+                    if (estado.equals("D")) {
+                        b.setIdEstatusBien(obtenerEstatus(Long.parseLong("3")));
+                    } else {
+                        if (!estado.equals("S")) {
+                            b.setIdEstatusBien(obtenerEstatus(Long.parseLong("1")));
+                        }
+                    }
+                }
+                em.merge(b);
+            }
+        } catch (Exception e) {
+            System.out.println("Error al actualizar estados de bien " + e);
+        }
+    }
+
+    public void actualizarBienTraslado(List<VwBienes> vb, String unidad, String uAF) {
+        try {
+            for (VwBienes object : vb) {
+                AfBienesDepreciables b = buscarBien(object.getIdBien());
+                b.setCodigoUnidad(unidad);
+                b.setUnidadActivoFijo(uAF);
+                em.merge(b);
+            }
+        } catch (Exception e) {
+            System.out.println("Error al actualizar estados de bien " + e);
+        }
+    }
+
+    public void guardarTrasladoDetalle(List<VwBienes> vb, AfTraslados des) {
+        try {
+            for (VwBienes object : vb) {
+                AfTrasladosDetalle td = buscarDetalleTras(object.getIdTraslado(), object.getIdTrasladoDet());
+                if (td.getIdTrasladoDetalle() == null) { //nuevos
+                    td.setIdTraslado(des.getIdTraslado());
+                    td.setIdBien(object.getIdBien());
+                    em.persist(td);
                 }
             }
-            em.merge(b);
+
+        } catch (Exception e) {
+            System.out.println("Error al guardar traslado detalle " + e);
         }
-         }catch(Exception e){
-                System.out.println("Error al actualizar estados de bien "+ e);
-               } 
     }
 
-    public void actualizarBienTraslado(List<VwBienes> vb,String unidad,String uAF) {
-      try{ 
-        for (VwBienes object : vb) {
-            AfBienesDepreciables b = buscarBien(object.getIdBien());
-            b.setCodigoUnidad(unidad);
-            b.setUnidadActivoFijo(uAF);
-            em.merge(b);
-        }
-     }catch(Exception e){
-                System.out.println("Error al actualizar estados de bien "+ e);
-               } 
-    }
-    
-    
-    
-    public void guardarTrasladoDetalle(List<VwBienes> vb, AfTraslados des) {
-       try{
-        for (VwBienes object : vb) {
-            AfTrasladosDetalle td = buscarDetalleTras(object.getIdTraslado(),object.getIdTrasladoDet());
-            if (td.getIdTrasladoDetalle()== null) { //nuevos
-                 td.setIdTraslado(des.getIdTraslado());
-                 td.setIdBien(object.getIdBien());
-                em.persist(td);
-            } 
-        }
-        
-      }catch(Exception e){
-                System.out.println("Error al guardar traslado detalle "+ e);
-               } 
-    }
-
-    public AfTrasladosDetalle buscarDetalleTras(Long idDes,Long desDet){
+    public AfTrasladosDetalle buscarDetalleTras(Long idDes, Long desDet) {
         AfTrasladosDetalle td = new AfTrasladosDetalle();
-        if (idDes!=null){
+        if (idDes != null) {
             Query q = em.createNativeQuery("select * from af_traslados_detalle A  where a.id_traslado=" + idDes + " and id_traslado_detalle=" + desDet, AfTrasladosDetalle.class);
-            if (q.getResultList()!=null) {
+            if (q.getResultList() != null) {
                 td = (AfTrasladosDetalle) q.getResultList().get(0);
+            }
         }
-        }
-       return td;
-        
+        return td;
+
     }
-    
-    public AfDescargosDetalle buscarDetalle(Long idDes,Long desDet){
+
+    public AfDescargosDetalle buscarDetalle(Long idDes, Long desDet) {
         AfDescargosDetalle td = new AfDescargosDetalle();
-        if (idDes!=null){
+        if (idDes != null) {
             Query q = em.createNativeQuery("select * from af_descargos_detalle A  where a.descargo_id=" + idDes + " and id_detalle_descargo=" + desDet, AfDescargosDetalle.class);
-            if (q.getResultList()!=null) {
+            if (q.getResultList() != null) {
                 td = (AfDescargosDetalle) q.getResultList().get(0);
+            }
         }
-        }
-       return td;
-        
+        return td;
+
     }
-    
+
     public void guardarDescargoDetalle(List<VwBienes> vb, AfDescargos des) {
-      try{
-        for (VwBienes object : vb) {
-            AfDescargosDetalle td = buscarDetalle(object.getDescargoId(),object.getIdDetalleDescargo());
-            if (td.getIdDetalleDescargo() == null) { //nuevos
-                 td.setDescargoId(des);
-                 td.setIdBien(BigInteger.valueOf(object.getIdBien()));
-                 td.setCodigoUnidad(object.getCodigoUnidad());
-                 td.setIdTipoDescargo(des.getIdTipoDescargo());
-           
-                em.persist(td);
-            } 
+        try {
+            for (VwBienes object : vb) {
+                AfDescargosDetalle td = buscarDetalle(object.getDescargoId(), object.getIdDetalleDescargo());
+                if (td.getIdDetalleDescargo() == null) { //nuevos
+                    td.setDescargoId(des);
+                    td.setIdBien(BigInteger.valueOf(object.getIdBien()));
+                    td.setCodigoUnidad(object.getCodigoUnidad());
+                    td.setIdTipoDescargo(des.getIdTipoDescargo());
+
+                    em.persist(td);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error al guardar descargo detalle " + e);
         }
-    }catch(Exception e){
-                System.out.println("Error al guardar descargo detalle "+ e);
-               } 
     }
 
     public void guardarSol(AfSolvencias sol, String usu) {
-    try{
-        if (sol.getIdSolvencia() != null) {
-            sol.setUsuarioModifica(usu);
-            sol.setFechaModifica(new Date());
-            em.merge(sol);
-        } else {
-            sol.setUsuarioCreo(usu);
-            sol.setFechaSolvencia(new Date());
-            em.persist(sol);
+        try {
+            if (sol.getIdSolvencia() != null) {
+                sol.setUsuarioModifica(usu);
+                sol.setFechaModifica(new Date());
+                em.merge(sol);
+            } else {
+                sol.setUsuarioCreo(usu);
+                sol.setFechaSolvencia(new Date());
+                em.persist(sol);
+            }
+        } catch (Exception e) {
+            System.out.println("Error al guardar solvencia " + e);
         }
-    }catch(Exception e){
-                System.out.println("Error al guardar solvencia "+ e);
-               } 
     }
 
     public void guardarBien(AfBienesDepreciables bienes, String usu) {
-    try{
-        if (bienes.getIdBien() != null) {
-            bienes.setUsuarioModif(usu);
-            bienes.setFechaModif(new Date());
-            em.merge(bienes);
-            // JsfUtil.mensajeUpdate();
-        } else {
-            bienes.setUsuarioCrea(usu);
-            bienes.setFechaCreacion(new Date());
-            em.persist(bienes);
-            //JsfUtil.mensajeInsert();
+        try {
+            if (bienes.getIdBien() != null) {
+                bienes.setUsuarioModif(usu);
+                bienes.setFechaModif(new Date());
+                em.merge(bienes);
+                // JsfUtil.mensajeUpdate();
+            } else {
+                bienes.setUsuarioCrea(usu);
+                bienes.setFechaCreacion(new Date());
+                em.persist(bienes);
+                //JsfUtil.mensajeInsert();
+            }
+        } catch (Exception e) {
+            System.out.println("Error al guardar bien " + e);
         }
-     }catch(Exception e){
-                System.out.println("Error al guardar bien "+ e);
-               } 
     }
 
     public List<VwDepreciaciones> depreciacionAnio(String Anio, String mes) {
@@ -542,46 +564,45 @@ try{
         return lstDepre;
     }
 
-    public List<VwSolvencia> buscarSolEmitidas(String condicion){
-        String condicion2="";
-        
-       if (!condicion.equals("")) {
-           condicion2 = "where "+condicion+" and fecha_solvencia is not null";
-        }else{
-           condicion2 = "where  fecha_solvencia is not null";
-        }
-        String sql=" select rownum as idRow, CODIGO_ENTIDAD as codigoEntidad, UNIDAD_ACTIVO_FIJO as unidadActivoFijo,NOMBRE_MUNICIPIO as nombreMunicipio,NOMBRE as nombre,"+
-                   " FECHA_SOLVENCIA as fechaSolvencia, ANIO as anio, nvl(NUMBIENES,0) as numBienes, nvl(COSTO,0) as costo,codigo_municipio as codigoMunicipio,fecha_actualizacion as fechaActualizacion,tipo_unidad as tipoUnidad "+
-                   " from  vw_solvencia "+condicion2;
-         Query q = em.createNativeQuery(sql,VwSolvencia.class);
-        
-          return q.getResultList();
-    }
-    
-    public List<VwSolvencia> buscarEntidades(String condicion){
-        String condicion2="";
-        
+    public List<VwSolvencia> buscarSolEmitidas(String condicion) {
+        String condicion2 = "";
+
         if (!condicion.equals("")) {
-           condicion2 = "where "+condicion;
+            condicion2 = "where " + condicion + " and fecha_solvencia is not null";
+        } else {
+            condicion2 = "where  fecha_solvencia is not null";
         }
-        String sql=" select   rownum as idRow, CODIGO_ENTIDAD as codigoEntidad, UNIDAD_ACTIVO_FIJO as unidadActivoFijo,NOMBRE_MUNICIPIO as nombreMunicipio,NOMBRE as nombre,"+
-                   " FECHA_SOLVENCIA as fechaSolvencia, ANIO as anio, nvl(NUMBIENES,0) as numBienes, nvl(COSTO,0) as costo,codigo_municipio as codigoMunicipio,fecha_actualizacion as fechaActualizacion,tipo_unidad as tipoUnidad "+
-                   " from  vw_solvencia "+condicion2;
-         Query q = em.createNativeQuery(sql,VwSolvencia.class);
-        
-          return q.getResultList();
+        String sql = " select rownum as idRow, CODIGO_ENTIDAD as codigoEntidad, UNIDAD_ACTIVO_FIJO as unidadActivoFijo,NOMBRE_MUNICIPIO as nombreMunicipio,NOMBRE as nombre,"
+                + " FECHA_SOLVENCIA as fechaSolvencia, ANIO as anio, nvl(NUMBIENES,0) as numBienes, nvl(COSTO,0) as costo,codigo_municipio as codigoMunicipio,fecha_actualizacion as fechaActualizacion,tipo_unidad as tipoUnidad "
+                + " from  vw_solvencia " + condicion2;
+        Query q = em.createNativeQuery(sql, VwSolvencia.class);
+
+        return q.getResultList();
     }
-    
-    public List<VwMunicipio> buscarMunicipios(String unidad){
-        String sql="select rownum as idRow,codigo_departamento as codigoDepartamento,codigo_municipio as codigoMunicipio,nombre_municipio as nombreMunicipio,unidad_activo_fijo as unidadActivoFijo "+
-                   "from Vw_municipio where unidad_activo_fijo='"+unidad+"'";
-        Query q = em.createNativeQuery(sql,VwMunicipio.class);
-        
-          return q.getResultList();
-        
+
+    public List<VwSolvencia> buscarEntidades(String condicion) {
+        String condicion2 = "";
+
+        if (!condicion.equals("")) {
+            condicion2 = "where " + condicion;
+        }
+        String sql = " select   rownum as idRow, CODIGO_ENTIDAD as codigoEntidad, UNIDAD_ACTIVO_FIJO as unidadActivoFijo,NOMBRE_MUNICIPIO as nombreMunicipio,NOMBRE as nombre,"
+                + " FECHA_SOLVENCIA as fechaSolvencia, ANIO as anio, nvl(NUMBIENES,0) as numBienes, nvl(COSTO,0) as costo,codigo_municipio as codigoMunicipio,fecha_actualizacion as fechaActualizacion,tipo_unidad as tipoUnidad "
+                + " from  vw_solvencia " + condicion2;
+        Query q = em.createNativeQuery(sql, VwSolvencia.class);
+
+        return q.getResultList();
     }
-    
-    
+
+    public List<VwMunicipio> buscarMunicipios(String unidad) {
+        String sql = "select rownum as idRow,codigo_departamento as codigoDepartamento,codigo_municipio as codigoMunicipio,nombre_municipio as nombreMunicipio,unidad_activo_fijo as unidadActivoFijo "
+                + "from Vw_municipio where unidad_activo_fijo='" + unidad + "'";
+        Query q = em.createNativeQuery(sql, VwMunicipio.class);
+
+        return q.getResultList();
+
+    }
+
     public List<VwCorrelativos> buscarCorrelativos(String condicion) {
         List<VwCorrelativos> lstCorrelativos = new ArrayList();
         Query q = em.createNativeQuery("select A.* from Vw_Correlativos A " + condicion + " order by A.codigo_tipo_bien");
@@ -604,29 +625,29 @@ try{
         return lstCorrelativos;
     }
 
-    public List<AfDepreciaciones> buscarDepre(String condicion){
-        
-         String sqlQuery = "select d.* from Af_depreciaciones d "+ condicion+" order by d.anio,d.mes " ;
+    public List<AfDepreciaciones> buscarDepre(String condicion) {
+
+        String sqlQuery = "select d.* from Af_depreciaciones d " + condicion + " order by d.anio,d.mes ";
 
         Query q = em.createNativeQuery(sqlQuery, AfDepreciaciones.class);
         return q.getResultList();
     }
-    
-    public List<VwDatosxCuentas> buscarDatos(String condicion){
+
+    public List<VwDatosxCuentas> buscarDatos(String condicion) {
         String condicion2 = " where a.id_estatus_bien in (1,2) ";
         //System.out.println(condicion);
         if (!condicion.equals("")) {
-            condicion2 = condicion2+" and "+ condicion;
+            condicion2 = condicion2 + " and " + condicion;
         }
 
         List<VwDatosxCuentas> lstBienes = new ArrayList<VwDatosxCuentas>();
-      
-        Query q = em.createNativeQuery("select a.CATEGORIA,sum(a.valor_adquisicion),sum(a.valor_adquisicion)*0.10 valor_residual,nvl(sum(a.monto_depreciacion) ,0) depre_acumulada,(sum(a.valor_adquisicion)- sum(a.valor_adquisicion)*0.10)-nvl(sum(a.monto_depreciacion) ,0) pendiente " +
-                                        " from vw_bienes a " +condicion2+"  group by a.CATEGORIA");
+
+        Query q = em.createNativeQuery("select a.CATEGORIA,sum(a.valor_adquisicion),sum(a.valor_adquisicion)*0.10 valor_residual,nvl(sum(a.monto_depreciacion) ,0) depre_acumulada,(sum(a.valor_adquisicion)- sum(a.valor_adquisicion)*0.10)-nvl(sum(a.monto_depreciacion) ,0) pendiente "
+                + " from vw_bienes a " + condicion2 + "  group by a.CATEGORIA");
         List lst = q.getResultList();
-    
+
         for (Object object : lst) {
-      
+
             Object[] datos = (Object[]) object;
             VwDatosxCuentas datPlan = new VwDatosxCuentas();
             datPlan.setCategoria(datos[0].toString());
@@ -650,77 +671,78 @@ try{
             } else {
                 datPlan.setPendienteDepre(null);
             }
-           lstBienes.add(datPlan);
+            lstBienes.add(datPlan);
         }
-           return lstBienes;
+        return lstBienes;
     }
-    
-    public List<VwVehiculos> buscarVehiculos(String condicion){
+
+    public List<VwVehiculos> buscarVehiculos(String condicion) {
         String condicion2 = "";
-       // System.out.println(condicion);
+        // System.out.println(condicion);
         if (!condicion.equals("")) {
             condicion2 = " where " + condicion;
         }
-        String sql=" select rownum as idRow,a.CODIGO_INVENTARIO as codigoInventario,a.DESCRIPCION_BIEN as descripcionBien,a.MARCA as marca, " +
-                   "      a.NUMERO_PLACA as numeroPlaca,a.NUMERO_MOTOR as numeroMotor,a.NUMERO_CHASIS as numeroChasis,a.COLOR_CARROCERIA as colorCarroceria, " +
-                   "      a.CALIDAD as calidad,a.FECHA_ADQUISICION as fechaAdquisicion,a.VALOR_ADQUISICION as valorAdquisicion,a.NOMBRE_UNIDAD as nombreUnidad, " +
-                   "      a.ASIGNADO as asignado  from vw_Vehiculos a "+condicion2;
-         Query q = em.createNativeQuery(sql,VwVehiculos.class);
-        
-      // Query q = em.createNativeQuery("select a.* from vw_Vehiculos a " + condicion2 ,VwVehiculos.class);
-       return q.getResultList();
+        String sql = " select rownum as idRow,a.CODIGO_INVENTARIO as codigoInventario,a.DESCRIPCION_BIEN as descripcionBien,a.MARCA as marca, "
+                + "      a.NUMERO_PLACA as numeroPlaca,a.NUMERO_MOTOR as numeroMotor,a.NUMERO_CHASIS as numeroChasis,a.COLOR_CARROCERIA as colorCarroceria, "
+                + "      a.CALIDAD as calidad,a.FECHA_ADQUISICION as fechaAdquisicion,a.VALOR_ADQUISICION as valorAdquisicion,a.NOMBRE_UNIDAD as nombreUnidad, "
+                + "      a.ASIGNADO as asignado  from vw_Vehiculos a " + condicion2;
+        Query q = em.createNativeQuery(sql, VwVehiculos.class);
+
+        // Query q = em.createNativeQuery("select a.* from vw_Vehiculos a " + condicion2 ,VwVehiculos.class);
+        return q.getResultList();
     }
-    public List<AfTipoBienes> buscarTipoBien(String condicion){
-         String condicion2 = "";
-       // System.out.println(condicion);
+
+    public List<AfTipoBienes> buscarTipoBien(String condicion) {
+        String condicion2 = "";
+        // System.out.println(condicion);
         if (!condicion.equals("")) {
             condicion2 = " where " + condicion;
         }
-        
-        String Sql ="select * from af_tipo_bienes a "+condicion2;
-        Query q = em.createNativeQuery(Sql,AfTipoBienes.class);
-        if (!q.getResultList().isEmpty()){
+
+        String Sql = "select * from af_tipo_bienes a " + condicion2;
+        Query q = em.createNativeQuery(Sql, AfTipoBienes.class);
+        if (!q.getResultList().isEmpty()) {
             return q.getResultList();
-        }else{
+        } else {
             return null;
         }
     }
-    
-    public List<AfUnidadesAdministrativas> buscarUnidadesAdmin(String condicion){
-         String condicion2 = "";
-       // System.out.println(condicion);
+
+    public List<AfUnidadesAdministrativas> buscarUnidadesAdmin(String condicion) {
+        String condicion2 = "";
+        // System.out.println(condicion);
         if (!condicion.equals("")) {
             condicion2 = " where " + condicion;
         }
-        
-        String Sql ="select * from af_unidades_administrativas a "+condicion2;
-        Query q = em.createNativeQuery(Sql,AfUnidadesAdministrativas.class);
-        if (!q.getResultList().isEmpty()){
+
+        String Sql = "select * from af_unidades_administrativas a " + condicion2;
+        Query q = em.createNativeQuery(Sql, AfUnidadesAdministrativas.class);
+        if (!q.getResultList().isEmpty()) {
             return q.getResultList();
-        }else{
+        } else {
             return null;
         }
     }
-    
-    public List<AfEmpleados> buscarEmpleados(String condicion){
-         String condicion2 = "";
-       // System.out.println(condicion);
+
+    public List<AfEmpleados> buscarEmpleados(String condicion) {
+        String condicion2 = "";
+        // System.out.println(condicion);
         if (!condicion.equals("")) {
             condicion2 = " where " + condicion;
         }
-        
-        String Sql ="select * from af_Empleados a "+condicion2;
-        Query q = em.createNativeQuery(Sql,AfEmpleados.class);
-        if (!q.getResultList().isEmpty()){
+
+        String Sql = "select * from af_Empleados a " + condicion2;
+        Query q = em.createNativeQuery(Sql, AfEmpleados.class);
+        if (!q.getResultList().isEmpty()) {
             return q.getResultList();
-        }else{
+        } else {
             return null;
         }
     }
-    
+
     public List<VwBienes> buscarBien(String condicion) {
         String condicion2 = "";
-       // System.out.println(condicion);
+        // System.out.println(condicion);
         if (!condicion.equals("")) {
             condicion2 = " where " + condicion;
         }
@@ -935,10 +957,10 @@ try{
         if (condicion.trim().equals("where")) {
             condicion = null;
         }
-        Query q = em.createNativeQuery("select * from Af_Traslados a " + condicion+" order by a.fecha_traslado", AfTraslados.class);
-        if (!q.getResultList().isEmpty()){
-           return q.getResultList();
-        }else{
+        Query q = em.createNativeQuery("select * from Af_Traslados a " + condicion + " order by a.fecha_traslado", AfTraslados.class);
+        if (!q.getResultList().isEmpty()) {
+            return q.getResultList();
+        } else {
             return null;
         }
     }
@@ -954,12 +976,17 @@ try{
             Object[] ob = (Object[]) dato;
             VwDescargos d = new VwDescargos();
             d.setDescargoId(Long.valueOf(ob[0].toString()));
-            if (ob[1]==null){
+            if (ob[1] == null) {
                 d.setCodigoDescargo(null);
-            }else { d.setCodigoDescargo(ob[1].toString());}
+            } else {
+                d.setCodigoDescargo(ob[1].toString());
+            }
             d.setNombreUnidad(ob[2].toString());
-            if (ob[3]!=null){  d.setFechaDescargo((Date) ob[3]);}
-            else {d.setFechaDescargo(null);}
+            if (ob[3] != null) {
+                d.setFechaDescargo((Date) ob[3]);
+            } else {
+                d.setFechaDescargo(null);
+            }
             d.setBienes((BigDecimal) ob[4]);
             d.setTotal((BigDecimal) ob[5]);
             d.setNombreTipoDescargo(ob[6].toString());
@@ -967,10 +994,13 @@ try{
             d.setDesEstado(ob[8].toString());
             d.setUnidadActivoFijo(ob[9].toString());
             d.setCodigoUnidad(ob[10].toString());
-            d.setTipoDescargo( ob[11].toString().charAt(0));
-            if (ob[12]!=null){  d.setFechaSolicitud((Date) ob[12]);}
-            else {d.setFechaSolicitud(null);}
-            d.setTipoUnidad( ob[13].toString().charAt(0));
+            d.setTipoDescargo(ob[11].toString().charAt(0));
+            if (ob[12] != null) {
+                d.setFechaSolicitud((Date) ob[12]);
+            } else {
+                d.setFechaSolicitud(null);
+            }
+            d.setTipoUnidad(ob[13].toString().charAt(0));
             lst.add(d);
         }
         return lst;
@@ -996,12 +1026,13 @@ try{
         }
 
     }
-   
+
     public List<AfEmpleados> empId(Long id) {
         Query q = em.createNativeQuery("select * from af_empleados where id_empleado=?1", AfEmpleados.class);
         q.setParameter(1, id);
         return q.getResultList();
     }
+
     public List<AfBienesDepreciables> bienId(Long id) {
         Query q = em.createNativeQuery("select * from af_bienes_depreciables where id_bien=?1", AfBienesDepreciables.class);
         q.setParameter(1, id);
@@ -1065,39 +1096,39 @@ try{
         }
 
     }
-public List<DatosVehiculos> getLista(String UnidadAF,String codUnidad, String fecReporte, List<VwVehiculos> lstBienes, String usuario) {
+
+    public List<DatosVehiculos> getLista(String UnidadAF, String codUnidad, String fecReporte, List<VwVehiculos> lstBienes, String usuario) {
         List<DatosVehiculos> lst = new ArrayList();
         String Sql;
         if (codUnidad.equals("0")) {
-            if (!UnidadAF.equals("0")){  
-                 Sql = "select '' institucion,af.NOMBRE_UNIDAD_AF DIRECCION "
-                    + "from AF_UNIDADES_ACTIVO_FIJO af "
-                    + "where trim(UNIDAD_ACTIVO_FIJO)='" + UnidadAF + "'";
-              
-                    Query q = em.createNativeQuery(Sql);
+            if (!UnidadAF.equals("0")) {
+                Sql = "select '' institucion,af.NOMBRE_UNIDAD_AF DIRECCION "
+                        + "from AF_UNIDADES_ACTIVO_FIJO af "
+                        + "where trim(UNIDAD_ACTIVO_FIJO)='" + UnidadAF + "'";
 
-                    for (Object dato : q.getResultList()) {
-                        Object[] ob = (Object[]) dato;
+                Query q = em.createNativeQuery(Sql);
 
-                        DatosVehiculos d = new DatosVehiculos();
-                        d.setInstitucion(null);
-                        d.setUnidad(ob[1].toString());
-                        d.setFecReporte(fecReporte);
-                        d.setUsuario(usuario);
+                for (Object dato : q.getResultList()) {
+                    Object[] ob = (Object[]) dato;
 
-                        d.setLstDatos(lstBienes);
-                        lst.add(d);
-                        }
-            }
-            else{
-                   DatosVehiculos d = new DatosVehiculos();
-                        d.setInstitucion(null);
-                        d.setUnidad(null);
-                        d.setFecReporte(fecReporte);
-                        d.setUsuario(usuario);
+                    DatosVehiculos d = new DatosVehiculos();
+                    d.setInstitucion(null);
+                    d.setUnidad(ob[1].toString());
+                    d.setFecReporte(fecReporte);
+                    d.setUsuario(usuario);
 
-                        d.setLstDatos(lstBienes);
-                        lst.add(d);
+                    d.setLstDatos(lstBienes);
+                    lst.add(d);
+                }
+            } else {
+                DatosVehiculos d = new DatosVehiculos();
+                d.setInstitucion(null);
+                d.setUnidad(null);
+                d.setFecReporte(fecReporte);
+                d.setUsuario(usuario);
+
+                d.setLstDatos(lstBienes);
+                lst.add(d);
             }
         } else {
             Sql = "select trim(ua.CODIGO_UNIDAD)||' - '||ua.NOMBRE_UNIDAD institucion,af.NOMBRE_UNIDAD_AF DIRECCION "
@@ -1120,39 +1151,38 @@ public List<DatosVehiculos> getLista(String UnidadAF,String codUnidad, String fe
         return lst;
     }
 
-    public List<DatosUnidad> getLst(String UnidadAF,String codUnidad, String fecReporte, List<VwBienes> lstBienes, String usuario) {
+    public List<DatosUnidad> getLst(String UnidadAF, String codUnidad, String fecReporte, List<VwBienes> lstBienes, String usuario) {
         List<DatosUnidad> lst = new ArrayList();
         String Sql;
         if (codUnidad.equals("0")) {
-            if (!UnidadAF.equals("0")){  
-                 Sql = "select '' institucion,af.NOMBRE_UNIDAD_AF DIRECCION "
-                    + "from AF_UNIDADES_ACTIVO_FIJO af "
-                    + "where trim(UNIDAD_ACTIVO_FIJO)='" + UnidadAF + "'";
-              
-                    Query q = em.createNativeQuery(Sql);
+            if (!UnidadAF.equals("0")) {
+                Sql = "select '' institucion,af.NOMBRE_UNIDAD_AF DIRECCION "
+                        + "from AF_UNIDADES_ACTIVO_FIJO af "
+                        + "where trim(UNIDAD_ACTIVO_FIJO)='" + UnidadAF + "'";
 
-                    for (Object dato : q.getResultList()) {
-                        Object[] ob = (Object[]) dato;
+                Query q = em.createNativeQuery(Sql);
 
-                        DatosUnidad d = new DatosUnidad();
-                        d.setInstitucion(null);
-                        d.setUnidad(ob[1].toString());
-                        d.setFecReporte(fecReporte);
-                        d.setUsuario(usuario);
+                for (Object dato : q.getResultList()) {
+                    Object[] ob = (Object[]) dato;
 
-                        d.setLstDatos(lstBienes);
-                        lst.add(d);
-                        }
-            }
-            else{
-                   DatosUnidad d = new DatosUnidad();
-                        d.setInstitucion(null);
-                        d.setUnidad(null);
-                        d.setFecReporte(fecReporte);
-                        d.setUsuario(usuario);
+                    DatosUnidad d = new DatosUnidad();
+                    d.setInstitucion(null);
+                    d.setUnidad(ob[1].toString());
+                    d.setFecReporte(fecReporte);
+                    d.setUsuario(usuario);
 
-                        d.setLstDatos(lstBienes);
-                        lst.add(d);
+                    d.setLstDatos(lstBienes);
+                    lst.add(d);
+                }
+            } else {
+                DatosUnidad d = new DatosUnidad();
+                d.setInstitucion(null);
+                d.setUnidad(null);
+                d.setFecReporte(fecReporte);
+                d.setUsuario(usuario);
+
+                d.setLstDatos(lstBienes);
+                lst.add(d);
             }
         } else {
             Sql = "select trim(ua.CODIGO_UNIDAD)||' - '||ua.NOMBRE_UNIDAD institucion,af.NOMBRE_UNIDAD_AF DIRECCION "
@@ -1174,54 +1204,53 @@ public List<DatosVehiculos> getLista(String UnidadAF,String codUnidad, String fe
         }
         return lst;
     }
-    
-    public List<DatosDepreciacion> getLstdepre(Long idBien, List<AfDepreciaciones> lstDepre,String fecRep,String usuario){
+
+    public List<DatosDepreciacion> getLstdepre(Long idBien, List<AfDepreciaciones> lstDepre, String fecRep, String usuario) {
 
         List<DatosDepreciacion> lst;
-      
-         Query q = em.createNamedQuery("BusquedaDepreciacionByBien",DatosDepreciacion.class);
-         q.setParameter(1,idBien);
-          
-         lst=q.getResultList();
-         lst.get(0).setLstDatos(lstDepre);
-         lst.get(0).setFecReporte(fecRep);
-         lst.get(0).setUsuario(usuario);
+
+        Query q = em.createNamedQuery("BusquedaDepreciacionByBien", DatosDepreciacion.class);
+        q.setParameter(1, idBien);
+
+        lst = q.getResultList();
+        lst.get(0).setLstDatos(lstDepre);
+        lst.get(0).setFecReporte(fecRep);
+        lst.get(0).setUsuario(usuario);
         return lst;
     }
-    
-    public List<DatosSolvencia> getLstSol(String UnidadAF,String codUnidad, String fecReporte, List<VwSolvencia> lstSolvencias, String usuario) {
+
+    public List<DatosSolvencia> getLstSol(String UnidadAF, String codUnidad, String fecReporte, List<VwSolvencia> lstSolvencias, String usuario) {
         List<DatosSolvencia> lst = new ArrayList<>();
         String Sql;
         if (codUnidad.equals("0")) {
-            if (!UnidadAF.equals("0")){  
-                 Sql = "select '' institucion,af.NOMBRE_UNIDAD_AF DIRECCION "
-                    + "from AF_UNIDADES_ACTIVO_FIJO af "
-                    + "where trim(UNIDAD_ACTIVO_FIJO)='" + UnidadAF + "'";
-              
-                    Query q = em.createNativeQuery(Sql);
+            if (!UnidadAF.equals("0")) {
+                Sql = "select '' institucion,af.NOMBRE_UNIDAD_AF DIRECCION "
+                        + "from AF_UNIDADES_ACTIVO_FIJO af "
+                        + "where trim(UNIDAD_ACTIVO_FIJO)='" + UnidadAF + "'";
 
-                    for (Object dato : q.getResultList()) {
-                        Object[] ob = (Object[]) dato;
+                Query q = em.createNativeQuery(Sql);
 
-                        DatosSolvencia d = new DatosSolvencia();
-                        d.setInstitucion(null);
-                        d.setUnidad(ob[1].toString());
-                        d.setFecReporte(fecReporte);
-                        d.setUsuario(usuario);
+                for (Object dato : q.getResultList()) {
+                    Object[] ob = (Object[]) dato;
 
-                        d.setLstDatos(lstSolvencias);
-                        lst.add(d);
-                        }
-            }
-            else{
-                   DatosSolvencia d = new DatosSolvencia();
-                        d.setInstitucion(null);
-                        d.setUnidad(null);
-                        d.setFecReporte(fecReporte);
-                        d.setUsuario(usuario);
+                    DatosSolvencia d = new DatosSolvencia();
+                    d.setInstitucion(null);
+                    d.setUnidad(ob[1].toString());
+                    d.setFecReporte(fecReporte);
+                    d.setUsuario(usuario);
 
-                        d.setLstDatos(lstSolvencias);
-                        lst.add(d);
+                    d.setLstDatos(lstSolvencias);
+                    lst.add(d);
+                }
+            } else {
+                DatosSolvencia d = new DatosSolvencia();
+                d.setInstitucion(null);
+                d.setUnidad(null);
+                d.setFecReporte(fecReporte);
+                d.setUsuario(usuario);
+
+                d.setLstDatos(lstSolvencias);
+                lst.add(d);
             }
         } else {
             Sql = "select trim(ua.CODIGO_UNIDAD)||' - '||ua.NOMBRE_UNIDAD institucion,af.NOMBRE_UNIDAD_AF DIRECCION "
@@ -1243,38 +1272,37 @@ public List<DatosVehiculos> getLista(String UnidadAF,String codUnidad, String fe
         }
         return lst;
     }
-    
-   public List<DatosxCuentas> getLstdatos(String UnidadAF,String codUnidad, String fecReporte,String fuente, List<VwDatosxCuentas> lstBienes, String usuario) {
+
+    public List<DatosxCuentas> getLstdatos(String UnidadAF, String codUnidad, String fecReporte, String fuente, List<VwDatosxCuentas> lstBienes, String usuario) {
         List<DatosxCuentas> lst = new ArrayList<DatosxCuentas>();
         if (codUnidad.equals("0")) {
-            if (!UnidadAF.equals("0")){ 
-            String Sql = "select '' institucion,af.NOMBRE_UNIDAD_AF DIRECCION "
-                    + "from AF_UNIDADES_ACTIVO_FIJO af "
-                    + "where trim(UNIDAD_ACTIVO_FIJO)='" + UnidadAF + "'";
-            Query q = em.createNativeQuery(Sql);
+            if (!UnidadAF.equals("0")) {
+                String Sql = "select '' institucion,af.NOMBRE_UNIDAD_AF DIRECCION "
+                        + "from AF_UNIDADES_ACTIVO_FIJO af "
+                        + "where trim(UNIDAD_ACTIVO_FIJO)='" + UnidadAF + "'";
+                Query q = em.createNativeQuery(Sql);
 
-            for (Object dato : q.getResultList()) {
-                Object[] ob = (Object[]) dato;
-              
+                for (Object dato : q.getResultList()) {
+                    Object[] ob = (Object[]) dato;
+
+                    DatosxCuentas d = new DatosxCuentas();
+                    d.setInstitucion(null);
+                    d.setUnidad(ob[1].toString());
+                    d.setFecReporte(fecReporte);
+                    d.setUsuario(usuario);
+
+                    d.setLstDatos(lstBienes);
+                    lst.add(d);
+                }
+            } else {
                 DatosxCuentas d = new DatosxCuentas();
                 d.setInstitucion(null);
-                d.setUnidad(ob[1].toString());
+                d.setUnidad(null);
                 d.setFecReporte(fecReporte);
                 d.setUsuario(usuario);
 
                 d.setLstDatos(lstBienes);
                 lst.add(d);
-                }
-            }
-            else{
-                   DatosxCuentas d = new DatosxCuentas();
-                        d.setInstitucion(null);
-                        d.setUnidad(null);
-                        d.setFecReporte(fecReporte);
-                        d.setUsuario(usuario);
-
-                        d.setLstDatos(lstBienes);
-                        lst.add(d);
             }
         } else {
             String Sql = "select trim(ua.CODIGO_UNIDAD)||' - '||ua.NOMBRE_UNIDAD institucion,af.NOMBRE_UNIDAD_AF DIRECCION "

@@ -12,13 +12,10 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -26,23 +23,9 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "AF_UNIDADES_ADMINISTRATIVAS", catalog = "", schema = "ACTIVO_FIJO_V2")
-@NamedQueries({
-    @NamedQuery(name = "AfUnidadesAdministrativas.findAll", query = "SELECT a FROM AfUnidadesAdministrativas a"),
-    @NamedQuery(name = "AfUnidadesAdministrativas.findByUnidadActivoFijo", query = "SELECT a FROM AfUnidadesAdministrativas a WHERE a.afUnidadesAdministrativasPK.unidadActivoFijo = :unidadActivoFijo"),
-    @NamedQuery(name = "AfUnidadesAdministrativas.findByCodigoUnidad", query = "SELECT a FROM AfUnidadesAdministrativas a WHERE a.afUnidadesAdministrativasPK.codigoUnidad = :codigoUnidad"),
-    @NamedQuery(name = "AfUnidadesAdministrativas.findByNombreUnidad", query = "SELECT a FROM AfUnidadesAdministrativas a WHERE a.nombreUnidad = :nombreUnidad"),
-    @NamedQuery(name = "AfUnidadesAdministrativas.findByDireccion", query = "SELECT a FROM AfUnidadesAdministrativas a WHERE a.direccion = :direccion"),
-    @NamedQuery(name = "AfUnidadesAdministrativas.findByNombreDirector", query = "SELECT a FROM AfUnidadesAdministrativas a WHERE a.nombreDirector = :nombreDirector"),
-    @NamedQuery(name = "AfUnidadesAdministrativas.findByCargoDirector", query = "SELECT a FROM AfUnidadesAdministrativas a WHERE a.cargoDirector = :cargoDirector"),
-    @NamedQuery(name = "AfUnidadesAdministrativas.findByTelefono", query = "SELECT a FROM AfUnidadesAdministrativas a WHERE a.telefono = :telefono"),
-    @NamedQuery(name = "AfUnidadesAdministrativas.findByNombreResponsable", query = "SELECT a FROM AfUnidadesAdministrativas a WHERE a.nombreResponsable = :nombreResponsable"),
-    @NamedQuery(name = "AfUnidadesAdministrativas.findByFechaInventario", query = "SELECT a FROM AfUnidadesAdministrativas a WHERE a.fechaInventario = :fechaInventario"),
-    @NamedQuery(name = "AfUnidadesAdministrativas.findByTipoUnidad", query = "SELECT a FROM AfUnidadesAdministrativas a WHERE a.tipoUnidad = :tipoUnidad"),
-    @NamedQuery(name = "AfUnidadesAdministrativas.findByFechaAdicion", query = "SELECT a FROM AfUnidadesAdministrativas a WHERE a.fechaAdicion = :fechaAdicion"),
-    @NamedQuery(name = "AfUnidadesAdministrativas.findByUsuarioAdicion", query = "SELECT a FROM AfUnidadesAdministrativas a WHERE a.usuarioAdicion = :usuarioAdicion"),
-    @NamedQuery(name = "AfUnidadesAdministrativas.findByFechaModifica", query = "SELECT a FROM AfUnidadesAdministrativas a WHERE a.fechaModifica = :fechaModifica"),
-    @NamedQuery(name = "AfUnidadesAdministrativas.findByUsuarioModifica", query = "SELECT a FROM AfUnidadesAdministrativas a WHERE a.usuarioModifica = :usuarioModifica")})
 public class AfUnidadesAdministrativas implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @EmbeddedId
     protected AfUnidadesAdministrativasPK afUnidadesAdministrativasPK;
@@ -76,7 +59,7 @@ public class AfUnidadesAdministrativas implements Serializable {
     private String usuarioModifica;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "afUnidadesAdministrativas")
     private List<AfSeccionesUnidad> afSeccionesUnidadList;
-    
+
     public AfUnidadesAdministrativas() {
     }
 
@@ -219,15 +202,12 @@ public class AfUnidadesAdministrativas implements Serializable {
             return false;
         }
         AfUnidadesAdministrativas other = (AfUnidadesAdministrativas) object;
-        if ((this.afUnidadesAdministrativasPK == null && other.afUnidadesAdministrativasPK != null) || (this.afUnidadesAdministrativasPK != null && !this.afUnidadesAdministrativasPK.equals(other.afUnidadesAdministrativasPK))) {
-            return false;
-        }
-        return true;
+        return !((this.afUnidadesAdministrativasPK == null && other.afUnidadesAdministrativasPK != null) || (this.afUnidadesAdministrativasPK != null && !this.afUnidadesAdministrativasPK.equals(other.afUnidadesAdministrativasPK)));
     }
 
     @Override
     public String toString() {
-        return nombreUnidad ;
+        return nombreUnidad;
     }
-  
+
 }

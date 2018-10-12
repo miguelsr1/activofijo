@@ -129,17 +129,7 @@ public class CatalogosEJB {
         } else {
             return null;
         }
-    }
-    
-    public AfUnidadesAdministrativas getUnidadPk(String codigo,String adm){
-        Query q = em.createQuery("Select a from AfUnidadesAdministrativas a where trim(a.afUnidadesAdministrativasPK.unidadActivoFijo)='"+codigo+"' and trim(a.afUnidadesAdministrativasPK.codigoUnidad)='"+adm+"' ", AfUnidadesAdministrativas.class);
-        if (q.getResultList().isEmpty()) {
-            return null;
-        } else {
-            return (AfUnidadesAdministrativas) q.getSingleResult();
-        }
-    }
-    
+    }    
         
     public List<AfUnidadesActivoFijo> getUnidadAf() {
 

@@ -78,5 +78,5 @@ public class AfUnidadesAdministrativasPK implements Serializable {
     public String toString() {
         return  unidadActivoFijo +" "+ codigoUnidad ;
     }
-    
+
 }
