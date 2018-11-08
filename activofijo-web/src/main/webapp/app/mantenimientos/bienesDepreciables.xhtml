@@ -6,6 +6,7 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://java.sun.com/jsf/core">
     <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+        
            <ui:define name="content">
                 <p:menubar id="barBtns" > 
                   <p:menuitem value="Guardar" icon="fa fa-save" action="#{bienesController.guardarBien}" update="cor" />
@@ -35,7 +36,7 @@
                                  <p:outputLabel value="Unidad Administrativa" />
                          </h:panelGroup>           
                         <p:selectOneMenu  id="uadm" value="#{bienesController.unidadAdm}" required="true" requiredMessage="Seleccione Unidad Administrativa" disabled="!#{bienesController.pnlLote}">
-                            <p:ajax update="uadm"/>
+                            <p:ajax update="uadm" />
                              <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
                             <f:selectItems value="#{bienesController.lstUnidadAdm}" var="uadm" itemLabel="#{uadm.afUnidadesAdministrativasPK.codigoUnidad} - #{uadm.nombreUnidad}" itemValue="#{uadm.afUnidadesAdministrativasPK.codigoUnidad}" />
                         </p:selectOneMenu> 
@@ -65,7 +66,7 @@
                     </h:panelGrid>    
                 </p:panel>
                   <p:panel header="DATOS GENERALES">
-                    <h:panelGrid columns="4">
+                    <h:panelGrid columns="5">
                          <p:outputLabel value="Calidad:"/>
                          <p:selectOneMenu value="#{bienesController.calidad}" >
                             <f:selectItems value="#{bienesController.calidadBien}" var="cal" itemLabel="#{cal.nombreCalidadBien}" itemValue="#{cal.codigoCalidadBien}"/>
@@ -73,10 +74,12 @@
                         <h:panelGroup><h:outputLabel value="*" style="font:bold;color:red;size:14px"/>
                           <p:outputLabel value="  Asignado A:"/>
                        </h:panelGroup>
-                         <p:inputText value="#{bienesController.bd.asignadoA}" required="true" requiredMessage="Ingrese Asignado a"/>
+                         <p:inputText  id="asig" value="#{bienesController.asignadoA}" required="true" requiredMessage="Ingrese Asignado a"/>
+                         <p:commandButton value="..." actionListener="#{bienesController.buscarEmpleado}" process="@this" disabled="!#{bienesController.pnlLote}">
+                               <p:ajax event="dialogReturn" listener="#{bienesController.onEmpleadoSelect}" update="asig"/>
+                         </p:commandButton>
                     <p:outputLabel value="Descripci&oacute;n:"/>
                     <p:inputTextarea id="des" value="#{bienesController.desBien}" cols="50" rows="5"/>
-                         <p:spacer width="8"/>
                          <p:spacer width="8"/>
                          <p:outputLabel value="Observaciones:"/>
                          <p:inputTextarea value="#{bienesController.bd.observaciones}" cols="50" rows="5"/>
@@ -126,7 +129,7 @@
                     <h:panelGroup><h:outputLabel value="*" style="font:bold;color:red;size:14px"/>
                         <p:outputLabel value=" Fecha Adquisici&oacute;n:"/>
                     </h:panelGroup>
-                  <p:calendar id="fechaAdq" value="#{bienesController.bd.fechaAdquisicion}" pattern="dd/MM/yyyy" required="true" maxdate="#{bienesController.fecLimit}" requiredMessage="Ingrese Fecha de Adquisición"/>
+                    <p:calendar id="fechaAdq"  widgetVar="fechaAdq" value="#{bienesController.fecAdquisicion}"  pattern="dd/MM/yyyy" navigator="true"  required="true" requiredMessage="Ingrese Fecha de Adquisición"   onblur="compararFecha()"/>
                 
                     <p:outputLabel value="Documento Adquisici&oacute;n:"/>
                   <p:inputText value="#{bienesController.bd.documentoAdquisicion}"/>

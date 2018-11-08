@@ -83,6 +83,15 @@ public class JsfUtil {
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
+    public static void mensajeEliminarEmpleado() {
+        msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "<big>Información</big>", "<big>Empleado Elimnado</big>");
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
+    
+    public static void mensajeEliminarUnidadAdm() {
+        msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "<big>Información</big>", "<big>Unidad Administrativa eliminada</big>");
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
      public static void mensajeEliminarBien() {
         msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "<big>Información</big>", "<big>Bien Elimnado</big>");
         FacesContext.getCurrentInstance().addMessage(null, msg);

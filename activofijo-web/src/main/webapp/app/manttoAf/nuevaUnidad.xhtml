@@ -16,29 +16,29 @@
                 <p:outputLabel value="Datos Unidades" escape="false"/>
                 <p:column>
                     <h:outputLabel value="Unidad Activo Fijo:       " />
-                    <h:selectOneMenu id="uaf" value="#{unidadAdministrativaController.unidad.afUnidadesAdministrativasPK.unidadActivoFijo}" required="true" requiredMessage="Seleccione Unidad de Activo Fijo" >
+                    <h:selectOneMenu id="uaf" value="#{unidadAdministrativaController.unidadAF}" required="true" requiredMessage="Seleccione Unidad de Activo Fijo" >
                         <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
                         <f:selectItems value="#{unidadAdministrativaController.lstUnidadAF}" var="uAF" itemLabel="#{uAF.unidadActivoFijo} - #{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
                     </h:selectOneMenu> 
                 </p:column>
                 <h:panelGrid columns="2">
                     <p:column> <h:outputLabel value="Codigo Unidad:"/> </p:column>
-                    <p:column> <h:inputText id="cod" value="#{unidadAdministrativaController.unidad.afUnidadesAdministrativasPK.codigoUnidad}" style="width:100px" maxlength="7" /> </p:column>
+                    <p:column> <h:inputText id="cod" value="#{unidadAdministrativaController.unidadAdm}" style="width:100px" maxlength="7" /> </p:column>
                     <p:column> <h:outputLabel value="Nombre de Unidad:"/> </p:column>
-                    <p:column> <h:inputText id="nom" value="#{unidadAdministrativaController.unidad.nombreUnidad}" styleClass="textMayuscula" onkeyup="return cUpper(this);" style="width:500px" /> </p:column>
+                    <p:column> <h:inputText id="nom" value="#{unidadAdministrativaController.nombreUnidad}" styleClass="textMayuscula" onkeyup="return cUpper(this);" style="width:500px" /> </p:column>
                     <p:column> <h:outputLabel value="Direcci&oacute;n:"/> </p:column>
-                    <p:column> <h:inputTextarea id="dir" value="#{unidadAdministrativaController.unidad.direccion}" cols="50" rows="4" /> </p:column>
+                    <p:column> <h:inputTextarea id="dir" value="#{unidadAdministrativaController.direccion}" cols="50" rows="4" /> </p:column>
                     <p:column> <h:outputLabel value="Nombre Director:"/> </p:column>
-                    <p:column> <h:inputText id="nomdir" value="#{unidadAdministrativaController.unidad.nombreDirector}" styleClass="textMayuscula" onkeyup="return cUpper(this);" style="width:500px" /> </p:column>
+                    <p:column> <h:inputText id="nomdir" value="#{unidadAdministrativaController.nombreDir}" styleClass="textMayuscula" onkeyup="return cUpper(this);" style="width:500px" /> </p:column>
                     <p:column> <h:outputLabel value="Cargo Director: "/> </p:column>
-                    <p:column> <h:inputText id="car" value="#{unidadAdministrativaController.unidad.cargoDirector}" styleClass="textMayuscula" onkeyup="return cUpper(this);" style="width:500px" /> </p:column>
+                    <p:column> <h:inputText id="car" value="#{unidadAdministrativaController.cargoDir}" styleClass="textMayuscula" onkeyup="return cUpper(this);" style="width:500px" /> </p:column>
                     <p:column> <h:outputLabel value="telefono:"/> </p:column>
-                    <p:column> <h:inputText id="tel" value="#{unidadAdministrativaController.unidad.telefono}" style="width:100px" maxlength="8"/> </p:column>
+                    <p:column> <h:inputText id="tel" value="#{unidadAdministrativaController.telefono}" style="width:100px" maxlength="8"/> </p:column>
                     <p:column> <h:outputLabel value="Nombre Responsable:"/> </p:column>
-                    <p:column> <h:inputText id="nomres" value="#{unidadAdministrativaController.unidad.nombreResponsable}" styleClass="textMayuscula" onkeyup="return cUpper(this);" style="width:500px" /> </p:column>
+                    <p:column> <h:inputText id="nomres" value="#{unidadAdministrativaController.nomResponsable}" styleClass="textMayuscula" onkeyup="return cUpper(this);" style="width:500px" /> </p:column>
                     <p:column> <h:outputLabel value="Tipo Unidad:"/> </p:column>
                     <p:column> 
-                        <h:selectOneMenu id="tipUni" value="#{unidadAdministrativaController.unidad.tipoUnidad}" required="true" requiredMessage="Ingrese tipo de unidad a crear">
+                        <h:selectOneMenu id="tipUni" value="#{unidadAdministrativaController.tipoUnidad}" required="true" requiredMessage="Ingrese tipo de unidad a crear">
                             <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
                             <f:selectItem itemLabel="Unidad Administrativa" itemValue="UA"/>
                             <f:selectItem itemLabel="Centro Escolar" itemValue="CE"/>

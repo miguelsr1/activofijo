@@ -40,6 +40,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import sv.gob.mined.activofijo.ejb.BienesEJB;
@@ -49,6 +50,7 @@ import sv.gob.mined.activofijo.model.AfBienesDepreciables;
 import sv.gob.mined.activofijo.model.AfCalidadBien;
 import sv.gob.mined.activofijo.model.AfCategoriasBien;
 import sv.gob.mined.activofijo.model.AfDepreciaciones;
+import sv.gob.mined.activofijo.model.AfEmpleados;
 import sv.gob.mined.activofijo.model.AfEstatusBien;
 import sv.gob.mined.activofijo.model.AfFormaAdquisicion;
 import sv.gob.mined.activofijo.model.AfFuenteFinanciamiento;
@@ -89,8 +91,11 @@ public class BienesController implements Serializable {
     private AfBienesDepreciables bd = new AfBienesDepreciables();
     private AfTipoBienes tb = new AfTipoBienes();
     private AfSolvencias sol = new AfSolvencias();
+    private AfEmpleados emp= new AfEmpleados();
     private String unidadAF;
     private String unidadAdm;
+     private String unidadAF1;
+    private String unidadAdm1;
     private String codigoEntidad;
     private String tipoUsu;
     private String tipoUnidad = "UA";
@@ -98,6 +103,7 @@ public class BienesController implements Serializable {
     private String periodo;
     private String periodo2 = "";
     private String mensaje;
+    private Long idEmp;
     private Long cat;
     private Long tipo;
     private Long section;
@@ -115,12 +121,14 @@ public class BienesController implements Serializable {
     private String modelo;
     private String serie;
     private String actFijo;
+    private Date fecAdquisicion;
     private Date fecAdq1;
     private Date fecAdq2;
     private Date fecCrea1;
     private Date fecCrea2;
     private Date fecRep;
     private Date fecLimit;
+    private Date fecInicio;
     private String valor;
     private String asignadoA;
     private String anio;
@@ -145,6 +153,9 @@ public class BienesController implements Serializable {
     private boolean pnlLote = true;
     private boolean modifica = true;
     private boolean disableBtn = true;
+    public String nombres;
+    public String apellidos;
+    public String cargo;
     private String tmp;
 
     private Usuario usuDao = new Usuario();
@@ -164,6 +175,8 @@ public class BienesController implements Serializable {
     private List<VwDatosxCuentas> lstDatos = new ArrayList();
     private List<VwBienes> lstBientmp = new ArrayList();
     private List<VwVehiculos> lstVehiculos = new ArrayList();
+    private List<AfEmpleados> lstEmpleados = new ArrayList<>();
+  
     /**
      * Creates a new instance of BienesController
      */
@@ -188,8 +201,10 @@ public class BienesController implements Serializable {
             tipo = bd.getIdTipoBien();// cejb.tipoBien(bd.getIdCatBien().getIdCatBien(), bd.getCodigoTipoBien());
             desBien = bd.getDescripcionBien();
             estatus = bd.getIdEstatusBien().getIdEstatusBien();
+            asignadoA = bd.getAsignadoA();
             correlativo = bd.getCorrelativo();
             codigoInventario = bd.getCodigoInventario();
+            fecAdquisicion = bd.getFechaAdquisicion();
             unidadAF = bd.getUnidadActivoFijo();
             lstUnidadAdm = cejb.getUnidadAdm(unidadAF, tipoUnidad);
             lstMunicipio = bejb.buscarMunicipios(unidadAF);
@@ -203,7 +218,7 @@ public class BienesController implements Serializable {
             fuente = bd.getIdFuente().toString();
             proyecto = bd.getIdProyecto().toString();
             valorAdquisicion = bd.getValorAdquisicion();
-
+          
             //   esAdm = true;
             if (cat == 5) {
                 marcaV = bd.getMarca();
@@ -229,7 +244,8 @@ public class BienesController implements Serializable {
             pnlLote = true;
             modifica = false;
         }
-
+            unidadAdm1=unidadAdm;
+            unidadAF1=unidadAF;
     }
 
     public void existeCorre(AjaxBehaviorEvent event) {
@@ -264,6 +280,14 @@ public class BienesController implements Serializable {
         return lstSolEmitidas;
     }
 
+    public Date getFecAdquisicion() {
+        return fecAdquisicion;
+    }
+
+    public void setFecAdquisicion(Date fecAdquisicion) {
+        this.fecAdquisicion = fecAdquisicion;
+    }
+
     public void setLstSolEmitidas(List<VwSolvencia> lstSolEmitidas) {
         this.lstSolEmitidas = lstSolEmitidas;
     }
@@ -278,6 +302,14 @@ public class BienesController implements Serializable {
 
     public void setMotor(String motor) {
         this.motor = motor;
+    }
+
+    public Date getFecInicio() {
+        return cejb.getFechaInicial();
+    }
+
+    public void setFecInicio(Date fecInicio) {
+        this.fecInicio = fecInicio;
     }
 
     public String getChasis() {
@@ -330,6 +362,38 @@ public class BienesController implements Serializable {
 
     public void setLstMunicipio(List<VwMunicipio> lstMunicipio) {
         this.lstMunicipio = lstMunicipio;
+    }
+
+    public Long getIdEmp() {
+        return idEmp;
+    }
+
+    public void setIdEmp(Long idEmp) {
+        this.idEmp = idEmp;
+    }
+
+    public String getNombres() {
+        return nombres;
+    }
+
+    public void setNombres(String nombres) {
+        this.nombres = nombres;
+    }
+
+    public String getApellidos() {
+        return apellidos;
+    }
+
+    public void setApellidos(String apellidos) {
+        this.apellidos = apellidos;
+    }
+
+    public String getCargo() {
+        return cargo;
+    }
+
+    public void setCargo(String cargo) {
+        this.cargo = cargo;
     }
 
     
@@ -861,6 +925,11 @@ public class BienesController implements Serializable {
         // activo=false;
         lstUnidadAdm = cejb.getUnidadAdm(unidadAF, tipoUnidad);
     }
+    
+    public void filtrarUnidadesAdm1() {
+        // activo=false;
+        lstUnidadAdm = cejb.getUnidadAdm(unidadAF1, tipoUnidad);
+    }
 
     public void bienesId(SelectEvent event) {
         lstBienesDepreciable = bejb.bienId(bd.getIdBien());
@@ -869,16 +938,7 @@ public class BienesController implements Serializable {
     public void depreciacionAnio() {
         lstDepreciaciones = bejb.depreciacionAnio(anio, mes);
     }
-/* public void obtenerCorre() {
-        String tipoBien = cejb.getTBien(tipo).getCodigoTipoBien();
-        if (tipoUnidad.equals("UA")) {
-            correlativo = String.format("%03d", cejb.getCorrelativoCod(unidadAF, unidadAdm, tipo.toString()));
-        } else {
-            correlativo = String.format("%04d", cejb.getCorrelativoCod(unidadAF, unidadAdm, tipo.toString()));
-        }
 
-        codigoInventario = unidadAdm + "-" + tipoBien + "-" + correlativo;
-    }*/
     public void obtenerCorre() {
         String tipoBien = cejb.getTBien(tipo).getCodigoTipoBien();
         if (tipoUnidad.equals("UA")) {
@@ -906,7 +966,15 @@ public class BienesController implements Serializable {
             pnlVh = false;
             pnlMb = true;
         }
-        RequestContext.getCurrentInstance().closeDialog(tb.getIdTipoBien());
+        PrimeFaces.current().dialog().closeDynamic(tb.getIdTipoBien());
+
+    }
+     public void onRowSelect2(SelectEvent event) {
+        emp = (AfEmpleados) event.getObject();
+        asignadoA = emp.getNombres()+' '+emp.getApellidos();
+        idEmp=emp.getIdEmpleado();
+         PrimeFaces.current().dialog().closeDynamic(emp.getIdEmpleado());
+        //RequestContext.getCurrentInstance().closeDialog(emp.getIdEmpleado());
 
     }
 
@@ -931,6 +999,8 @@ public class BienesController implements Serializable {
             bd.setCodigoCalidadBien(cejb.getCalidadBien(calidad));
             bd.setIdEstatusBien(cejb.getEstatusBien(estatus));
             bd.setDescripcionBien(desBien);
+            bd.setAsignadoA(asignadoA);
+            bd.setIdEmpleado(idEmp);
             if (fuente == null) {
                 bd.setIdFuente(0l);
             } else {
@@ -1060,6 +1130,40 @@ public class BienesController implements Serializable {
         lstBienes = null;
 
     }
+
+    public List<AfEmpleados> getLstEmpleados() {
+        return lstEmpleados;
+    }
+
+    public void setLstEmpleados(List<AfEmpleados> lstEmpleados) {
+        this.lstEmpleados = lstEmpleados;
+    }
+
+    public AfEmpleados getEmp() {
+        return emp;
+    }
+
+    public void setEmp(AfEmpleados emp) {
+        this.emp = emp;
+    }
+
+    public String getUnidadAF1() {
+        return unidadAF1;
+    }
+
+    public void setUnidadAF1(String unidadAF1) {
+        this.unidadAF1 = unidadAF1;
+    }
+
+    public String getUnidadAdm1() {
+        return unidadAdm1;
+    }
+
+    public void setUnidadAdm1(String unidadAdm1) {
+        this.unidadAdm1 = unidadAdm1;
+    }
+
+   
 
     public void buscarDepreBien() {
         String condicion;
@@ -1279,7 +1383,7 @@ public class BienesController implements Serializable {
         if (unidadAdm == null || unidadAdm.equals("0")) {
             JsfUtil.mensajeError("Seleccione la Unidad Administrativa");
         } else {
-            Map<String, Object> options = new HashMap<String, Object>();
+            Map<String, Object> options = new HashMap();
             options.put("resizable", true);
             options.put("draggable", true);
             options.put("width", 640);
@@ -1290,6 +1394,25 @@ public class BienesController implements Serializable {
             RequestContext.getCurrentInstance().openDialog("/app/mantenimientos/buscarTipoBien", options, null);
         }
     }
+    
+    public void buscarEmpleado() {
+        if (unidadAdm == null || unidadAdm.equals("0")) {
+            JsfUtil.mensajeError("Seleccione la Unidad Administrativa");
+        } else {
+            unidadAdm1=unidadAdm;
+            unidadAF1=unidadAF;
+            Map<String, Object> options = new HashMap();
+            options.put("resizable", true);
+            options.put("draggable", true);
+            options.put("width", 640);
+            options.put("height", 340);
+            options.put("contentWidth", "100%");
+            options.put("contentHeight", "100%");
+            options.put("modal", true);
+            RequestContext.getCurrentInstance().openDialog("/app/mantenimientos/buscarEmpleado", options, null);
+        }
+    }
+
 
     public void buscarTipoBienDep() {
         Map<String, Object> options = new HashMap();
@@ -1303,6 +1426,14 @@ public class BienesController implements Serializable {
         RequestContext.getCurrentInstance().openDialog("/app/mantenimientos/buscarTipoBien", options, null);
     }
 
+    public void onEmpleadoSelect(SelectEvent event) {
+        if (event.getObject() instanceof Long) {
+            idEmp = (Long) event.getObject();
+            asignadoA= cejb.NomEmpleado(idEmp);
+        }
+
+    }
+    
     public void onTipoSelect(SelectEvent event) {
         if (event.getObject() instanceof Long) {
             tipo = (Long) event.getObject();
@@ -1319,8 +1450,9 @@ public class BienesController implements Serializable {
 
     }
 
+      
     public Date getFecLimit() {
-        return fecLimit;
+        return new Date();
     }
 
     public void setFecLimit(Date fecLimit) {
@@ -2157,7 +2289,25 @@ public class BienesController implements Serializable {
         JsfUtil.mensajeInformacion("Depreciación calculada para " + Bienes + " bienes");
 
     }
+    
+      public void buscarEmpleados(){
+        String condicion="";
+        
+         if (!unidadAF1.equals("0")) { condicion=condicion+ " a.unidad_activo_fijo='"+unidadAF1+"' and ";}
+        if (!unidadAdm1.equals("0")) { condicion=condicion+ " a.codigo_unidad='"+unidadAdm1+"' and ";}
+        if (!nombres.isEmpty() && !nombres.equals("")) { condicion=condicion+ " a.nombres like '%"+nombres+"%' and ";}
+        if (!apellidos.isEmpty() && !apellidos.equals("")) { condicion=condicion+ " a.apellidos like '%"+apellidos+"%' and ";}
+        if (!condicion.equals("")){
+            condicion =condicion.substring(0,condicion.length()-4);
+        }
+        
+        lstEmpleados = bejb.buscarEmpleados(condicion);
+    }
 
+      public String obtenerNombreUnidad(String codigo){
+        return cejb.NomUnidad(codigo,"UA");
+    }
+      
     public void generarXls_reporteBienesxsubcuentas() throws IOException {
         Workbook libro = new HSSFWorkbook();
         Sheet hoja = libro.createSheet("Reporte");

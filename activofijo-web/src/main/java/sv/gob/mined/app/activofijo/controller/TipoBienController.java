@@ -43,7 +43,7 @@ public class TipoBienController implements Serializable {
     
     private Long idTipoBien;
     private Long cat;
-    private Long clas;
+    private Long clas=1l;
     private String codigo;
     private String descripcion;
     private Usuario usuDao = new Usuario();
@@ -71,6 +71,7 @@ public class TipoBienController implements Serializable {
              cat = tipoBien.getIdCatBien().getIdCatBien();
              
          }
+          lstCategoria = cejb.getCategoriaxCla(clas);
        
       }
     
@@ -84,10 +85,7 @@ public class TipoBienController implements Serializable {
         this.clas = clas;
     }
 
-    public void filtrarCategoria(){
-        lstCategoria = cejb.getCategoriaxCla(clas);
-    }
-
+  
     public List<AfTipoBienes> getLstTipoBien() {
         return lstTipoBien;
     }
@@ -223,15 +221,19 @@ public class TipoBienController implements Serializable {
      
     }
     public void eliminar(){
+        
          tipoBien= cejb.getTBien(idTipoBien);
-         if (tipoBien.getEstadoTipo().toString().equals("1"))
+         if (bejb.bienesTipo(idTipoBien)){
+            bejb.removeTipoBien(tipoBien);
+         }else {
+            if (tipoBien.getEstadoTipo().toString().equals("1"))
               tipoBien.setEstadoTipo('0');
-         else{
-             tipoBien.setEstadoTipo('1');
-         }
+             else{
+                 tipoBien.setEstadoTipo('1');
+             }
          
-         bejb.inactivarTipoBien(tipoBien, JsfUtil.getVariableSession("usuario").toString());
-
+            bejb.inactivarTipoBien(tipoBien, JsfUtil.getVariableSession("usuario").toString());
+         }
          JsfUtil.redireccionar("/app/manttoAf/buscarTipoBien.mined?faces-redirect=true");
        //   JsfUtil.redireccionar("buscarTrasladosCE.mined?faces-redirect=true");
      }

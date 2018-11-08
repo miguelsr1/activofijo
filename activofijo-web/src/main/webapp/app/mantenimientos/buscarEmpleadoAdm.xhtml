@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Filtro tipo de bienes</title>
+        <style type="text/css">
+            .col1{
+                height:auto;vertical-align: top; width: 100px;
+            }
+            .col2{
+                height:auto; vertical-align: middle; width: 300px;
+            }
+        </style>
+        <link href="#{request.contextPath}/resources/css/principal.css" rel="stylesheet" type="text/css" />
+        <link href="#{request.contextPath}/resources/css/iconos-1.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="#{request.contextPath}/resources/js/funciones-1.js"></script>
+    </h:head>
+
+    <h:body>
+        <h:form id="frmDialog">
+         <p:panel>
+         <h:panelGrid>
+            <h:outputLabel value="Nombre" />
+            <h:inputText id="nombreEmpleado" value="#{bienesAdmController.nombres}" styleClass="textMayuscula" onkeyup="return cUpper(this);" />
+            <h:outputLabel value="Apellidos" />
+            <h:inputText id="apeEmpleado" value="#{bienesAdmController.apellidos}" styleClass="textMayuscula" onkeyup="return cUpper(this);"/> 
+            <h:outputLabel value="Unidad Activo Fijo:       " />
+            <h:selectOneMenu id="uaf" value="#{bienesAdmController.unidadAF1}" disabled="true">
+                    <p:ajax update="uadm" listener="#{bienesAdmController.filtrarUnidadesAdm1}" process="@this"/>
+                    <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                    <f:selectItems value="#{bienesAdmController.lstUnidadAF}" var="uAF" itemLabel="#{uAF.unidadActivoFijo} - #{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
+                 </h:selectOneMenu> 
+           <h:outputLabel value="Unidad Administrativa:     " />
+           <h:selectOneMenu  id="uadm" value="#{bienesAdmController.unidadAdm1}" disabled="true">
+                    <f:selectItems value="#{bienesAdmController.lstUnidadAdm}" var="uadm" itemLabel="#{uadm.afUnidadesAdministrativasPK.codigoUnidad} - #{uadm.nombreUnidad}" itemValue="#{uadm.afUnidadesAdministrativasPK.codigoUnidad}"/>
+               </h:selectOneMenu> 
+           <p:commandButton value="buscar" ajax="true" action="#{bienesAdmController.buscarEmpleados}" update="pnlEmp temp"/> 
+           
+         </h:panelGrid>
+               </p:panel> 
+        </h:form>  
+               <p:panel id="pnlEmp">
+                   <p:dataTable id="temp" value="#{bienesAdmController.lstEmpleados}" var="empleado" selection="#{bienesAdmController.emp}" selectionMode="single" rowKey="#{empleado.idEmpleado}"
+                                rows="10"  paginator="true">
+                    <p:ajax event="rowSelect"  listener="#{bienesAdmController.onRowSelect2}" />
+                    <p:column headerText="Nombre">
+                        <p:outputLabel value="#{empleado.nombres} #{empleado.apellidos}"/>
+                    </p:column>
+                   <p:column headerText="Cargo">
+                       <p:outputLabel value="#{empleado.cargo}"/>
+                   </p:column> 
+                    <p:column headerText="Unidad">
+                        <p:outputLabel value="#{bienesAdmController.obtenerNombreUnidad(empleado.codigoUnidad)}"/>
+                   </p:column>  
+                   </p:dataTable>
+               </p:panel>
+    </h:body>
+</html>
+

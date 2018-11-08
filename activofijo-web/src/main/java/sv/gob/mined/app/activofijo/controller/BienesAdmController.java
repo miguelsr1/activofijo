@@ -28,6 +28,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
+import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import sv.gob.mined.activofijo.ejb.BienesEJB;
@@ -41,6 +42,7 @@ import sv.gob.mined.activofijo.model.AfEstatusBien;
 import sv.gob.mined.activofijo.model.AfFormaAdquisicion;
 import sv.gob.mined.activofijo.model.AfFuenteFinanciamiento;
 import sv.gob.mined.activofijo.model.AfProyectos;
+import sv.gob.mined.activofijo.model.AfEmpleados;
 import sv.gob.mined.activofijo.model.AfSeccionesUnidad;
 import sv.gob.mined.activofijo.model.AfTipoBienes;
 import sv.gob.mined.activofijo.model.AfUnidadesActivoFijo;
@@ -71,8 +73,11 @@ public class BienesAdmController implements Serializable{
     
     private AfBienesDepreciables bd = new AfBienesDepreciables();
     private AfTipoBienes tb = new AfTipoBienes();
+    private AfEmpleados emp = new AfEmpleados();
     private String unidadAF;
     private String unidadAdm;
+     private String unidadAF1;
+    private String unidadAdm1;
     private String tipoUnidad = "UA";
     private String desBien;
     private String lote = "N";
@@ -83,16 +88,19 @@ public class BienesAdmController implements Serializable{
     private Long tipoBien;
     private Long section;
     private Long calidad = Long.valueOf(1);
-    private String AsignadoA;
+    private String asignadoA;
     private Long estatus = Long.valueOf(1);
     private String marcaM;
     private String marcaV;
     private Long fuente = Long.valueOf(0);
     private Long formaAdq;
     private Long proyecto;
+    private Long idEmp;
     private String modelo;
     private String serie;
     private String actFijo;
+    private String nombres;
+    private String apellidos;
     private String responsable;
     private String responsableAF;
     private Date fecAdq1;
@@ -104,7 +112,6 @@ public class BienesAdmController implements Serializable{
     private String numSerie;
     private String anio;
     private String mes;
-    private String asignadoA;
     private String correlativo;
     private String codigoInventario;
     private String descripcion;
@@ -129,6 +136,7 @@ public class BienesAdmController implements Serializable{
     private List<AfProyectos> lstProyectos = new ArrayList();
     private List<VwBienes> lstBienes = new ArrayList();
     private List<VwCorrelativos> lstCorrelativos = new ArrayList();
+    private List<AfEmpleados> lstEmpleados = new ArrayList<>();
 
     /**
      * Creates a new instance of BienesController
@@ -162,6 +170,8 @@ public class BienesAdmController implements Serializable{
             desBien = bd.getDescripcionBien();
             correlativo = bd.getCorrelativo();
             codigoInventario = bd.getCodigoInventario();
+            asignadoA = bd.getAsignadoA();
+            idEmp = bd.getIdEmpleado();
             if (bd.getIdFormaAdquisicion()!=null)    {
                formaAdq = bd.getIdFormaAdquisicion().getIdFormaAdquisicion();
             }
@@ -201,6 +211,30 @@ public class BienesAdmController implements Serializable{
         this.periodo = periodo;
     }
 
+    public Long getIdEmp() {
+        return idEmp;
+    }
+
+    public void setIdEmp(Long idEmp) {
+        this.idEmp = idEmp;
+    }
+
+    public String getUnidadAF1() {
+        return unidadAF1;
+    }
+
+    public void setUnidadAF1(String unidadAF1) {
+        this.unidadAF1 = unidadAF1;
+    }
+
+    public String getUnidadAdm1() {
+        return unidadAdm1;
+    }
+
+    public void setUnidadAdm1(String unidadAdm1) {
+        this.unidadAdm1 = unidadAdm1;
+    }
+
     public String getDesBien() {
         return desBien;
     }
@@ -213,8 +247,32 @@ public class BienesAdmController implements Serializable{
         return responsable;
     }
 
+    public List<AfEmpleados> getLstEmpleados() {
+        return lstEmpleados;
+    }
+
+    public void setLstEmpleados(List<AfEmpleados> lstEmpleados) {
+        this.lstEmpleados = lstEmpleados;
+    }
+
     public void setResponsable(String responsable) {
         this.responsable = responsable;
+    }
+
+    public String getNombres() {
+        return nombres;
+    }
+
+    public void setNombres(String nombres) {
+        this.nombres = nombres;
+    }
+
+    public String getApellidos() {
+        return apellidos;
+    }
+
+    public void setApellidos(String apellidos) {
+        this.apellidos = apellidos;
     }
 
     public Long getIdBien() {
@@ -626,6 +684,11 @@ public class BienesAdmController implements Serializable{
         lstUnidadAdm = cejb.getUnidadAdm(unidadAF, tipoUnidad);
     }
 
+    public void filtrarUnidadesAdm1() {
+        // activo=false;
+        lstUnidadAdm = cejb.getUnidadAdm(unidadAF1, tipoUnidad);
+    }
+
     public void filtrarProyectos() {
         mostrarProy = (fuente != 3);
         lstProyectos = cejb.getProyectosCE();
@@ -640,6 +703,65 @@ public class BienesAdmController implements Serializable{
         this.mostrarProy = mostrarProy;
     }
 
+    public void buscarEmpleados(){
+        String condicion="";
+        
+         if (!unidadAF1.equals("0")) { condicion=condicion+ " a.unidad_activo_fijo='"+unidadAF1+"' and ";}
+        if (!unidadAdm1.equals("0")) { condicion=condicion+ " a.codigo_unidad='"+unidadAdm1+"' and ";}
+        if (!nombres.isEmpty() && !nombres.equals("")) { condicion=condicion+ " a.nombres like '%"+nombres+"%' and ";}
+        if (!apellidos.isEmpty() && !apellidos.equals("")) { condicion=condicion+ " a.apellidos like '%"+apellidos+"%' and ";}
+        if (!condicion.equals("")){
+            condicion =condicion.substring(0,condicion.length()-4);
+        }
+        
+        lstEmpleados = bejb.buscarEmpleados(condicion);
+    }
+
+    public String obtenerNombreUnidad(String codigo){
+        return cejb.NomUnidad(codigo,"UA");
+    }
+    
+    public AfEmpleados getEmp() {
+        return emp;
+    }
+
+    public void setEmp(AfEmpleados emp) {
+        this.emp = emp;
+    }
+
+    public void onRowSelect2(SelectEvent event) {
+        emp = (AfEmpleados) event.getObject();
+        asignadoA = emp.getNombres()+' '+emp.getApellidos();
+        idEmp=emp.getIdEmpleado();
+         PrimeFaces.current().dialog().closeDynamic(emp.getIdEmpleado());
+        //RequestContext.getCurrentInstance().closeDialog(emp.getIdEmpleado());
+
+    }
+    public void buscarEmpleado() {
+        if (unidadAdm == null || unidadAdm.equals("0")) {
+            JsfUtil.mensajeError("Seleccione la Unidad Administrativa");
+        } else {
+            unidadAdm1=unidadAdm;
+            unidadAF1=unidadAF;
+            Map<String, Object> options = new HashMap();
+            options.put("resizable", true);
+            options.put("draggable", true);
+            options.put("width", 640);
+            options.put("height", 340);
+            options.put("contentWidth", "100%");
+            options.put("contentHeight", "100%");
+            options.put("modal", true);
+            RequestContext.getCurrentInstance().openDialog("/app/mantenimientos/buscarEmpleadoAdm", options, null);
+        }
+    }
+    
+    public void onEmpleadoSelect(SelectEvent event) {
+        if (event.getObject() instanceof Long) {
+            idEmp = (Long) event.getObject();
+            asignadoA= cejb.NomEmpleado(idEmp);
+        }
+
+    }
     public void imprimirCorrelativos() throws IOException, JRException {
         HashMap param = new HashMap();
         SimpleDateFormat formateador = new SimpleDateFormat("dd 'de ' MMMM 'de' yyyy", new Locale("es"));

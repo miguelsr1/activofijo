@@ -1,24 +1,37 @@
 package sv.gob.mined.app.activofijo.controller;
 
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import sv.gob.mined.activofijo.ejb.BienesEJB;
 import sv.gob.mined.activofijo.ejb.CatalogosEJB;
+import sv.gob.mined.activofijo.ejb.ReportesEJB;
+import sv.gob.mined.activofijo.model.AfBienesDepreciables;
 import sv.gob.mined.activofijo.model.AfEmpleados;
 
 import sv.gob.mined.activofijo.model.AfUnidadesActivoFijo;
 import sv.gob.mined.activofijo.model.AfUnidadesAdministrativas;
 import sv.gob.mined.app.activofijo.util.JsfUtil;
+import sv.gob.mined.app.activofijo.util.UtilReport;
+import static sv.gob.mined.app.activofijo.util.UtilReport.PATH_IMAGENES;
 import sv.gob.mined.seguridad.model.Usuario;
 import sv.gob.mined.seguridad.web.controller.LoginController;
 
@@ -34,7 +47,8 @@ public class EmpleadosController implements Serializable {
     public CatalogosEJB cejb;
     @EJB
     public BienesEJB bejb;
-    //public List<AfUnidadesAdministrativas> lstUnidadAdm = new ArrayList<AfUnidadesAdministrativas>();
+     @EJB
+    public ReportesEJB reb;
     public AfEmpleados emp= new AfEmpleados();
     
     private int rowDrop = 0;
@@ -46,11 +60,15 @@ public class EmpleadosController implements Serializable {
     public String tipoUnidad="UA";
     private String tipoUsu;
     private Long idEmpleado;
+    private String nomRespon;
+    private String cargoRespon;
     private boolean actAF=false;
     private boolean actAd=false;
     private Usuario usuDao = new Usuario();
     private List<AfEmpleados> lstEmpleados = new ArrayList<>();
     private List<AfUnidadesAdministrativas> lstUnidadAdm = new ArrayList();
+    private List<AfBienesDepreciables> lstBienes = new ArrayList<>();
+    
     public EmpleadosController() {
 
     }
@@ -91,6 +109,7 @@ public class EmpleadosController implements Serializable {
         unidadAdm = usuDao.getCodigoEntidad();
         unidadAF = cejb.getUnidadAf(usuDao.getCodigoEntidad(), tipoUnidad); 
         lstUnidadAdm = cejb.getUnidadAdm(unidadAF, tipoUnidad);
+        lstEmpleados = cejb.getEmpleadosAdm(unidadAdm, unidadAF);
         
         if (JsfUtil.getRequestParameter("idEmpleado")!=null){ 
             emp= bejb.getEmpAdmin(JsfUtil.getRequestParameter("idEmpleado"));
@@ -101,6 +120,22 @@ public class EmpleadosController implements Serializable {
             apellidos=emp.getApellidos();
         }
       
+    }
+
+    public String getNomRespon() {
+        return nomRespon;
+    }
+
+    public void setNomRespon(String nomRespon) {
+        this.nomRespon = nomRespon;
+    }
+
+    public String getCargoRespon() {
+        return cargoRespon;
+    }
+
+    public void setCargoRespon(String cargoRespon) {
+        this.cargoRespon = cargoRespon;
     }
    
 
@@ -151,6 +186,22 @@ public class EmpleadosController implements Serializable {
 
     public void setTipoUsu(String tipoUsu) {
         this.tipoUsu = tipoUsu;
+    }
+
+    public AfEmpleados getEmp() {
+        return emp;
+    }
+
+    public void setEmp(AfEmpleados emp) {
+        this.emp = emp;
+    }
+
+    public List<AfBienesDepreciables> getLstBienes() {
+        return lstBienes;
+    }
+
+    public void setLstBienes(List<AfBienesDepreciables> lstBienes) {
+        this.lstBienes = lstBienes;
     }
 
   
@@ -223,6 +274,11 @@ public class EmpleadosController implements Serializable {
        lstUnidadAdm=cejb.getUnidadAdm(unidadAF,tipoUnidad);
     }
 
+    public void filtrarEmpleados(){
+       lstEmpleados=cejb.getEmpleadosAdm(unidadAdm,unidadAF);
+    }
+
+    
     public Long getIdEmpleado() {
         return idEmpleado;
     }
@@ -259,6 +315,21 @@ public class EmpleadosController implements Serializable {
         lstEmpleados = bejb.buscarEmpleados(condicion);
     }
     
+      public void buscarBienesEmpleado(){
+        String condicion=" a.id_empleado= "+idEmpleado+" and ";
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        
+        
+        if (!unidadAF.equals("0")) { condicion=condicion+ " a.unidad_activo_fijo='"+unidadAF+"' and ";}
+        if (!unidadAdm.equals("0")) { condicion=condicion+ " a.codigo_unidad='"+unidadAdm+"' and ";}
+        
+        if (!condicion.equals("")){
+            condicion =condicion.substring(0,condicion.length()-4);
+        }
+        
+        lstBienes = bejb.buscarBienes(condicion);
+    }
+    
     public void limpiarFiltro(){
         nombres="";
         apellidos="";
@@ -270,7 +341,25 @@ public class EmpleadosController implements Serializable {
         return cejb.NomUnidad(codigo,"UA");
     }
     
-  
+  public void imprimirBienes() throws IOException, JRException {
+       List<JasperPrint> jasperPrintList = new ArrayList();
+     
+        HashMap param = new HashMap();
+        SimpleDateFormat formateador = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new Locale("es"));
+       
+        Date fecRep = cejb.getFechaActual();
+       
+        ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        param.put("p_RutaImg", ctx.getRealPath(PATH_IMAGENES));
+        
+         JasperPrint jp= reb.getRpt(param, EmpleadosController.class.getClassLoader().getResourceAsStream(("reportes" + File.separator + "rep_actaResponsabilidad.jasper")),bejb.getLstEmp(unidadAF, unidadAdm, formateador.format(fecRep),nomRespon,cargoRespon,idEmpleado,lstBienes, usuDao.getLogin()));
+       
+        jasperPrintList.add(jp);
+     
+        UtilReport.generarReporte(jasperPrintList, "actaResponsabilidad");
+
+    }
+
     
     public void guardarEmpleado(){
      
@@ -285,7 +374,25 @@ public class EmpleadosController implements Serializable {
          JsfUtil.redireccionar("/app/manttoAf/EmpleadosAdministrativos.mined?faces-redirect=true");
        //   JsfUtil.redireccionar("buscarTrasladosCE.mined?faces-redirect=true");
      }
-        
+     
+    public void eliminarEmpleado() {
+       
+       if (bejb.bienesEmpleado(idEmpleado)){
+            emp = bejb.getEmpAdmin(idEmpleado.toString());
+         
+            bejb.removeEmpleado(emp);
+            RequestContext.getCurrentInstance().execute("PF('dlg1').hide()");
+           buscarEmpleados();
+
+        JsfUtil.mensajeEliminarEmpleado();
+       }else{
+           JsfUtil.mensajeError("Empleado tiene bienes asignados");
+       }
+          
+
+    }
+
+    
      public void nuevoEmpleado() {
        
         JsfUtil.redireccionar("/app/manttoAf/NuevosEmpleados.mined?faces-redirect=true");

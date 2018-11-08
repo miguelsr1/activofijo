@@ -42,7 +42,7 @@
                 </h:panelGrid>    
             </p:panel>
             <p:panel id="pDatos" header="DATOS GENERALES">
-                <h:panelGrid columns="4">
+                <h:panelGrid columns="5">
                     <p:outputLabel value="Calidad:"/>
                     <p:selectOneMenu value="#{bienesAdmController.calidad}" >
                         <f:selectItems value="#{bienesAdmController.calidadBien}" var="cal" itemLabel="#{cal.nombreCalidadBien}" itemValue="#{cal.codigoCalidadBien}"/>
@@ -50,7 +50,10 @@
                     <h:panelGroup><h:outputLabel value="*" style="font:bold;color:red;size:14px"/>
                         <p:outputLabel value="  Asignado A:"/>
                     </h:panelGroup>
-                    <p:inputText value="#{bienesAdmController.bd.asignadoA}" required="true" requiredMessage="Ingrese Asignado a"/>
+                    <p:inputText id="asig" value="#{bienesAdmController.asignadoA}" required="true" requiredMessage="Ingrese Asignado a"/>
+                    <p:commandButton value="..." actionListener="#{bienesAdmController.buscarEmpleado}" process="@this" disabled="!#{bienesAdmController.pnlLote}">
+                               <p:ajax event="dialogReturn" listener="#{bienesAdmController.onEmpleadoSelect}" update="asig"/>
+                         </p:commandButton>
                     <p:outputLabel value="Descripci&oacute;n:"/>
                     <p:inputTextarea id="des" value="#{bienesAdmController.desBien}" cols="50" rows="5"/>
                     <p:outputLabel value="Observaciones:"/>
@@ -101,7 +104,7 @@
                      <h:panelGroup><h:outputLabel value="*" style="font:bold;color:red;size:14px"/>
                         <p:outputLabel value=" Fecha Adquisici&oacute;n:"/>
                     </h:panelGroup>
-                    <p:calendar id="fechaAdq" value="#{bienesAdmController.bd.fechaAdquisicion}" pattern="dd/MM/yyyy" required="true" maxdate="#{bienesAdmController.fecLimit}" disabled="#{bienesAdmController.modifica}" requiredMessage="Ingrese Fecha de Adquisición"/>
+                    <p:calendar id="fechaAdq" value="#{bienesAdmController.bd.fechaAdquisicion}" pattern="dd/MM/yyyy" required="true" maxdate="#{bienesAdmController.fecLimit}"  readonlyInput="true" disabled="#{bienesAdmController.modifica}" requiredMessage="Ingrese Fecha de Adquisición"/>
                     <p:outputLabel value="Documento Adquisici&oacute;n:"/>
                     <p:inputText value="#{bienesAdmController.bd.documentoAdquisicion}"/>
                     <h:panelGroup><h:outputLabel value="*" style="font:bold;color:red;size:14px"/>

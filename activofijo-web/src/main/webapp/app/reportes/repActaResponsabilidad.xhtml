@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+        <ui:define name="content">
+            <p:menubar id="barBtns" > 
+                <p:menuitem value="Buscar" icon="fa fa-search" action="#{empleadosController.buscarBienesEmpleado}" update="barBtns pnlEmp"/>
+                <p:menuitem id="btnImp" value="Imprimir" icon="fa fa-print" ajax="true" onclick="PF('dlgImprimir').show();"/> 
+                <p:menuitem value="Limpiar" icon="fa fa-trash-o" action="#{empleadosController.limpiarFiltro}" update="pnlFiltros pnlEmp"/>
+                <p:menuitem value="Salir" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+            </p:menubar>
+            <p:panel id="pnlFiltros" header="Reporte de Acta de Responsabilidad">
+                <h:panelGrid >
+                     <p:row>    
+                        <p:column>
+                            <h:outputLabel value="Unidad Activo Fijo:       " />
+                            <h:selectOneMenu id="uaf" value="#{empleadosController.unidadAF}" disabled="#{empleadosController.actAF}" required="true">
+                                <p:ajax update="uadm" listener="#{empleadosController.filtrarUnidadesAdm}" process="@this"/>
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{empleadosController.lstUnidadAF}" var="uAF" itemLabel="#{uAF.unidadActivoFijo} - #{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                        <p:column> <h:outputLabel value="Unidad Administrativa:     " />
+                          </p:column>
+                        <p:column>    
+                            <h:selectOneMenu  id="uadm" value="#{empleadosController.unidadAdm}" disabled="#{empleadosController.actAd}" required="true">
+                               <p:ajax update="emp" listener="#{empleadosController.filtrarEmpleados}" process="@this"/>    
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                                <f:selectItems value="#{empleadosController.lstUnidadAdm}" var="uadm" itemLabel="#{uadm.afUnidadesAdministrativasPK.codigoUnidad} - #{uadm.nombreUnidad}" itemValue="#{uadm.afUnidadesAdministrativasPK.codigoUnidad}"/>
+                            </h:selectOneMenu> 
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                          <p:column> <h:outputLabel value="Empleado:     " />  </p:column>
+                        <h:selectOneMenu  id="emp" value="#{empleadosController.idEmpleado}" required="true" requiredMessage="Seleccione Empleado">
+                           <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                           <f:selectItems value="#{empleadosController.lstEmpleados}" var="emp" itemLabel="#{emp.nombres} #{emp.apellidos}" itemValue="#{emp.idEmpleado}"/>
+                        </h:selectOneMenu> 
+                   </p:row>    
+                </h:panelGrid> 
+               </p:panel> 
+            <p:dialog id="dlgImprimir" widgetVar="dlgImprimir" header="Reporte" modal="true" >
+                <p:panel>
+                    <p:outputLabel value="Acta de Responsabilidad" escape="false"/>
+                    <h:panelGrid columns="2">
+                        <p:column> <h:outputLabel value="Responsable de Activo Fijo:"/> </p:column>
+                        <p:column><p:inputText id="res" value="#{empleadosController.nomRespon}"/> </p:column>
+                        <p:column> <h:outputLabel value="Cargo responsable:"/> </p:column>
+                        <p:column><p:inputText id="car" value="#{empleadosController.cargoRespon}"/> </p:column>
+                    </h:panelGrid>
+                </p:panel>
+                <f:facet name="footer">
+                    <p:commandButton value="Aceptar" onclick="this.form.target = PF('dlgImprimir').hide();" ajax="false" action="#{empleadosController.imprimirBienes}"/>
+                    <p:commandButton value="Cancelar" ajax="true" onclick="PF('dlgImprimir').hide();"/>
+                </f:facet>
+            </p:dialog>
+               <p:panel id="pnlEmp">
+                   <p:dataTable id="tBienes" value="#{empleadosController.lstBienes}"  var="bien" rowKey="#{empleado.idEmpleado}" 
+                         style="width: 100%"    paginator="true" rows="20"  paginatorPosition="top" scrollable="true"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                       <p:column headerText="C&oacute;digo Inventario">
+                           <p:outputLabel value="#{bien.codigoInventario}"/>
+                    </p:column>
+                       <p:column headerText="Descripci&oacute;n Bien">
+                           <p:outputLabel value="#{bien.descripcionBien}"/>
+                   </p:column> 
+                   <p:column headerText="Marca">
+                        <p:outputLabel value="#{bien.marca}"/>
+                   </p:column>  
+                   <p:column headerText="Serie">
+                       <p:outputLabel value="#{bien.numeroSerie}"/>
+                   </p:column>      
+                       <p:column headerText="Fecha Adquisici&oacute;n">
+                          <h:outputLabel value="#{bien.fechaAdquisicion}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputLabel>        
+                   </p:column>          
+                   </p:dataTable>
+               </p:panel>
+      </ui:define>
+    </ui:composition>
+
+</html>
+

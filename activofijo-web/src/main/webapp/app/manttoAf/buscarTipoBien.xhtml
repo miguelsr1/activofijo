@@ -23,13 +23,6 @@
                         <p:column> <h:inputText id="desTipo" value="#{tipoBienController.descripcion}" styleClass="textMayuscula" onkeyup="return cUpper(this);"/>  </p:column>
                    </p:row>    
                     <p:row>    
-                        <p:column> <h:outputLabel value="Clasificaci&oacute;n:  " />
-                            <h:selectOneMenu  id="clas" value="#{tipoBienController.clas}">
-                                <p:ajax update="catbien" listener="#{tipoBienController.filtrarCategoria}" process="@this,catbien"/>
-                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
-                                <f:selectItems value="#{tipoBienController.lstClasificacion}" var="cla" itemLabel="#{cla.idClasifBien} - #{cla.nombreClasifBien}" itemValue="#{cla.idClasifBien}"/>
-                            </h:selectOneMenu> 
-                        </p:column>
                         <p:column>
                             <h:outputLabel value="Categoria Bien:       " />
                             <h:selectOneMenu id="catbien" value="#{tipoBienController.cat}" >
