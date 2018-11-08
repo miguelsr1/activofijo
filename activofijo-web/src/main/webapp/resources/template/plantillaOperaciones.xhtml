@@ -34,16 +34,24 @@
         <script type="text/javascript" language="javascript">
             function compararFecha() {
                 var fecha = PF('fechaAdq').getDate();
-             //   var fecha1 = new Date('01/01/1950');
-              //  var fechaAct = new Date();
-                console.log('ok'+fecha);
-                /*if (fecha &lt; fecha1) {
-                    console.log('La fecha invalida');
-                } else {
-                    if (fecha > fechaAct) {
-                        console.log('La fecha introducida es mayor a la actual');
+                PF('fechaAdq').setDate(fecha)
+                var fecha1 = new Date('01/01/1950');
+                var fechaAct = new Date();
+                console.log('ok' + fecha);
+                        if (fecha & lt;
+                        fecha1
+                        ) {
+                PF('growl').renderMessage({"summary":"Alerta",
+                        "detail":"La fecha de adquisición no es valida",
+                        "severity":"warn"})
+                }
+                else {
+                if (fecha > fechaAct) {
+                    PF('growl').renderMessage({"summary": "Alerta",
+                        "detail": "La fecha introducida es mayor a la actual",
+                        "severity": "warn"})
                     }
-                }*/
+                }
             }
         </script>
     </h:head>
@@ -69,7 +77,7 @@
         </p:dialog>
 
         <h:form id="frmPrincipal" prependId="false" >
-            <p:growl id="growl" showDetail="true" sticky="true" escape="false">
+            <p:growl id="growl" widgetVar="growl" showDetail="true" sticky="true" escape="false">
                 <p:autoUpdate/>
             </p:growl>
 
