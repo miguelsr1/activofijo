@@ -214,8 +214,10 @@ public class AfBienesDepreciables implements Serializable {
     private AfCalidadBien codigoCalidadBien;
     @Column(name = "MARCA")
     private String marca;
- 
-  
+    @Column(name = "ID_EMPLEADO")
+    private Long idEmpleado;
+    
+    
 
     public AfBienesDepreciables() {
     }
@@ -384,6 +386,14 @@ public class AfBienesDepreciables implements Serializable {
 
     public void setModelo(String modelo) {
         this.modelo = modelo;
+    }
+
+    public Long getIdEmpleado() {
+        return idEmpleado;
+    }
+
+    public void setIdEmpleado(Long idEmpleado) {
+        this.idEmpleado = idEmpleado;
     }
 
     public String getNumeroSerie() {

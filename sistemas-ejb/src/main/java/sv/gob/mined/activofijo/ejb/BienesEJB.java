@@ -34,6 +34,7 @@ import sv.gob.mined.activofijo.model.VwDepreciaciones;
 import sv.gob.mined.activofijo.model.VwMunicipio;
 import sv.gob.mined.activofijo.model.VwSolvencia;
 import sv.gob.mined.activofijo.model.VwVehiculos;
+import sv.gob.mined.activofijo.model.dto.DatosBienxEmpleado;
 import sv.gob.mined.activofijo.model.dto.DatosUnidad;
 import sv.gob.mined.activofijo.model.dto.DatosxCuentas;
 import sv.gob.mined.activofijo.model.dto.DatosDepreciacion;
@@ -137,7 +138,20 @@ public class BienesEJB {
             System.out.println("Error al Almacenar el descargo " + e);
         }
     }
-
+    
+    public void eliminarUnidad (AfUnidadesAdministrativas adm){
+        try {
+           Query q = em.createNativeQuery("delete AF_UNIDADES_ADMINISTRATIVAS  WHERE ((TRIM(UNIDAD_ACTIVO_FIJO) = ?1) AND (TRIM(CODIGO_UNIDAD) = ?2))");
+           q.setParameter(1, adm.getAfUnidadesAdministrativasPK().getUnidadActivoFijo());
+           q.setParameter(2, adm.getAfUnidadesAdministrativasPK().getCodigoUnidad());
+          
+           System.out.println(q.executeUpdate());
+            
+        } catch (Exception e) {
+            System.out.println("Error al Almacenar Unidad administrativa " + e);
+        }
+    }
+    
     public void editarUnidadAdmin(AfUnidadesAdministrativas adm, String usu) {
         try {
             Query q = em.createNativeQuery("UPDATE AF_UNIDADES_ADMINISTRATIVAS SET CARGO_DIRECTOR = ?1, DIRECCION = ?2, NOMBRE_DIRECTOR = ?3, "
@@ -151,8 +165,9 @@ public class BienesEJB {
             q.setParameter(7, adm.getTipoUnidad());
             q.setParameter(8, usu);
             q.setParameter(9, new Date());
-            q.setParameter(10, adm.getAfUnidadesAdministrativasPK().getCodigoUnidad());
-            q.setParameter(11, adm.getAfUnidadesAdministrativasPK().getUnidadActivoFijo());
+            q.setParameter(10, adm.getAfUnidadesAdministrativasPK().getUnidadActivoFijo());
+            q.setParameter(11, adm.getAfUnidadesAdministrativasPK().getCodigoUnidad());
+          
             
             System.out.println(q.executeUpdate());
             
@@ -170,7 +185,18 @@ public class BienesEJB {
             System.out.println("Error al Almacenar el empleado " + e);
         }
     }
-
+    public boolean getUnidadBienes (String codigo, String adm) {
+        Query q = em.createQuery("select a from AfBienesDepreciables a where trim(a.codigoUnidad)=:adm and trim(a.unidadActivoFijo)=:codigo",AfBienesDepreciables.class);
+        q.setParameter("codigo", codigo);
+        q.setParameter("adm", adm);
+        if (q.getResultList().isEmpty()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    
     public AfUnidadesAdministrativas getUnidadPk(String codigo, String adm) {
         Query q = em.createQuery("Select a from AfUnidadesAdministrativas a where trim(a.afUnidadesAdministrativasPK.unidadActivoFijo)=:codigo and trim(a.afUnidadesAdministrativasPK.codigoUnidad)=:adm ", AfUnidadesAdministrativas.class);
         q.setParameter("codigo", codigo);
@@ -200,7 +226,59 @@ public class BienesEJB {
             System.out.println("Error al Almacenar el empleado " + e);
         }
     }
+    public void removeEmpleado(AfEmpleados emp){
+        try{
+            if (!em.contains(emp)) {
+                emp = em.merge(emp);
+            }
+            em.remove(emp);
+            
+        } catch (Exception e) {
+            System.out.println("Error al eliminar empleado " + e);
+        }
+    }
+    public void removeUnidadAdm(AfUnidadesAdministrativas adm){
+        try{
 
+           /* if (!em.contains(adm)) {
+                adm = em.merge(adm);
+            }*/
+            em.remove(adm);
+            
+        } catch (Exception e) {
+            System.out.println("Error al eliminar Unidad Administrativa " + e);
+        }
+    }
+  public boolean bienesEmpleado(Long idEmp){
+        Query q = em.createQuery("select a from AfBienesDepreciables a where a.idEmpleado="+idEmp,AfBienesDepreciables.class);
+        if (q.getResultList().isEmpty()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+  
+    public boolean bienesTipo(Long tipo){
+         Query q = em.createQuery("select a from AfBienesDepreciables a where a.idTipoBien="+tipo,AfBienesDepreciables.class);
+        if (q.getResultList().isEmpty()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+  
+    public void removeTipoBien(AfTipoBienes tipo) {
+        try {
+               if (!em.contains(tipo)) {
+                tipo = em.merge(tipo);
+            }
+            em.remove(tipo);
+            
+       } catch (Exception e) {
+            System.out.println("Error al Eliminar el tipo de bien " + e);
+        }
+    }
+    
     public void inactivarTipoBien(AfTipoBienes tipo, String usu) {
         try {
 
@@ -723,6 +801,21 @@ public class BienesEJB {
             return null;
         }
     }
+    public List<AfBienesDepreciables> buscarBienes(String condicion) {
+        String condicion2 = "";
+        // System.out.println(condicion);
+        if (!condicion.equals("")) {
+            condicion2 = " where " + condicion;
+        }
+
+        String Sql = "select a.* from af_Bienes_depreciables a " + condicion2;
+        Query q = em.createNativeQuery(Sql, AfBienesDepreciables.class);
+        if (!q.getResultList().isEmpty()) {
+            return q.getResultList();
+        } else {
+            return null;
+        }
+    }
 
     public List<AfEmpleados> buscarEmpleados(String condicion) {
         String condicion2 = "";
@@ -1205,6 +1298,36 @@ public class BienesEJB {
         return lst;
     }
 
+    
+    
+    public List<DatosBienxEmpleado> getLstEmp(String UnidadAF, String codUnidad, String fecReporte,String Responsable,String cargoRes,Long IdEmpleado, List<AfBienesDepreciables> lstBienes, String usuario) {
+        List<DatosBienxEmpleado> lst = new ArrayList();
+        String Sql;
+            Sql = "select ua.NOMBRE_UNIDAD institucion,af.NOMBRE_UNIDAD_AF DIRECCION, e.nombres||' '||e.apellidos nomEmpleado,e.cargo cargoEmpleado,to_char(sysdate,'HH24:MI') hora " +
+                   " from af_empleados e inner join af_unidades_administrativas ua on ua.CODIGO_UNIDAD = e.CODIGO_UNIDAD and ua.UNIDAD_ACTIVO_FIJO=e.UNIDAD_ACTIVO_FIJO " +
+                   " inner join AF_UNIDADES_ACTIVO_FIJO af on af.UNIDAD_ACTIVO_FIJO=ua.UNIDAD_ACTIVO_FIJO where trim(e.CODIGO_UNIDAD)='" + codUnidad + "' and e.id_empleado="+IdEmpleado;
+            Query q = em.createNativeQuery(Sql);
+
+            for (Object dato : q.getResultList()) {
+                Object[] ob = (Object[]) dato;
+                DatosBienxEmpleado d = new DatosBienxEmpleado();
+                d.setInstitucion(ob[0].toString());
+                d.setUnidad(ob[1].toString());
+                d.setNomEmpleado(ob[2].toString());
+                d.setCargoEmpleado(ob[3].toString());
+                d.setHora(ob[4].toString());
+                d.setResponsable(Responsable);
+                d.setCargoRes(cargoRes);
+                d.setFecReporte(fecReporte);
+                d.setUsuario(usuario);
+
+                d.setLstDatos(lstBienes);
+                lst.add(d);
+            }
+        
+        return lst;
+    }
+
     public List<DatosDepreciacion> getLstdepre(Long idBien, List<AfDepreciaciones> lstDepre, String fecRep, String usuario) {
 
         List<DatosDepreciacion> lst;
@@ -1324,4 +1447,5 @@ public class BienesEJB {
         }
         return lst;
     }
+  
 }

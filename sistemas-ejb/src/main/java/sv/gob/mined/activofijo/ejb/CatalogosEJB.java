@@ -16,6 +16,7 @@ import sv.gob.mined.activofijo.model.AfCalidadBien;
 import sv.gob.mined.activofijo.model.AfCategoriasBien;
 import sv.gob.mined.activofijo.model.AfClasificacionBien;
 import sv.gob.mined.activofijo.model.AfEstatusBien;
+import sv.gob.mined.activofijo.model.AfEmpleados;
 import sv.gob.mined.activofijo.model.AfFormaAdquisicion;
 import sv.gob.mined.activofijo.model.AfFuenteFinanciamiento;
 import sv.gob.mined.activofijo.model.AfProyectos;
@@ -45,6 +46,15 @@ public class CatalogosEJB {
         return em;
     }
 
+    public String NomEmpleado(Long idEmp){
+      Query q = em.createNativeQuery("select a.Nombres||' '||a.apellidos from af_Empleados a where a.id_Empleado= "+idEmp);
+      if (!q.getResultList().isEmpty()) {
+                return q.getSingleResult().toString();
+            } else {
+                return "";
+            }
+    }
+    
     public String NomUnidad(String codigo, String tipo) {
         
             Query q = em.createQuery("Select a.nombreUnidad from AfUnidadesAdministrativas a where trim(a.afUnidadesAdministrativasPK.codigoUnidad)=:codigo and a.tipoUnidad=:tipo");
@@ -113,10 +123,20 @@ public class CatalogosEJB {
             return null;
         }
     }
+    
+    public AfUnidadesAdministrativasPK getPkUAdm(String unidad,String adm){
+        Query q = em.createNativeQuery("Select a.unidad_activo_fijo,a.codigo_unidad from Af_Unidades_Administrativas a where a.codigo_Unidad='"+adm+"' and a.unidad_activo_fijo='"+unidad+"'", AfUnidadesAdministrativasPK.class);
+        if (q.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return (AfUnidadesAdministrativasPK) q.getSingleResult();
+        }
+    }
+    
     public AfUnidadesAdministrativas getUnidadAdmin(String unidad,String adm){
         Query q = em.createNativeQuery("Select * from Af_Unidades_Administrativas a where a.codigo_Unidad='"+adm+"' and a.unidad_activo_fijo='"+unidad+"'", AfUnidadesAdministrativas.class);
         if (q.getResultList().isEmpty()) {
-            return null;
+            return new AfUnidadesAdministrativas();
         } else {
             return (AfUnidadesAdministrativas) q.getSingleResult();
         }
@@ -171,6 +191,17 @@ public class CatalogosEJB {
         }
     }
 
+    public List<AfEmpleados> getEmpleadosAdm(String codigo, String unidad) {
+        Query q = em.createQuery("Select a from AfEmpleados a where trim(a.codigoUnidad)=:codigo and trim(a.unidadActivoFijo)=:unidad order by a.idEmpleado", AfEmpleados.class);
+        q.setParameter("unidad", unidad);
+        q.setParameter("codigo", codigo);
+        if (q.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return q.getResultList();
+        }
+    }
+    
     public List<AfUnidadesAdministrativas> getUnidadAdm(String codigo, String tipo) {
         Query q = em.createQuery("Select a from AfUnidadesAdministrativas a where a.tipoUnidad=:tipo and trim(a.afUnidadesAdministrativasPK.unidadActivoFijo)=:codigo order by a.afUnidadesAdministrativasPK.codigoUnidad", AfUnidadesAdministrativas.class);
         q.setParameter("tipo", tipo);
@@ -436,7 +467,7 @@ public class CatalogosEJB {
     }
 
     public List<AfTipoBienes> getTipoBien(Long cat) {
-        Query q = em.createQuery("select a from AfTipoBienes a where a.idCatBien.idCatBien=:cat order by a.nombreTipoBien", AfTipoBienes.class);
+        Query q = em.createQuery("select a from AfTipoBienes a where a.idCatBien.idCatBien=:cat and a.estadoTipo=1 order by a.nombreTipoBien", AfTipoBienes.class);
         q.setParameter("cat", cat);
         if (q.getResultList().isEmpty()) {
             return null;
@@ -589,6 +620,17 @@ public class CatalogosEJB {
             return null;
         } 
     }
+    
+    public Date getFechaInicial(){
+        Query q = em.createNativeQuery("select to_date('01/01/1950','dd/mm/yyyy') from dual" );
+
+        if (q.getSingleResult() != null) {
+            return (Date) q.getSingleResult();
+        } else {
+            return null;
+        } 
+    }
+    
     public Date getFechaActualizacion(String unidad){
         Query q = em.createNativeQuery("select max(FECHA_SOLVENCIA) from AF_SOLVENCIAS where CODIGO_UNIDAD='"+unidad+"'");
         if (q.getSingleResult() != null) {

@@ -4,7 +4,7 @@
 
     <groupId>sv.gob.mined</groupId>
     <artifactId>sistemas-ejb</artifactId>
-    <version>1.3.7</version>
+    <version>1.3.8</version>
     <packaging>ejb</packaging>
 
     <name>sistemas-ejb</name>
