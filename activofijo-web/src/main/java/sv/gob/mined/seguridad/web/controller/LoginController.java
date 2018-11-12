@@ -100,7 +100,7 @@ public class LoginController implements Serializable {
                 } else {
                     url = "/app/principal?faces-redirect=true";
                     VarSession.setVariableSession(Constantes.USUARIO, usuario);
-                    if (usuario.getTipoUsu().equals("C")) {
+                    if (usuario.getTipoUsuario().equals("C")) {
                         VarSession.setVariableSession(Constantes.COD_ENTIDAD, usuario.getCodigoEntidad());
                     }
                 }

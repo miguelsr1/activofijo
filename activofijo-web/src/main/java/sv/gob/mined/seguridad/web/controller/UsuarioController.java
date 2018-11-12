@@ -155,7 +155,7 @@ public class UsuarioController implements Serializable {
         }
 
         if (validarUsuario) {
-            if(usuario.getTipoUsu().equals("C")){
+            if(usuario.getTipoUsuario().equals("C")){
                 usuario.setCodigoEntidad(codigoEntidad);
             }
             usuario.setLogin(usuario.getLogin().toUpperCase());

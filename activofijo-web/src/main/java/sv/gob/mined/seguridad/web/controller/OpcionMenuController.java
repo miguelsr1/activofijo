@@ -16,6 +16,7 @@ import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
 import sv.gob.mined.seguridad.ejb.SeguridadBean;
 import sv.gob.mined.seguridad.model.OpcionMenu;
@@ -122,11 +123,13 @@ public class OpcionMenuController implements Serializable {
     }
     
     public void guardarOpcMenuApp() {
-        RequestContext.getCurrentInstance().closeDialog(opcionMenu);
+        PrimeFaces.current().dialog().closeDynamic(opcionMenu);
+        //RequestContext.getCurrentInstance().closeDialog(opcionMenu);
     }
     
     public void cerrarFiltroOpcMenuApp() {
-        RequestContext.getCurrentInstance().closeDialog("/app/manttos/lstOpcionesMenu");
+        PrimeFaces.current().dialog().closeDynamic("/app/manttos/lstOpcionesMenu");
+        //RequestContext.getCurrentInstance().closeDialog("/app/manttos/lstOpcionesMenu");
     }
     
     public void seleccionApp() {

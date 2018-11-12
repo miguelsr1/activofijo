@@ -18,9 +18,9 @@
                     <p:spacer width="10" height="100"/>
                     <div class="bloque2 textoConSombra" style=" min-height:200px; background-position:left top; background-repeat:no-repeat; margin: 0px auto;">
                             <div class="subItem" >
-                            <p:commandLink ajax="false" styleClass="secciones" action="{opcionMenuController.seleccionApp}">
+                            <p:commandLink ajax="false" styleClass="secciones" action="#{opcionMenuController.seleccionApp}">
                                 <h:panelGrid columns="1" columnClasses="colAppImagen,colAppDescripcion" style="margin: 0 auto;" >
-                                    <p:graphicImage value="../resources/images/user_app.png" />
+                                    <p:graphicImage name="user_app.png" library="images" />
                                     <p:outputLabel value="Seguridad"/>
                                 </h:panelGrid>
                                 <f:setPropertyActionListener target="#{opcionMenuController.idApp}" value="1" />
@@ -32,7 +32,7 @@
                             <div class="subItem" >
                             <p:commandLink ajax="false" styleClass="secciones" action="#{opcionMenuController.seleccionApp}">
                                 <h:panelGrid columns="1" columnClasses="colAppImagen,colAppDescripcion" style="margin: 0 auto;">
-                                    <p:graphicImage value="../resources/images/activo_app.png" />
+                                    <p:graphicImage name="activo_app.png" library="images" />
                                     <p:outputLabel value="Activo Fijo"/>
                                 </h:panelGrid>
                                 <f:setPropertyActionListener target="#{opcionMenuController.idApp}" value="5" />

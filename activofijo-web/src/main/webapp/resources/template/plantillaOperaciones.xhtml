@@ -38,12 +38,10 @@
                 var fecha1 = new Date('01/01/1950');
                 var fechaAct = new Date();
                 console.log('ok' + fecha);
-                        if (fecha & lt;
-                        fecha1
-                        ) {
-                PF('growl').renderMessage({"summary":"Alerta",
-                        "detail":"La fecha de adquisición no es valida",
-                        "severity":"warn"})
+                    if (fecha &lt; fecha1) {
+                    PF('growl').renderMessage({"summary": "Alerta",
+                        "detail": "La fecha de adquisición no es valida",
+                        "severity": "warn"})
                 }
                 else {
                 if (fecha > fechaAct) {

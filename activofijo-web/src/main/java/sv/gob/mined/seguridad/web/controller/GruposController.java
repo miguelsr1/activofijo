@@ -256,7 +256,7 @@ public class GruposController implements Serializable {
         if (event != null && event.getObject() instanceof OpcionMenu) {
             OpcionMenu opcionMenu = (OpcionMenu) event.getObject();
             AplicacionOpcMenu aplicacionOpcMenu = new AplicacionOpcMenu();
-            aplicacionOpcMenu.setIdAplicacion(aplicacion);
+            //aplicacionOpcMenu.setIdAplicacion(aplicacion);
             aplicacionOpcMenu.setIdGrupoApp(grupoAplicacion);
             aplicacionOpcMenu.setIdOpcMenu(opcionMenu);
 
@@ -277,7 +277,7 @@ public class GruposController implements Serializable {
     public void udpUsuarioAppGrupo() {
         if (usuario.getLogin() != null && !usuario.getLogin().isEmpty()) {
             deshabilitar = false;
-            deshabilitarDepartamento = usuario.getTipoUsu().equals("C");
+            deshabilitarDepartamento = usuario.getTipoUsuario().equals("C");
             if (deshabilitarDepartamento) {
                 usuarioApp.setCodigoDepartamento(seguridadBean.getEntidadEducativa(usuario.getCodigoEntidad()).getCodigoDepartamento());
             }

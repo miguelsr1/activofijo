@@ -33,20 +33,20 @@
                         <f:selectItem itemLabel="Externo" itemValue="E"/>
                         <p:ajax update="pnlEdicion"/>
                     </p:selectOneRadio>
-                    <p:outputLabel value="Buscar empleado:" rendered="#{usuarioController.usuario.tipoUsu eq 'I'}"/>
-                    <p:commandButton actionListener="#{usuarioController.findEmpleados}" icon="fa fa-search" rendered="#{usuarioController.usuario.tipoUsu eq 'I'}">
+                    <p:outputLabel value="Buscar empleado:" rendered="#{usuarioController.usuario.tipoUsuario eq 'I'}"/>
+                    <p:commandButton actionListener="#{usuarioController.findEmpleados}" icon="fa fa-search" rendered="#{usuarioController.usuario.tipoUsuario eq 'I'}">
                         <p:ajax event="dialogReturn" listener="#{usuarioController.selectEmpleado}" update="pnlEdicion"/>
                     </p:commandButton>
-                    <p:outputLabel value="Código de Infraestructura:" rendered="#{usuarioController.usuario.tipoUsu eq 'C'}"/>
-                    <h:panelGrid columns="3" rendered="#{usuarioController.usuario.tipoUsu eq 'C'}">
+                    <p:outputLabel value="Código de Infraestructura:" rendered="#{usuarioController.usuario.tipoUsuario eq 'C'}"/>
+                    <h:panelGrid columns="3" rendered="#{usuarioController.usuario.tipoUsuario eq 'C'}">
                         <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{usuarioController.codigoEntidad}" size="5" autocomplete="off" requiredMessage="Código de infraestructura">
                             <p:ajax event="keyup" update="nombreCE" listener="#{usuarioController.buscarEntidadEducativa}" />
                         </p:inputText>
                         <p:spacer width="10" height="8"/>
                         <p:outputLabel id="nombreCE" value="#{usuarioController.entidadEducativa.nombre}" style="font-weight: bold"/>
                     </h:panelGrid>
-                    <p:outputLabel value="Departamento:" rendered="#{usuarioController.usuario.tipoUsu eq 'D'}"/>
-                    <p:selectOneMenu value="#{usuarioController.usuario.tipoUsuario}" rendered="#{usuarioController.usuario.tipoUsu eq 'D'}" >
+                    <p:outputLabel value="Departamento:" rendered="#{usuarioController.usuario.tipoUsuario eq 'D'}"/>
+                    <p:selectOneMenu value="#{usuarioController.usuario.tipoUsuario}" rendered="#{usuarioController.usuario.tipoUsuario eq 'D'}" >
                         <f:selectItem itemLabel="Todo el país" itemValue="00"/>
                         <f:selectItem itemLabel="AHUACHAPAN" itemValue="01"/>
                         <f:selectItem itemLabel="SANTA ANA" itemValue="02"/>
@@ -65,13 +65,13 @@
                     </p:selectOneMenu>
                     <h:outputText value="Nombre:" />
                     <h:panelGrid columns="3">
-                        <p:inputText size="25" disabled="#{usuarioController.usuario.tipoUsu eq 'I'}" value="#{usuarioController.nombres}" placeholder="NOMBRES"/>
+                        <p:inputText size="25" disabled="#{usuarioController.usuario.tipoUsuario eq 'I'}" value="#{usuarioController.nombres}" placeholder="NOMBRES"/>
                         <p:spacer width="10" height="8"/>
-                        <p:inputText size="25" disabled="#{usuarioController.usuario.tipoUsu eq 'I'}" value="#{usuarioController.apellidos}" placeholder="APELLIDOS"/>
+                        <p:inputText size="25" disabled="#{usuarioController.usuario.tipoUsuario eq 'I'}" value="#{usuarioController.apellidos}" placeholder="APELLIDOS"/>
                     </h:panelGrid>
 
-                    <h:outputText value="Código empleado:" rendered="#{usuarioController.usuario.tipoUsu eq 'I'}"/>
-                    <p:inputText value="#{usuarioController.codigoEmpleado}" rendered="#{usuarioController.usuario.tipoUsu eq 'I'}" disabled="#{usuarioController.modifUsuario}"/>
+                    <h:outputText value="Código empleado:" rendered="#{usuarioController.usuario.tipoUsuario eq 'I'}"/>
+                    <p:inputText value="#{usuarioController.codigoEmpleado}" rendered="#{usuarioController.usuario.tipoUsuario eq 'I'}" disabled="#{usuarioController.modifUsuario}"/>
                     <h:outputLabel value="Correo eléctronico:" />
                     <p:inputText size="25" value="#{usuarioController.correoElectronico}" />
                     <h:outputLabel value="Usuario:" />
