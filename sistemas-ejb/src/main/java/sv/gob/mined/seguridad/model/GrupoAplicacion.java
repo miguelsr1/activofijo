@@ -1,5 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package sv.gob.mined.seguridad.model;
@@ -31,6 +32,7 @@ import javax.persistence.Table;
 @NamedQueries({
     @NamedQuery(name = "GrupoAplicacion.findAll", query = "SELECT g FROM GrupoAplicacion g")})
 public class GrupoAplicacion implements Serializable {
+
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -41,12 +43,12 @@ public class GrupoAplicacion implements Serializable {
     private BigDecimal idGrupoApp;
     @OneToMany(mappedBy = "idGrupoApp", fetch = FetchType.LAZY)
     private List<UsuarioGrupoAplicacion> usuarioGrupoAplicacionList;
-    @JoinColumn(name = "ID_GRUPO", referencedColumnName = "ID_GRUPO")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Grupo idGrupo;
     @JoinColumn(name = "ID_APLICACION", referencedColumnName = "ID_APLICACION")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Aplicacion idAplicacion;
+    @JoinColumn(name = "ID_GRUPO", referencedColumnName = "ID_GRUPO")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Grupo idGrupo;
     @OneToMany(mappedBy = "idGrupoApp", fetch = FetchType.LAZY)
     private List<AplicacionOpcMenu> aplicacionOpcMenuList;
 
@@ -73,20 +75,20 @@ public class GrupoAplicacion implements Serializable {
         this.usuarioGrupoAplicacionList = usuarioGrupoAplicacionList;
     }
 
-    public Grupo getIdGrupo() {
-        return idGrupo;
-    }
-
-    public void setIdGrupo(Grupo idGrupo) {
-        this.idGrupo = idGrupo;
-    }
-
     public Aplicacion getIdAplicacion() {
         return idAplicacion;
     }
 
     public void setIdAplicacion(Aplicacion idAplicacion) {
         this.idAplicacion = idAplicacion;
+    }
+
+    public Grupo getIdGrupo() {
+        return idGrupo;
+    }
+
+    public void setIdGrupo(Grupo idGrupo) {
+        this.idGrupo = idGrupo;
     }
 
     public List<AplicacionOpcMenu> getAplicacionOpcMenuList() {
@@ -119,7 +121,7 @@ public class GrupoAplicacion implements Serializable {
 
     @Override
     public String toString() {
-        return idGrupo.toString();
+        return "sv.gob.mined.seguridadv2.model.GrupoAplicacion[ idGrupoApp=" + idGrupoApp + " ]";
     }
     
 }

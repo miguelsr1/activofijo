@@ -46,10 +46,6 @@ public class SeguridadBean {
     @PersistenceContext(unitName = "seguridadV2PU", type = PersistenceContextType.TRANSACTION)
     private EntityManager em;
 
-    //@Resource(mappedName = "java:app/env/AFij")
-    private String urlAFijo;
-    //@Resource(mappedName = "java:app/env/Segv2")
-    private String urlSeg;
 
     public SeguridadBean() {
     }
@@ -68,9 +64,9 @@ public class SeguridadBean {
         String claveMd5 = UtilSeguridad.getMD5(claveAcesso).toUpperCase();
         try {
 
-            Query q = em.createNativeQuery("SELECT * FROM Usuario WHERE activo='A' AND login='" + usuario + "' AND clave_acceso='" + claveMd5 + "'", Usuario.class);
-            q.setParameter("usuario", usuario);
-            q.setParameter("claveAcceso", claveMd5);
+            Query q = em.createQuery("SELECT u FROM Usuario u WHERE u.activo='A' AND u.login=:usu AND u.claveAcceso=:clave", Usuario.class);
+            q.setParameter("usu", usuario);
+            q.setParameter("clave", claveMd5);
             param.put(Constantes.USUARIO_VALIDO, !q.getResultList().isEmpty());
 
             if ((Boolean) param.get(Constantes.USUARIO_VALIDO)) {
@@ -88,8 +84,8 @@ public class SeguridadBean {
     }
 
     public Usuario getUsu(String usuario) {
-        Query q = em.createNativeQuery("SELECT * FROM Usuario WHERE activo='A' AND login='" + usuario + "' ", Usuario.class);
-        q.setParameter("usuario", usuario);
+        Query q = em.createQuery("SELECT u FROM Usuario u WHERE u.activo='A' AND u.login=:usu", Usuario.class);
+        q.setParameter("usu", usuario);
         if (!q.getResultList().isEmpty()) {
             return (Usuario) q.getResultList().get(0);
         } else {
@@ -101,9 +97,8 @@ public class SeguridadBean {
         Map<String, Object> param = new HashMap();
 
         try {
-
-            Query q = em.createNativeQuery("SELECT * FROM Usuario WHERE activo='A' AND login='" + usuario + "' ", Usuario.class);
-            q.setParameter("usuario", usuario);
+            Query q = em.createNativeQuery("SELECT u FROM Usuario u WHERE u.activo='A' AND u.login=:usu", Usuario.class);
+            q.setParameter("usu", usuario);
 
             param.put(Constantes.USUARIO_VALIDO, !q.getResultList().isEmpty());
             if ((Boolean) param.get(Constantes.USUARIO_VALIDO)) {
@@ -115,8 +110,6 @@ public class SeguridadBean {
 
         } catch (Exception e) {
             Logger.getLogger(SeguridadBean.class.getName()).log(Level.WARNING, "Error en autenticación del usuario", e);
-        } finally {
-            //System.out.println("Usuario: " + usuario + " - Clave: " + claveMd5);
         }
 
         return param;
@@ -159,9 +152,10 @@ public class SeguridadBean {
 
     /**
      * Devuelve true si se logra actualizar la contraseña
+     *
      * @param login
      * @param clave
-     * @return 
+     * @return
      */
     public Boolean resetearContrasena(String login, String clave) {
         String claveMd5 = UtilSeguridad.getMD5(clave).toUpperCase();
@@ -220,7 +214,7 @@ public class SeguridadBean {
     public List<OpcionMenu> getLstOpcionMenu(String login, BigDecimal app) {
         List<OpcionMenu> lst = new ArrayList();
 
-        Query q = em.createQuery("SELECT u.idGrupoApp FROM UsuarioGrupoAplicacion u WHERE u.activoGrupoApp='A' AND u.idUsuApp.login.login=:login AND u.idUsuApp.idAplicacion.idAplicacion=:app", GrupoAplicacion.class);
+        Query q = em.createQuery("SELECT u.idGrupoApp FROM UsuarioGrupoAplicacion u WHERE u.activoGrupoApp='A' AND u.idUsuApp.login.login=:login AND u.idGrupoApp.idAplicacion.idAplicacion=:app", GrupoAplicacion.class);
 
         q.setParameter("login", login);
         q.setParameter("app", app);
@@ -304,7 +298,7 @@ public class SeguridadBean {
 
         if (q.getResultList().isEmpty()) {
             usuarioAplicacion = new UsuarioAplicacion();
-            usuarioAplicacion.setIdAplicacion(app);
+            //usuarioAplicacion.setIdAplicacion(app);
             usuarioAplicacion.setLogin(login);
             usuarioAplicacion.setUsuGrupoActivo('A');
             usuarioAplicacion.setCodigoDepartamento("00");
@@ -376,7 +370,7 @@ public class SeguridadBean {
     public boolean existeOpcionMenuGrupo(AplicacionOpcMenu aplicacionOpcMenu) {
         Query q;
         q = em.createQuery("SELECT a FROM AplicacionOpcMenu a WHERE a.idAplicacion=:idApp and a.idOpcMenu=:idOpc and a.idGrupoApp=:idGrupo", AplicacionOpcMenu.class);
-        q.setParameter("idApp", aplicacionOpcMenu.getIdAplicacion());
+        //q.setParameter("idApp", aplicacionOpcMenu.getIdAplicacion());
         q.setParameter("idOpc", aplicacionOpcMenu.getIdOpcMenu());
         q.setParameter("idGrupo", aplicacionOpcMenu.getIdGrupoApp());
 
@@ -390,7 +384,7 @@ public class SeguridadBean {
         //se verifica que la opción seleccionado sea un hijo o un padre
         if (opcionMenu != null) {
             q = em.createQuery("SELECT a FROM AplicacionOpcMenu a WHERE a.idAplicacion=:idApp and a.idOpcMenu=:idOpc and a.idGrupoApp=:idGrupo", AplicacionOpcMenu.class);
-            q.setParameter("idApp", aplicacionOpcMenu.getIdAplicacion());
+            //q.setParameter("idApp", aplicacionOpcMenu.getIdAplicacion());
             q.setParameter("idOpc", opcionMenu);
             q.setParameter("idGrupo", aplicacionOpcMenu.getIdGrupoApp());
 
@@ -401,7 +395,7 @@ public class SeguridadBean {
                 if (!q.getResultList().isEmpty()) {
                     AplicacionOpcMenu aom = new AplicacionOpcMenu();
                     aom.setIdOpcMenu(opcionMenu);
-                    aom.setIdAplicacion(aplicacionOpcMenu.getIdAplicacion());
+                    //aom.setIdAplicacion(aplicacionOpcMenu.getIdAplicacion());
                     aom.setIdGrupoApp(aplicacionOpcMenu.getIdGrupoApp());
                     em.persist(aom);
 
@@ -482,10 +476,10 @@ public class SeguridadBean {
     }
 
     public String usuarioValidoApp(String usuario, BigDecimal idApp) {
-        Query q = em.createQuery("SELECT u FROM UsuarioAplicacion u WHERE u.login.login=:login AND u.idAplicacion.idAplicacion=:idApp", UsuarioAplicacion.class);
+        Query q = em.createQuery("SELECT u FROM UsuarioGrupoAplicacion u WHERE u.idUsuApp.login.login=:login AND u.idGrupoApp.idAplicacion.idAplicacion=:idApp", UsuarioAplicacion.class);
         q.setParameter("login", usuario);
         q.setParameter("idApp", idApp);
-        urlSeg = "/sistemas-web/app/inicial.mined";
+        /*urlSeg = "/sistemas-web/app/inicial.mined";
         urlAFijo = "/activofijo-web/app/inicial.mined";
         if (!q.getResultList().isEmpty()) {
             switch (idApp.intValue()) {
@@ -496,8 +490,8 @@ public class SeguridadBean {
                 default:
                     return "";
             }
-        } else {
-            return "/activofijo-web/app/inicial.mined";
-        }
+        } else {*/
+        return "/activofijo-web/app/inicial.mined";
+        //}
     }
 }

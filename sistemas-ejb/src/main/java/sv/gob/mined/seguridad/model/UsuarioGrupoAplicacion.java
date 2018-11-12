@@ -1,5 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package sv.gob.mined.seguridad.model;
@@ -15,6 +16,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -24,7 +27,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "USUARIO_GRUPO_APLICACION", schema = "SEGURIDAD_V2")
+@NamedQueries({
+    @NamedQuery(name = "UsuarioGrupoAplicacion.findAll", query = "SELECT u FROM UsuarioGrupoAplicacion u")})
 public class UsuarioGrupoAplicacion implements Serializable {
+
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -33,16 +39,16 @@ public class UsuarioGrupoAplicacion implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "USU_GRUPO_APP")
     @SequenceGenerator(name = "USU_GRUPO_APP", sequenceName = "SEQ_USU_GRUPO_APP", allocationSize = 1, initialValue = 1)
     private BigDecimal idUsuGrupoApp;
-    @Column(name = "USU_GRUPO_APP")
-    private Character usuGrupoApp;
     @Column(name = "ACTIVO_GRUPO_APP")
     private Character activoGrupoApp;
-    @JoinColumn(name = "ID_USU_APP", referencedColumnName = "ID_USU_APP")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private UsuarioAplicacion idUsuApp;
+    @Column(name = "USU_GRUPO_APP")
+    private Character usuGrupoApp;
     @JoinColumn(name = "ID_GRUPO_APP", referencedColumnName = "ID_GRUPO_APP")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private GrupoAplicacion idGrupoApp;
+    @JoinColumn(name = "ID_USU_APP", referencedColumnName = "ID_USU_APP")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private UsuarioAplicacion idUsuApp;
 
     public UsuarioGrupoAplicacion() {
     }
@@ -59,14 +65,6 @@ public class UsuarioGrupoAplicacion implements Serializable {
         this.idUsuGrupoApp = idUsuGrupoApp;
     }
 
-    public Character getUsuGrupoApp() {
-        return usuGrupoApp;
-    }
-
-    public void setUsuGrupoApp(Character usuGrupoApp) {
-        this.usuGrupoApp = usuGrupoApp;
-    }
-
     public Character getActivoGrupoApp() {
         return activoGrupoApp;
     }
@@ -75,12 +73,12 @@ public class UsuarioGrupoAplicacion implements Serializable {
         this.activoGrupoApp = activoGrupoApp;
     }
 
-    public UsuarioAplicacion getIdUsuApp() {
-        return idUsuApp;
+    public Character getUsuGrupoApp() {
+        return usuGrupoApp;
     }
 
-    public void setIdUsuApp(UsuarioAplicacion idUsuApp) {
-        this.idUsuApp = idUsuApp;
+    public void setUsuGrupoApp(Character usuGrupoApp) {
+        this.usuGrupoApp = usuGrupoApp;
     }
 
     public GrupoAplicacion getIdGrupoApp() {
@@ -89,6 +87,14 @@ public class UsuarioGrupoAplicacion implements Serializable {
 
     public void setIdGrupoApp(GrupoAplicacion idGrupoApp) {
         this.idGrupoApp = idGrupoApp;
+    }
+
+    public UsuarioAplicacion getIdUsuApp() {
+        return idUsuApp;
+    }
+
+    public void setIdUsuApp(UsuarioAplicacion idUsuApp) {
+        this.idUsuApp = idUsuApp;
     }
 
     @Override
@@ -113,7 +119,7 @@ public class UsuarioGrupoAplicacion implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.gob.mined.seguridad.model.UsuarioGrupoAplicacion[ idUsuGrupoApp=" + idUsuGrupoApp + " ]";
+        return "sv.gob.mined.seguridadv2.model.UsuarioGrupoAplicacion[ idUsuGrupoApp=" + idUsuGrupoApp + " ]";
     }
     
 }

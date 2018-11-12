@@ -1,5 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package sv.gob.mined.seguridad.model;
@@ -14,6 +15,8 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -24,14 +27,16 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "BITACORA_ACCESO", schema = "SEGURIDAD_V2")
+@NamedQueries({
+    @NamedQuery(name = "BitacoraAcceso.findAll", query = "SELECT b FROM BitacoraAcceso b")})
 public class BitacoraAcceso implements Serializable {
+
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @Basic(optional = false)
     @Column(name = "ID_BITACORA_ACCESO")
     private BigDecimal idBitacoraAcceso;
-    @Basic(optional = false)
     @Column(name = "FECHA_ACCESO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaAcceso;
@@ -41,7 +46,7 @@ public class BitacoraAcceso implements Serializable {
     @Column(name = "IP_ACCESO")
     private String ipAcceso;
     @JoinColumn(name = "ID_USU_GRUPO", referencedColumnName = "ID_USU_APP")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private UsuarioAplicacion idUsuGrupo;
 
     public BitacoraAcceso() {
@@ -49,11 +54,6 @@ public class BitacoraAcceso implements Serializable {
 
     public BitacoraAcceso(BigDecimal idBitacoraAcceso) {
         this.idBitacoraAcceso = idBitacoraAcceso;
-    }
-
-    public BitacoraAcceso(BigDecimal idBitacoraAcceso, Date fechaAcceso) {
-        this.idBitacoraAcceso = idBitacoraAcceso;
-        this.fechaAcceso = fechaAcceso;
     }
 
     public BigDecimal getIdBitacoraAcceso() {
@@ -118,7 +118,7 @@ public class BitacoraAcceso implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.gob.mined.seguridad.model.BitacoraAcceso[ idBitacoraAcceso=" + idBitacoraAcceso + " ]";
+        return "sv.gob.mined.seguridadv2.model.BitacoraAcceso[ idBitacoraAcceso=" + idBitacoraAcceso + " ]";
     }
     
 }

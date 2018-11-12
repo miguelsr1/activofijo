@@ -1,5 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package sv.gob.mined.seguridad.model;
@@ -10,8 +11,9 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -19,39 +21,28 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "PARAMETROS_GENERALES", schema = "SEGURIDAD_V2")
+@NamedQueries({
+    @NamedQuery(name = "ParametrosGenerales.findAll", query = "SELECT p FROM ParametrosGenerales p")})
 public class ParametrosGenerales implements Serializable {
+
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @Basic(optional = false)
-    @NotNull
     @Column(name = "ID_PARAMETRO")
     private BigDecimal idParametro;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "NUM_INTENTOS_CLAVE")
-    private short numIntentosClave;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "PERIODICIDAD_CAMBIO_CLAVE")
-    private short periodicidadCambioClave;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "ACTIVO_PARAMETRO")
-    private char activoParametro;
+    private Character activoParametro;
+    @Column(name = "NUM_INTENTOS_CLAVE")
+    private Integer numIntentosClave;
+    @Column(name = "PERIODICIDAD_CAMBIO_CLAVE")
+    private Integer periodicidadCambioClave;
 
     public ParametrosGenerales() {
     }
 
     public ParametrosGenerales(BigDecimal idParametro) {
         this.idParametro = idParametro;
-    }
-
-    public ParametrosGenerales(BigDecimal idParametro, short numIntentosClave, short periodicidadCambioClave, char activoParametro) {
-        this.idParametro = idParametro;
-        this.numIntentosClave = numIntentosClave;
-        this.periodicidadCambioClave = periodicidadCambioClave;
-        this.activoParametro = activoParametro;
     }
 
     public BigDecimal getIdParametro() {
@@ -62,28 +53,28 @@ public class ParametrosGenerales implements Serializable {
         this.idParametro = idParametro;
     }
 
-    public short getNumIntentosClave() {
-        return numIntentosClave;
-    }
-
-    public void setNumIntentosClave(short numIntentosClave) {
-        this.numIntentosClave = numIntentosClave;
-    }
-
-    public short getPeriodicidadCambioClave() {
-        return periodicidadCambioClave;
-    }
-
-    public void setPeriodicidadCambioClave(short periodicidadCambioClave) {
-        this.periodicidadCambioClave = periodicidadCambioClave;
-    }
-
-    public char getActivoParametro() {
+    public Character getActivoParametro() {
         return activoParametro;
     }
 
-    public void setActivoParametro(char activoParametro) {
+    public void setActivoParametro(Character activoParametro) {
         this.activoParametro = activoParametro;
+    }
+
+    public Integer getNumIntentosClave() {
+        return numIntentosClave;
+    }
+
+    public void setNumIntentosClave(Integer numIntentosClave) {
+        this.numIntentosClave = numIntentosClave;
+    }
+
+    public Integer getPeriodicidadCambioClave() {
+        return periodicidadCambioClave;
+    }
+
+    public void setPeriodicidadCambioClave(Integer periodicidadCambioClave) {
+        this.periodicidadCambioClave = periodicidadCambioClave;
     }
 
     @Override
@@ -108,7 +99,7 @@ public class ParametrosGenerales implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.gob.mined.seguridad.model.ParametrosGenerales[ idParametro=" + idParametro + " ]";
+        return "sv.gob.mined.seguridadv2.model.ParametrosGenerales[ idParametro=" + idParametro + " ]";
     }
     
 }

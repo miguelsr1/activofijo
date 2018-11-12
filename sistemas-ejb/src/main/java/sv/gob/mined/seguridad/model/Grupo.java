@@ -1,5 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package sv.gob.mined.seguridad.model;
@@ -14,6 +15,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -24,7 +27,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "GRUPO", schema = "SEGURIDAD_V2")
+@NamedQueries({
+    @NamedQuery(name = "Grupo.findAll", query = "SELECT g FROM Grupo g")})
 public class Grupo implements Serializable {
+
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -33,7 +39,6 @@ public class Grupo implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "grupo")
     @SequenceGenerator(name = "grupo", sequenceName = "SEQ_GRUPO", allocationSize = 1, initialValue = 1)
     private BigDecimal idGrupo;
-    @Basic(optional = false)
     @Column(name = "NOMBRE_GRUPO")
     private String nombreGrupo;
     @OneToMany(mappedBy = "idGrupo", fetch = FetchType.LAZY)
@@ -44,11 +49,6 @@ public class Grupo implements Serializable {
 
     public Grupo(BigDecimal idGrupo) {
         this.idGrupo = idGrupo;
-    }
-
-    public Grupo(BigDecimal idGrupo, String nombreGrupo) {
-        this.idGrupo = idGrupo;
-        this.nombreGrupo = nombreGrupo;
     }
 
     public BigDecimal getIdGrupo() {
@@ -97,7 +97,7 @@ public class Grupo implements Serializable {
 
     @Override
     public String toString() {
-        return nombreGrupo;
+        return "sv.gob.mined.seguridadv2.model.Grupo[ idGrupo=" + idGrupo + " ]";
     }
     
 }

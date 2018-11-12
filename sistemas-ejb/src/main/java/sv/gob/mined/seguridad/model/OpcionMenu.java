@@ -1,5 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package sv.gob.mined.seguridad.model;
@@ -18,13 +19,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 /**
  *
@@ -32,6 +33,8 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name = "OPCION_MENU", schema = "SEGURIDAD_V2")
+@NamedQueries({
+    @NamedQuery(name = "OpcionMenu.findAll", query = "SELECT o FROM OpcionMenu o")})
 public class OpcionMenu implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -44,58 +47,43 @@ public class OpcionMenu implements Serializable {
     private BigDecimal idOpcMenu;
     @Column(name = "CODIGO_OPC_MENU")
     private String codigoOpcMenu;
-    @Basic(optional = false)
-    @Column(name = "NOMBRE_OPCION")
-    private String nombreOpcion;
-    @Column(name = "URL")
-    private String url;
-    @Column(name = "TIPO")
-    private Character tipo;
-    @Column(name = "ICONO")
-    private String icono;
-    @Basic(optional = false)
-    @Column(name = "ORDEN")
-    private BigInteger orden;
-    @Basic(optional = false)
-    @Column(name = "USUARIO_INSERCION")
-    private String usuarioInsercion;
-    @Basic(optional = false)
+    @Column(name = "ESTADO_ELIMINACION")
+    private BigInteger estadoEliminacion;
     @Column(name = "FECHA_INSERCION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaInsercion;
-    @Column(name = "USUARIO_MODIFICACION")
-    private String usuarioModificacion;
     @Column(name = "FECHA_MODIFICACION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
-    @Basic(optional = false)
-    @Column(name = "ESTADO_ELIMINACION")
-    private BigInteger estadoEliminacion;
-    @OneToMany(mappedBy = "idOpcMenu", fetch = FetchType.LAZY)
-    private List<AplicacionOpcMenu> aplicacionOpcMenuList;
+    @Column(name = "ICONO")
+    private String icono;
+    @Column(name = "NOMBRE_OPCION")
+    private String nombreOpcion;
+    @Column(name = "ORDEN")
+    private BigInteger orden;
+    @Column(name = "TIPO")
+    private Character tipo;
+    @Column(name = "URL")
+    private String url;
+    @Column(name = "USUARIO_INSERCION")
+    private String usuarioInsercion;
+    @Column(name = "USUARIO_MODIFICACION")
+    private String usuarioModificacion;
+    @Column(name = "ROUTER_LINK")
+    private String routerLink;
     @OneToMany(mappedBy = "idOpcMenuPadre", fetch = FetchType.LAZY)
-    @OrderBy("orden ASC")
     private List<OpcionMenu> opcionMenuList;
     @JoinColumn(name = "ID_OPC_MENU_PADRE", referencedColumnName = "ID_OPC_MENU")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private OpcionMenu idOpcMenuPadre;
-    @Transient
-    private Boolean eliminar = false;
+    @OneToMany(mappedBy = "idOpcMenu", fetch = FetchType.LAZY)
+    private List<AplicacionOpcMenu> aplicacionOpcMenuList;
 
     public OpcionMenu() {
     }
 
     public OpcionMenu(BigDecimal idOpcMenu) {
         this.idOpcMenu = idOpcMenu;
-    }
-
-    public OpcionMenu(BigDecimal idOpcMenu, String nombreOpcion, BigInteger orden, String usuarioInsercion, Date fechaInsercion, BigInteger estadoEliminacion) {
-        this.idOpcMenu = idOpcMenu;
-        this.nombreOpcion = nombreOpcion;
-        this.orden = orden;
-        this.usuarioInsercion = usuarioInsercion;
-        this.fechaInsercion = fechaInsercion;
-        this.estadoEliminacion = estadoEliminacion;
     }
 
     public BigDecimal getIdOpcMenu() {
@@ -114,52 +102,12 @@ public class OpcionMenu implements Serializable {
         this.codigoOpcMenu = codigoOpcMenu;
     }
 
-    public String getNombreOpcion() {
-        return nombreOpcion;
+    public BigInteger getEstadoEliminacion() {
+        return estadoEliminacion;
     }
 
-    public void setNombreOpcion(String nombreOpcion) {
-        this.nombreOpcion = nombreOpcion;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public Character getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(Character tipo) {
-        this.tipo = tipo;
-    }
-
-    public String getIcono() {
-        return icono;
-    }
-
-    public void setIcono(String icono) {
-        this.icono = icono;
-    }
-
-    public BigInteger getOrden() {
-        return orden;
-    }
-
-    public void setOrden(BigInteger orden) {
-        this.orden = orden;
-    }
-
-    public String getUsuarioInsercion() {
-        return usuarioInsercion;
-    }
-
-    public void setUsuarioInsercion(String usuarioInsercion) {
-        this.usuarioInsercion = usuarioInsercion;
+    public void setEstadoEliminacion(BigInteger estadoEliminacion) {
+        this.estadoEliminacion = estadoEliminacion;
     }
 
     public Date getFechaInsercion() {
@@ -170,14 +118,6 @@ public class OpcionMenu implements Serializable {
         this.fechaInsercion = fechaInsercion;
     }
 
-    public String getUsuarioModificacion() {
-        return usuarioModificacion;
-    }
-
-    public void setUsuarioModificacion(String usuarioModificacion) {
-        this.usuarioModificacion = usuarioModificacion;
-    }
-
     public Date getFechaModificacion() {
         return fechaModificacion;
     }
@@ -186,20 +126,68 @@ public class OpcionMenu implements Serializable {
         this.fechaModificacion = fechaModificacion;
     }
 
-    public BigInteger getEstadoEliminacion() {
-        return estadoEliminacion;
+    public String getIcono() {
+        return icono;
     }
 
-    public void setEstadoEliminacion(BigInteger estadoEliminacion) {
-        this.estadoEliminacion = estadoEliminacion;
+    public void setIcono(String icono) {
+        this.icono = icono;
     }
 
-    public List<AplicacionOpcMenu> getAplicacionOpcMenuList() {
-        return aplicacionOpcMenuList;
+    public String getNombreOpcion() {
+        return nombreOpcion;
     }
 
-    public void setAplicacionOpcMenuList(List<AplicacionOpcMenu> aplicacionOpcMenuList) {
-        this.aplicacionOpcMenuList = aplicacionOpcMenuList;
+    public void setNombreOpcion(String nombreOpcion) {
+        this.nombreOpcion = nombreOpcion;
+    }
+
+    public BigInteger getOrden() {
+        return orden;
+    }
+
+    public void setOrden(BigInteger orden) {
+        this.orden = orden;
+    }
+
+    public Character getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(Character tipo) {
+        this.tipo = tipo;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getUsuarioInsercion() {
+        return usuarioInsercion;
+    }
+
+    public void setUsuarioInsercion(String usuarioInsercion) {
+        this.usuarioInsercion = usuarioInsercion;
+    }
+
+    public String getUsuarioModificacion() {
+        return usuarioModificacion;
+    }
+
+    public void setUsuarioModificacion(String usuarioModificacion) {
+        this.usuarioModificacion = usuarioModificacion;
+    }
+
+    public String getRouterLink() {
+        return routerLink;
+    }
+
+    public void setRouterLink(String routerLink) {
+        this.routerLink = routerLink;
     }
 
     public List<OpcionMenu> getOpcionMenuList() {
@@ -216,6 +204,14 @@ public class OpcionMenu implements Serializable {
 
     public void setIdOpcMenuPadre(OpcionMenu idOpcMenuPadre) {
         this.idOpcMenuPadre = idOpcMenuPadre;
+    }
+
+    public List<AplicacionOpcMenu> getAplicacionOpcMenuList() {
+        return aplicacionOpcMenuList;
+    }
+
+    public void setAplicacionOpcMenuList(List<AplicacionOpcMenu> aplicacionOpcMenuList) {
+        this.aplicacionOpcMenuList = aplicacionOpcMenuList;
     }
 
     @Override
@@ -242,12 +238,5 @@ public class OpcionMenu implements Serializable {
     public String toString() {
         return nombreOpcion;
     }
-
-    public Boolean getEliminar() {
-        return eliminar;
-    }
-
-    public void setEliminar(Boolean eliminar) {
-        this.eliminar = eliminar;
-    }
+    
 }

@@ -1,5 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package sv.gob.mined.seguridad.model;
@@ -15,6 +16,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -24,7 +27,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "APLICACION_OPC_MENU", schema = "SEGURIDAD_V2")
+@NamedQueries({
+    @NamedQuery(name = "AplicacionOpcMenu.findAll", query = "SELECT a FROM AplicacionOpcMenu a")})
 public class AplicacionOpcMenu implements Serializable {
+
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -33,15 +39,12 @@ public class AplicacionOpcMenu implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "app_menu_opc")
     @SequenceGenerator(name = "app_menu_opc", sequenceName = "SEQ_APP_MENU_OPC", allocationSize = 1, initialValue = 1)
     private BigDecimal idAppOpcMenu;
-    @JoinColumn(name = "ID_OPC_MENU", referencedColumnName = "ID_OPC_MENU")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private OpcionMenu idOpcMenu;
     @JoinColumn(name = "ID_GRUPO_APP", referencedColumnName = "ID_GRUPO_APP")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private GrupoAplicacion idGrupoApp;
-    @JoinColumn(name = "ID_APLICACION", referencedColumnName = "ID_APLICACION")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Aplicacion idAplicacion;
+    @JoinColumn(name = "ID_OPC_MENU", referencedColumnName = "ID_OPC_MENU")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private OpcionMenu idOpcMenu;
 
     public AplicacionOpcMenu() {
     }
@@ -58,14 +61,6 @@ public class AplicacionOpcMenu implements Serializable {
         this.idAppOpcMenu = idAppOpcMenu;
     }
 
-    public OpcionMenu getIdOpcMenu() {
-        return idOpcMenu;
-    }
-
-    public void setIdOpcMenu(OpcionMenu idOpcMenu) {
-        this.idOpcMenu = idOpcMenu;
-    }
-
     public GrupoAplicacion getIdGrupoApp() {
         return idGrupoApp;
     }
@@ -74,12 +69,12 @@ public class AplicacionOpcMenu implements Serializable {
         this.idGrupoApp = idGrupoApp;
     }
 
-    public Aplicacion getIdAplicacion() {
-        return idAplicacion;
+    public OpcionMenu getIdOpcMenu() {
+        return idOpcMenu;
     }
 
-    public void setIdAplicacion(Aplicacion idAplicacion) {
-        this.idAplicacion = idAplicacion;
+    public void setIdOpcMenu(OpcionMenu idOpcMenu) {
+        this.idOpcMenu = idOpcMenu;
     }
 
     @Override
@@ -104,7 +99,7 @@ public class AplicacionOpcMenu implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.gob.mined.seguridad.model.AplicacionOpcMenu[ idAppOpcMenu=" + idAppOpcMenu + " ]";
+        return "sv.gob.mined.seguridadv2.model.AplicacionOpcMenu[ idAppOpcMenu=" + idAppOpcMenu + " ]";
     }
     
 }

@@ -1,5 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package sv.gob.mined.seguridad.model;
@@ -16,6 +17,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -26,7 +29,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "USUARIO_APLICACION", schema = "SEGURIDAD_V2")
+@NamedQueries({
+    @NamedQuery(name = "UsuarioAplicacion.findAll", query = "SELECT u FROM UsuarioAplicacion u")})
 public class UsuarioAplicacion implements Serializable {
+
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -39,16 +45,13 @@ public class UsuarioAplicacion implements Serializable {
     private String codigoDepartamento;
     @Column(name = "USU_GRUPO_ACTIVO")
     private Character usuGrupoActivo;
-    @OneToMany(mappedBy = "idUsuApp", fetch = FetchType.LAZY)
-    private List<UsuarioGrupoAplicacion> usuarioGrupoAplicacionList;
     @OneToMany(mappedBy = "idUsuGrupo", fetch = FetchType.LAZY)
     private List<BitacoraAcceso> bitacoraAccesoList;
     @JoinColumn(name = "LOGIN", referencedColumnName = "LOGIN")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Usuario login;
-    @JoinColumn(name = "ID_APLICACION", referencedColumnName = "ID_APLICACION")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Aplicacion idAplicacion;
+    @OneToMany(mappedBy = "idUsuApp", fetch = FetchType.LAZY)
+    private List<UsuarioGrupoAplicacion> usuarioGrupoAplicacionList;
 
     public UsuarioAplicacion() {
     }
@@ -81,14 +84,6 @@ public class UsuarioAplicacion implements Serializable {
         this.usuGrupoActivo = usuGrupoActivo;
     }
 
-    public List<UsuarioGrupoAplicacion> getUsuarioGrupoAplicacionList() {
-        return usuarioGrupoAplicacionList;
-    }
-
-    public void setUsuarioGrupoAplicacionList(List<UsuarioGrupoAplicacion> usuarioGrupoAplicacionList) {
-        this.usuarioGrupoAplicacionList = usuarioGrupoAplicacionList;
-    }
-
     public List<BitacoraAcceso> getBitacoraAccesoList() {
         return bitacoraAccesoList;
     }
@@ -105,12 +100,12 @@ public class UsuarioAplicacion implements Serializable {
         this.login = login;
     }
 
-    public Aplicacion getIdAplicacion() {
-        return idAplicacion;
+    public List<UsuarioGrupoAplicacion> getUsuarioGrupoAplicacionList() {
+        return usuarioGrupoAplicacionList;
     }
 
-    public void setIdAplicacion(Aplicacion idAplicacion) {
-        this.idAplicacion = idAplicacion;
+    public void setUsuarioGrupoAplicacionList(List<UsuarioGrupoAplicacion> usuarioGrupoAplicacionList) {
+        this.usuarioGrupoAplicacionList = usuarioGrupoAplicacionList;
     }
 
     @Override
@@ -135,7 +130,7 @@ public class UsuarioAplicacion implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.gob.mined.seguridad.model.UsuarioAplicacion[ idUsuApp=" + idUsuApp + " ]";
+        return "sv.gob.mined.seguridadv2.model.UsuarioAplicacion[ idUsuApp=" + idUsuApp + " ]";
     }
     
 }

@@ -1,5 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package sv.gob.mined.seguridad.model;
@@ -15,6 +16,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -27,7 +30,10 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "APLICACION", schema = "SEGURIDAD_V2")
+@NamedQueries({
+    @NamedQuery(name = "Aplicacion.findAll", query = "SELECT a FROM Aplicacion a")})
 public class Aplicacion implements Serializable {
+
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -36,35 +42,26 @@ public class Aplicacion implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "APP")
     @SequenceGenerator(name = "APP", sequenceName = "SEQ_APLICACION", allocationSize = 1, initialValue = 1)
     private BigDecimal idAplicacion;
-    @Basic(optional = false)
-    @Column(name = "NOMBRE_APLICACION")
-    private String nombreAplicacion;
+    @Column(name = "ADMINISTRADOR_APLICACION")
+    private String administradorAplicacion;
+    @Column(name = "ESTADO_APLICACION")
+    private Character estadoAplicacion;
     @Column(name = "FECHA_INICIO_PRODUCCION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaInicioProduccion;
-    @Column(name = "ESTADO_APLICACION")
-    private Character estadoAplicacion;
+    @Column(name = "NOMBRE_APLICACION")
+    private String nombreAplicacion;
     @Column(name = "UNIDAD_DUENA")
     private String unidadDuena;
-    @Column(name = "ADMINISTRADOR_APLICACION")
-    private String administradorAplicacion;
-    @OneToMany(mappedBy = "idAplicacion", fetch = FetchType.LAZY)
-    private List<UsuarioAplicacion> usuarioAplicacionList;
     @OneToMany(mappedBy = "idAplicacion", fetch = FetchType.LAZY)
     private List<GrupoAplicacion> grupoAplicacionList;
-    @OneToMany(mappedBy = "idAplicacion", fetch = FetchType.LAZY)
-    private List<AplicacionOpcMenu> aplicacionOpcMenuList;
+    
 
     public Aplicacion() {
     }
 
     public Aplicacion(BigDecimal idAplicacion) {
         this.idAplicacion = idAplicacion;
-    }
-
-    public Aplicacion(BigDecimal idAplicacion, String nombreAplicacion) {
-        this.idAplicacion = idAplicacion;
-        this.nombreAplicacion = nombreAplicacion;
     }
 
     public BigDecimal getIdAplicacion() {
@@ -75,20 +72,12 @@ public class Aplicacion implements Serializable {
         this.idAplicacion = idAplicacion;
     }
 
-    public String getNombreAplicacion() {
-        return nombreAplicacion;
+    public String getAdministradorAplicacion() {
+        return administradorAplicacion;
     }
 
-    public void setNombreAplicacion(String nombreAplicacion) {
-        this.nombreAplicacion = nombreAplicacion;
-    }
-
-    public Date getFechaInicioProduccion() {
-        return fechaInicioProduccion;
-    }
-
-    public void setFechaInicioProduccion(Date fechaInicioProduccion) {
-        this.fechaInicioProduccion = fechaInicioProduccion;
+    public void setAdministradorAplicacion(String administradorAplicacion) {
+        this.administradorAplicacion = administradorAplicacion;
     }
 
     public Character getEstadoAplicacion() {
@@ -99,6 +88,22 @@ public class Aplicacion implements Serializable {
         this.estadoAplicacion = estadoAplicacion;
     }
 
+    public Date getFechaInicioProduccion() {
+        return fechaInicioProduccion;
+    }
+
+    public void setFechaInicioProduccion(Date fechaInicioProduccion) {
+        this.fechaInicioProduccion = fechaInicioProduccion;
+    }
+
+    public String getNombreAplicacion() {
+        return nombreAplicacion;
+    }
+
+    public void setNombreAplicacion(String nombreAplicacion) {
+        this.nombreAplicacion = nombreAplicacion;
+    }
+
     public String getUnidadDuena() {
         return unidadDuena;
     }
@@ -107,36 +112,12 @@ public class Aplicacion implements Serializable {
         this.unidadDuena = unidadDuena;
     }
 
-    public String getAdministradorAplicacion() {
-        return administradorAplicacion;
-    }
-
-    public void setAdministradorAplicacion(String administradorAplicacion) {
-        this.administradorAplicacion = administradorAplicacion;
-    }
-
-    public List<UsuarioAplicacion> getUsuarioAplicacionList() {
-        return usuarioAplicacionList;
-    }
-
-    public void setUsuarioAplicacionList(List<UsuarioAplicacion> usuarioAplicacionList) {
-        this.usuarioAplicacionList = usuarioAplicacionList;
-    }
-
     public List<GrupoAplicacion> getGrupoAplicacionList() {
         return grupoAplicacionList;
     }
 
     public void setGrupoAplicacionList(List<GrupoAplicacion> grupoAplicacionList) {
         this.grupoAplicacionList = grupoAplicacionList;
-    }
-
-    public List<AplicacionOpcMenu> getAplicacionOpcMenuList() {
-        return aplicacionOpcMenuList;
-    }
-
-    public void setAplicacionOpcMenuList(List<AplicacionOpcMenu> aplicacionOpcMenuList) {
-        this.aplicacionOpcMenuList = aplicacionOpcMenuList;
     }
 
     @Override

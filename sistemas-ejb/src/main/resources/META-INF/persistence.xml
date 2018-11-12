@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
     <persistence-unit name="seguridadV2PU" transaction-type="JTA">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <jta-data-source>java:/SeguridadV2Ds</jta-data-source>
@@ -19,7 +19,7 @@
             <property name="eclipselink.cache.shared.default" value="false"/>
             <property name="eclipselink.target-database" value="Oracle"/>
             <property name="eclipselink.target-server" value="JBoss"/>
-            <property name="eclipselink.cache.size.default" value="0"/> 
+            <property name="eclipselink.cache.size.default" value="0"/>
         </properties>
     </persistence-unit>
     <persistence-unit name="activoFijoPU" transaction-type="JTA">
@@ -61,7 +61,7 @@
             <property name="eclipselink.cache.shared.default" value="false"/>
             <property name="eclipselink.target-database" value="Oracle"/>
             <property name="eclipselink.target-server" value="JBoss"/>
-            <property name="eclipselink.cache.size.default" value="0"/> 
+            <property name="eclipselink.cache.size.default" value="0"/>
         </properties>
     </persistence-unit>
 </persistence>

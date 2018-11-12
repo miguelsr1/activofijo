@@ -1,5 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package sv.gob.mined.seguridad.model;
@@ -14,11 +15,11 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  *
@@ -26,26 +27,23 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "HISTORIAL_CLAVES_ACCESO", schema = "SEGURIDAD_V2")
+@NamedQueries({
+    @NamedQuery(name = "HistorialClavesAcceso.findAll", query = "SELECT h FROM HistorialClavesAcceso h")})
 public class HistorialClavesAcceso implements Serializable {
+
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @Basic(optional = false)
-    @NotNull
     @Column(name = "ID_HISTORIAL_CLAVES")
     private BigDecimal idHistorialClaves;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 32)
     @Column(name = "CLAVE_ACCESO")
     private String claveAcceso;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "FECHA_CADUCIDAD")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCaducidad;
     @JoinColumn(name = "LOGIN", referencedColumnName = "LOGIN")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Usuario login;
 
     public HistorialClavesAcceso() {
@@ -53,12 +51,6 @@ public class HistorialClavesAcceso implements Serializable {
 
     public HistorialClavesAcceso(BigDecimal idHistorialClaves) {
         this.idHistorialClaves = idHistorialClaves;
-    }
-
-    public HistorialClavesAcceso(BigDecimal idHistorialClaves, String claveAcceso, Date fechaCaducidad) {
-        this.idHistorialClaves = idHistorialClaves;
-        this.claveAcceso = claveAcceso;
-        this.fechaCaducidad = fechaCaducidad;
     }
 
     public BigDecimal getIdHistorialClaves() {
@@ -115,7 +107,7 @@ public class HistorialClavesAcceso implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.gob.mined.seguridad.model.HistorialClavesAcceso[ idHistorialClaves=" + idHistorialClaves + " ]";
+        return "sv.gob.mined.seguridadv2.model.HistorialClavesAcceso[ idHistorialClaves=" + idHistorialClaves + " ]";
     }
     
 }
