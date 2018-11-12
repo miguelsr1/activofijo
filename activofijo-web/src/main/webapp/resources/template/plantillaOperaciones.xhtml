@@ -33,21 +33,25 @@
         </style>
         <script type="text/javascript" language="javascript">
             function compararFecha() {
+                var fechaTmp = $('#fechaAdq_input').val();
                 var fecha = PF('fechaAdq').getDate();
-                PF('fechaAdq').setDate(fecha)
-                var fecha1 = new Date('01/01/1950');
+                
+                var fMinima = new Date('01/01/1950 00:00:00');
                 var fechaAct = new Date();
-                console.log('ok' + fecha);
-                    if (fecha &lt; fecha1) {
+                
+                var fTemp = new Date(fechaTmp);
+                
+                if(fTemp &lt;= fMinima){
                     PF('growl').renderMessage({"summary": "Alerta",
-                        "detail": "La fecha de adquisición no es valida",
-                        "severity": "warn"})
-                }
-                else {
-                if (fecha > fechaAct) {
-                    PF('growl').renderMessage({"summary": "Alerta",
-                        "detail": "La fecha introducida es mayor a la actual",
-                        "severity": "warn"})
+                        "detail": "La fecha de adquisición no es valida y se sustituira por 01/01/1950",
+                        "severity": "warn"});
+                    PF('fechaAdq').setDate(fMinima)
+                }else {
+                    if (fecha > fechaAct) {
+                        PF('growl').renderMessage({"summary": "Alerta",
+                            "detail": "La fecha introducida es mayor a la actual",
+                            "severity": "warn"})
+                        PF('fechaAdq').setDate(fechaAct)
                     }
                 }
             }
