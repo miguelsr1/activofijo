@@ -87,14 +87,14 @@ public class DescargoController implements Serializable {
     private String estSolicitud;
     private String tipoUsu;
     private String activo;
-    private List<AfTipoDescargo> lstTipoDescargo = new ArrayList<AfTipoDescargo>();
-    private List<AfDescargos> lstDescargos = new ArrayList<AfDescargos>();
-    private List<AfUnidadesAdministrativas> lstUnidadAdm = new ArrayList<AfUnidadesAdministrativas>();
-    private List<AfUnidadesAdministrativas> lstUnidadAdmDes = new ArrayList<AfUnidadesAdministrativas>();
-    private List<AfBienesDepreciables> lstBienes = new ArrayList<AfBienesDepreciables>();
-    private List<VwBienes> lstBienesDescargar = new ArrayList<VwBienes>();
-    private List<VwDescargos> listaDescargos = new ArrayList<VwDescargos>();
-    private List<AfCategoriasBien> lstCatBien = new ArrayList<AfCategoriasBien>();
+    private List<AfTipoDescargo> lstTipoDescargo = new ArrayList<>();
+    private List<AfDescargos> lstDescargos = new ArrayList<>();
+    private List<AfUnidadesAdministrativas> lstUnidadAdm = new ArrayList<>();
+    private List<AfUnidadesAdministrativas> lstUnidadAdmDes = new ArrayList<>();
+    private List<AfBienesDepreciables> lstBienes = new ArrayList<>();
+    private List<VwBienes> lstBienesDescargar = new ArrayList<>();
+    private List<VwDescargos> listaDescargos = new ArrayList<>();
+    private List<AfCategoriasBien> lstCatBien = new ArrayList<>();
     private int rowDrop = 0;
     private String unidadAdm;
     private String unidadAF;
@@ -721,6 +721,7 @@ public class DescargoController implements Serializable {
         if (!unidadAF.equals("0")) { condicion=condicion+ " a.unidad_activo_fijo="+unidadAF+" and ";}
         if(!codigoInv.isEmpty()){ condicion=condicion +" a.codigo_inventario='"+codigoInv+"' and "; }
         if (!estSolicitud.equals("Y")){ condicion = condicion + " a.estado_descargo='"+estSolicitud.trim()+"' and ";}
+        else {condicion = condicion + " a.estado_descargo in ('P','D') and ";}
         if (cat!=0){condicion = condicion + "a.id_cat_bien="+cat+" and ";}
          if(!numSolicitud.isEmpty()){ condicion=condicion +" a.codigo_descargo='"+numSolicitud.trim()+"' and "; }
      

@@ -1,5 +1,8 @@
 package sv.gob.mined.app.activofijo.controller;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,10 +12,21 @@ import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import sv.gob.mined.activofijo.ejb.BienesEJB;
 import sv.gob.mined.activofijo.ejb.CatalogosEJB;
+
 
 import sv.gob.mined.activofijo.model.AfUnidadesActivoFijo;
 import sv.gob.mined.activofijo.model.AfUnidadesAdministrativas;
@@ -383,4 +397,108 @@ public class UnidadAdministrativaController implements Serializable {
     public void editarUnidad() {
         JsfUtil.redireccionar("/app/manttoAf/nuevaUnidad.mined?faces-redirect=true&paramUAF=" + paramUAF + "&paramUadmin=" + paramUadmin);
     }
+     public void generarXls_reporteCatalogo() throws IOException {
+        Workbook libro = new HSSFWorkbook();
+        Sheet hoja = libro.createSheet("Reporte Unidades Administrativas");
+
+        HSSFFont font = (HSSFFont) libro.createFont();
+        font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        font.setColor(HSSFColor.BLACK.index);
+        font.setFontName(HSSFFont.FONT_ARIAL);
+
+        HSSFFont font1 = (HSSFFont) libro.createFont();
+        font1.setBoldweight(HSSFFont.BOLDWEIGHT_NORMAL);
+        font1.setColor(HSSFColor.BLACK.index);
+        font1.setFontName(HSSFFont.FONT_ARIAL);
+
+        HSSFCellStyle style = (HSSFCellStyle) libro.createCellStyle();
+        style.setFont(font);
+
+        HSSFCellStyle style2 = (HSSFCellStyle) libro.createCellStyle();
+        style2.setFont(font1);
+        short alig = 2;
+        style.setAlignment(alig);
+
+        //fila = hoja.createRow((short) 1);
+        Row fila = hoja.createRow((short) 1);
+        Cell celdaEn1 = fila.createCell((short) 1);
+        celdaEn1.setCellStyle(style);
+        celdaEn1.setCellValue("MINISTERIO DE EDUCACIÓN");
+        hoja.addMergedRegion(new CellRangeAddress(1, 1, 1, 5));
+
+        fila = hoja.createRow((short) 3);
+        Cell celdaEn4 = fila.createCell((short) 1);
+        celdaEn4.setCellStyle(style);
+        celdaEn4.setCellValue("CATALOGO DE UNIDADES ADMINISTRATIVAS ");
+        hoja.addMergedRegion(new CellRangeAddress(3, 3, 1, 5));
+
+        fila = hoja.createRow((short) 5);
+        Cell celdaEn5 = fila.createCell((short) 1);
+        celdaEn5.setCellStyle(style);
+        celdaEn5.setCellValue("UNIDAD DE ACTIVO FIJO");
+
+        Cell celdaEn6 = fila.createCell((short) 2);
+        celdaEn6.setCellStyle(style);
+        celdaEn6.setCellValue("CÓDIGO");
+
+        Cell celdaEn7 = fila.createCell((short) 3);
+        celdaEn7.setCellStyle(style);
+        celdaEn7.setCellValue("NOMBRE UNIDAD");
+
+        Cell celdaEn8 = fila.createCell((short) 4);
+        celdaEn8.setCellStyle(style);
+        celdaEn8.setCellValue("NOMBRE RESPONSABLE");
+
+       int x = 6;
+       
+        for (AfUnidadesAdministrativas object : lstUnidadAdm) {
+            fila = hoja.createRow((short) x);
+
+            Cell celda4 = fila.createCell((short) 1);
+            celda4.setCellStyle(style2);
+            celda4.setCellValue(getNombreUnidad(object.getAfUnidadesAdministrativasPK().getUnidadActivoFijo()));
+
+            Cell celda5 = fila.createCell((short) 2);
+            celda5.setCellStyle(style2);
+            celda5.setCellValue(object.getAfUnidadesAdministrativasPK().getCodigoUnidad());
+
+            Cell celda6 = fila.createCell((short) 3);
+            celda6.setCellStyle(style2);
+            celda6.setCellValue(getNombreAdm(object.getAfUnidadesAdministrativasPK().getCodigoUnidad(),object.getTipoUnidad()));
+            
+            Cell celda7 = fila.createCell((short) 4);
+            celda7.setCellStyle(style2);
+            celda7.setCellValue(object.getNombreResponsable());
+            
+            x++;
+        }
+       
+
+        hoja.autoSizeColumn((short) 0);
+        hoja.autoSizeColumn((short) 1);
+        hoja.autoSizeColumn((short) 2);
+        hoja.autoSizeColumn((short) 3);
+        hoja.autoSizeColumn((short) 4);
+        hoja.autoSizeColumn((short) 5);
+        hoja.autoSizeColumn((short) 6);
+
+        ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
+        FacesContext fc = FacesContext.getCurrentInstance();
+        HttpServletResponse response = (HttpServletResponse) fc.getExternalContext().getResponse();
+
+        libro.write(outByteStream);
+
+        byte[] outArray = outByteStream.toByteArray();
+        response.setContentType("application / ms - excel");
+        response.setContentLength(outArray.length);
+        response.setHeader("Expires:", "0"); // eliminates browser caching
+        //String patron = "dd-MM-yyyy";
+        //SimpleDateFormat formato = new SimpleDateFormat(patron);
+        response.setHeader("Content-Disposition", "attachment;filename = ListadoUnidades.xls");
+        OutputStream outStream = response.getOutputStream();
+        outStream.write(outArray);
+        outStream.flush();
+        fc.responseComplete();
+    }
+    
 }

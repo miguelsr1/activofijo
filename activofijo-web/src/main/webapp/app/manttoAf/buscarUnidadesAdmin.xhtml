@@ -10,6 +10,7 @@
             <p:menubar id="barBtns" > 
                 <p:menuitem value="Buscar" icon="fa fa-search" action="#{unidadAdministrativaController.buscarUnidad}" update="barBtns pnlUnidades"/>
                 <p:menuitem value="Nuevo" icon="fa fa-file-o" ajax="true" action="#{unidadAdministrativaController.nuevoUnidad}" />
+                <p:menuitem value="Reporte" icon="fa fa-file-excel-o" ajax="false" action="#{unidadAdministrativaController.generarXls_reporteCatalogo}" />
                 <p:menuitem value="Limpiar" icon="fa fa-trash-o" action="#{unidadAdministrativaController.limpiarFiltro}" update="pnlFiltros pnlUnidades"/>
                 <p:menuitem value="Salir" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
 
@@ -64,7 +65,7 @@
                     <p:column headerText="Unidad Activo Fijo">
                         <p:outputLabel value="#{unidadAdministrativaController.getNombreUnidad(unidad.afUnidadesAdministrativasPK.unidadActivoFijo)}"/>
                     </p:column>   
-                    <p:column headerText="codigo" style="width: 80px">
+                    <p:column headerText="c&oacute;digo" style="width: 80px">
                         <p:outputLabel value="#{unidad.afUnidadesAdministrativasPK.codigoUnidad}"/>
                     </p:column>
                     <p:column headerText="Nombre Unidad">

@@ -622,6 +622,7 @@ public class TrasladoController implements Serializable {
         }
     }
      public void eliminarTraslado() {
+         if (!lstTdtmp.isEmpty()){
         for (AfTraslados td : lstTdtmp) {
             
             bejb.removeTraslado(td.getIdTraslado());
@@ -629,7 +630,9 @@ public class TrasladoController implements Serializable {
         RequestContext.getCurrentInstance().execute("PF('dlg1').hide()");
         buscarTraslados();
         JsfUtil.mensajeEliminarTraslado();
-
+         }else{
+             
+         }
     }
     
     public void trasladosId(SelectEvent event) {

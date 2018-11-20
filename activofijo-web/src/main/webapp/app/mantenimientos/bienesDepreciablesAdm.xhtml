@@ -104,7 +104,9 @@
                      <h:panelGroup><h:outputLabel value="*" style="font:bold;color:red;size:14px"/>
                         <p:outputLabel value=" Fecha Adquisici&oacute;n:"/>
                     </h:panelGroup>
-                    <p:calendar id="fechaAdq" value="#{bienesAdmController.bd.fechaAdquisicion}" pattern="dd/MM/yyyy" required="true" maxdate="#{bienesAdmController.fecLimit}"  readonlyInput="true" disabled="#{bienesAdmController.modifica}" requiredMessage="Ingrese Fecha de Adquisición"/>
+                    <p:calendar id="fechaAdq" widgetVar="fechaAdq" value="#{bienesAdmController.bd.fechaAdquisicion}" disabled="#{bienesAdmController.modifica}" pattern="dd/MM/yyyy" navigator="true" 
+                                required="true" requiredMessage="Ingrese Fecha de Adquisición" onblur="compararFecha();"/>
+                 
                     <p:outputLabel value="Documento Adquisici&oacute;n:"/>
                     <p:inputText value="#{bienesAdmController.bd.documentoAdquisicion}"/>
                     <h:panelGroup><h:outputLabel value="*" style="font:bold;color:red;size:14px"/>

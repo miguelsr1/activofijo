@@ -1,8 +1,10 @@
 package sv.gob.mined.app.activofijo.controller;
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -17,8 +19,18 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import sv.gob.mined.activofijo.ejb.BienesEJB;
@@ -400,4 +412,109 @@ public class EmpleadosController implements Serializable {
     public void editarEmpleado() {
         JsfUtil.redireccionar("/app/manttoAf/NuevosEmpleados.mined?faces-redirect=true&idEmpleado="+idEmpleado);
     }
+     public void generarXls_reporteCatalogo() throws IOException {
+        Workbook libro = new HSSFWorkbook();
+        Sheet hoja = libro.createSheet("Reporte Tipo Bien");
+
+        HSSFFont font = (HSSFFont) libro.createFont();
+        font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        font.setColor(HSSFColor.BLACK.index);
+        font.setFontName(HSSFFont.FONT_ARIAL);
+
+        HSSFFont font1 = (HSSFFont) libro.createFont();
+        font1.setBoldweight(HSSFFont.BOLDWEIGHT_NORMAL);
+        font1.setColor(HSSFColor.BLACK.index);
+        font1.setFontName(HSSFFont.FONT_ARIAL);
+
+        HSSFCellStyle style = (HSSFCellStyle) libro.createCellStyle();
+        style.setFont(font);
+
+        HSSFCellStyle style2 = (HSSFCellStyle) libro.createCellStyle();
+        style2.setFont(font1);
+        short alig = 2;
+        style.setAlignment(alig);
+
+        //fila = hoja.createRow((short) 1);
+        Row fila = hoja.createRow((short) 1);
+        Cell celdaEn1 = fila.createCell((short) 1);
+        celdaEn1.setCellStyle(style);
+        celdaEn1.setCellValue("MINISTERIO DE EDUCACIÓN");
+        hoja.addMergedRegion(new CellRangeAddress(1, 1, 1, 5));
+        fila = hoja.createRow((short) 2);
+        Cell celdaEn2 = fila.createCell((short) 1);
+        celdaEn2.setCellStyle(style);
+        if (!unidadAdm.equals("0")) {
+            celdaEn2.setCellValue(cejb.NomUnidad(unidadAdm, tipoUnidad));
+        } else {
+            celdaEn2.setCellValue("");
+        }
+        hoja.addMergedRegion(new CellRangeAddress(2, 2, 1, 5));
+
+        fila = hoja.createRow((short) 3);
+        Cell celdaEn4 = fila.createCell((short) 1);
+        celdaEn4.setCellStyle(style);
+        celdaEn4.setCellValue("CATALOGO DE EMPLEADOS ");
+        hoja.addMergedRegion(new CellRangeAddress(3, 3, 1, 5));
+
+        fila = hoja.createRow((short) 5);
+        Cell celdaEn5 = fila.createCell((short) 1);
+        celdaEn5.setCellStyle(style);
+        celdaEn5.setCellValue("NOMBRE");
+
+        Cell celdaEn6 = fila.createCell((short) 2);
+        celdaEn6.setCellStyle(style);
+        celdaEn6.setCellValue("CARGO");
+
+        Cell celdaEn7 = fila.createCell((short) 3);
+        celdaEn7.setCellStyle(style);
+        celdaEn7.setCellValue("UNIDAD");
+
+        
+       int x = 6;
+       
+        for (AfEmpleados object : lstEmpleados) {
+            fila = hoja.createRow((short) x);
+
+            Cell celda4 = fila.createCell((short) 1);
+            celda4.setCellStyle(style2);
+            celda4.setCellValue(object.getNombres()+" "+ object.getApellidos());
+
+            Cell celda5 = fila.createCell((short) 2);
+            celda5.setCellStyle(style2);
+            celda5.setCellValue(object.getCargo());
+
+            Cell celda6 = fila.createCell((short) 3);
+            celda6.setCellStyle(style2);
+            celda6.setCellValue(obtenerNombreUnidad(object.getCodigoUnidad()));
+            x++;
+        }
+       
+
+        hoja.autoSizeColumn((short) 0);
+        hoja.autoSizeColumn((short) 1);
+        hoja.autoSizeColumn((short) 2);
+        hoja.autoSizeColumn((short) 3);
+        hoja.autoSizeColumn((short) 4);
+        hoja.autoSizeColumn((short) 5);
+        hoja.autoSizeColumn((short) 6);
+
+        ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
+        FacesContext fc = FacesContext.getCurrentInstance();
+        HttpServletResponse response = (HttpServletResponse) fc.getExternalContext().getResponse();
+
+        libro.write(outByteStream);
+
+        byte[] outArray = outByteStream.toByteArray();
+        response.setContentType("application / ms - excel");
+        response.setContentLength(outArray.length);
+        response.setHeader("Expires:", "0"); // eliminates browser caching
+        //String patron = "dd-MM-yyyy";
+        //SimpleDateFormat formato = new SimpleDateFormat(patron);
+        response.setHeader("Content-Disposition", "attachment;filename = ListadoEmpleados.xls");
+        OutputStream outStream = response.getOutputStream();
+        outStream.write(outArray);
+        outStream.flush();
+        fc.responseComplete();
+    }
+    
 }

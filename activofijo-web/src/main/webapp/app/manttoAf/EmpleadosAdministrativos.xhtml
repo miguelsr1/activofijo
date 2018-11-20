@@ -10,6 +10,7 @@
             <p:menubar id="barBtns" > 
                 <p:menuitem value="Buscar" icon="fa fa-search" action="#{empleadosController.buscarEmpleados}" update="barBtns pnlEmp"/>
                 <p:menuitem value="Nuevo" icon="fa fa-file-o" ajax="true" action="#{empleadosController.nuevoEmpleado}" />
+                <p:menuitem value="Reporte" icon="fa fa-file-excel-o" ajax="false" action="#{empleadosController.generarXls_reporteCatalogo}" />
                 <p:menuitem value="Limpiar" icon="fa fa-trash-o" action="#{empleadosController.limpiarFiltro}" update="pnlFiltros pnlEmp"/>
                 <p:menuitem value="Salir" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
 
