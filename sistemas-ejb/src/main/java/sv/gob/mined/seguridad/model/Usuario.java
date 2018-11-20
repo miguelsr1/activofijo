@@ -234,7 +234,7 @@ public class Usuario implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.gob.mined.seguridadv2.model.Usuario[ login=" + login + " ]";
+        return login ;
     }
     
 }

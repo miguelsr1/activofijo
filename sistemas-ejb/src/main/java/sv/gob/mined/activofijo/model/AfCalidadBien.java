@@ -138,7 +138,7 @@ public class AfCalidadBien implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.gob.mined.app.activofijo.model.AfCalidadBien[ codigoCalidadBien=" + codigoCalidadBien + " ]";
+        return  codigoCalidadBien.toString() ;
     }
     
 }

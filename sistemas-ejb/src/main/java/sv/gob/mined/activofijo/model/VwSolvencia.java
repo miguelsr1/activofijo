@@ -27,7 +27,7 @@ private String nombre;
 @Temporal(javax.persistence.TemporalType.DATE)
 private Date fechaSolvencia;
 private String anio;
-private Number numBienes;
+private Long numBienes;
 private BigDecimal costo;
 private String codigoMunicipio;
 @Temporal(javax.persistence.TemporalType.DATE)
@@ -102,11 +102,11 @@ public VwSolvencia() {
         this.anio = anio;
     }
 
-    public Number getNumBienes() {
+    public Long getNumBienes() {
         return numBienes;
     }
 
-    public void setNumBienes(Number numBienes) {
+    public void setNumBienes(Long numBienes) {
         this.numBienes = numBienes;
     }
 

@@ -396,7 +396,7 @@ public class VwBienes implements Serializable {
 
     @Override
     public String toString() {
-        return "VwBienes{" + "idBien=" + idBien + ", codigoInventario=" + codigoInventario + ", categoria=" + categoria + ", descripcionBien=" + descripcionBien + ", Marca=" + Marca + ", fechaAdquisicion=" + fechaAdquisicion + ", valorAdquisicion=" + valorAdquisicion + ", modelo=" + modelo + ", numeroSerie=" + numeroSerie + ", activoFijo=" + activoFijo + ", estado=" + estado + ", fuente=" + fuente + ", nombreProyecto=" + nombreProyecto + ", documentoAdquisicion=" + documentoAdquisicion + ", proveedor=" + proveedor +'}';
+        return codigoInventario;
     }
     
     

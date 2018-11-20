@@ -130,7 +130,7 @@ public class UsuarioAplicacion implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.gob.mined.seguridadv2.model.UsuarioAplicacion[ idUsuApp=" + idUsuApp + " ]";
+        return idUsuApp.toString();
     }
     
 }

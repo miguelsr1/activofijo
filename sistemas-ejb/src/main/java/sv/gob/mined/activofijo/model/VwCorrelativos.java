@@ -105,7 +105,7 @@ public VwCorrelativos() {
  
     @Override
     public String toString() {
-        return "VwCorrelativos{" + "correlativo=" + correlativo + ", idTipoBien=" + idTipoBien + ", nombreTipoBien=" + nombreTipoBien + ", idCatBien=" + idCatBien + ", codigoUnidad=" + codigoUnidad + ", unidadActivoFijo=" + unidadActivoFijo + ", nombreUnidadAf=" + nombreUnidadAf + ", nombreUnidad=" + nombreUnidad +  '}';
+        return idTipoBien.toString(); 
     }
 
 

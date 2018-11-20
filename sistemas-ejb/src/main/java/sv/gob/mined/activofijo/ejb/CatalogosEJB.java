@@ -4,6 +4,7 @@
  */
 package sv.gob.mined.activofijo.ejb;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -192,7 +193,7 @@ public class CatalogosEJB {
     }
 
     public List<AfEmpleados> getEmpleadosAdm(String codigo, String unidad) {
-        Query q = em.createQuery("Select a from AfEmpleados a where trim(a.codigoUnidad)=:codigo and trim(a.unidadActivoFijo)=:unidad order by a.idEmpleado", AfEmpleados.class);
+        Query q = em.createQuery("Select a from AfEmpleados a where trim(a.codigoUnidad)=:codigo and trim(a.unidadActivoFijo)=:unidad order by a.apellidos,a.nombres", AfEmpleados.class);
         q.setParameter("unidad", unidad);
         q.setParameter("codigo", codigo);
         if (q.getResultList().isEmpty()) {
@@ -260,7 +261,7 @@ public class CatalogosEJB {
      public List<AfBienesDepreciables> getBienesDescargo(String codigo, String Inv, String Activo, List<Long> lst) {
         Query q;
         String sqlQuery;
-       
+       try{
             if (Activo.equals("N")) {
                 sqlQuery = "Select a from AfBienesDepreciables a where a.idEstatusBien.idEstatusBien='1' and a.valorAdquisicion<600 and trim(a.codigoUnidad)=:codigo and trim(a.codigoInventario) like :inv and a.idBien not in (select b.idBien from AfDescargosDetalle b) and a.idBien not in :temp";
             } else {
@@ -270,12 +271,12 @@ public class CatalogosEJB {
             q.setParameter("codigo", codigo);
             q.setParameter("inv", "%" + Inv + "%");
             q.setParameter("temp", lst);
-            if (q.getResultList().isEmpty()) {
-                return null;
-            } else {
-                return q.getResultList();
-            }
-       
+            
+            return q.getResultList();
+            
+       }catch(Exception e){
+           return new ArrayList<>();
+       }
     }
     
      public List<AfBienesDepreciables> getBienesTraslado(String codigo, String Inv,List<Long> lst) {

@@ -389,18 +389,19 @@ public class BienesEJB {
 
                 q = em.createNativeQuery("select * from af_traslados_detalle where id_traslado=" + idTd, AfTrasladosDetalle.class);
                 if (!q.getResultList().isEmpty() && q.getResultList() != null) {
-                    tdet = (AfTrasladosDetalle) q.getResultList().get(0);
                     try {
-                        em.remove(tdet);
+                       q= em.createNativeQuery("delete af_traslados_detalle where id_traslado="+idTd);
+                       q.executeUpdate();
+                        
                         em.remove(td);
                     } catch (Exception e) {
-                        System.out.println("Error al eliminar traslados " + e);
+                        System.out.println("Error al eliminar traslados detalle " + e);
                     }
                 } else {
                     try {
                         em.remove(td);
                     } catch (Exception e) {
-                        System.out.println("Error al eliminar traslado detalle " + e);
+                        System.out.println("Error al eliminar traslado " + e);
                     }
                 }
             }
@@ -660,16 +661,31 @@ public class BienesEJB {
 
     public List<VwSolvencia> buscarEntidades(String condicion) {
         String condicion2 = "";
-
+       List<VwSolvencia> lstEntidades = new ArrayList();
         if (!condicion.equals("")) {
             condicion2 = "where " + condicion;
         }
-        String sql = " select   rownum as idRow, CODIGO_ENTIDAD as codigoEntidad, UNIDAD_ACTIVO_FIJO as unidadActivoFijo,NOMBRE_MUNICIPIO as nombreMunicipio,NOMBRE as nombre,"
-                + " FECHA_SOLVENCIA as fechaSolvencia, ANIO as anio, nvl(NUMBIENES,0) as numBienes, nvl(COSTO,0) as costo,codigo_municipio as codigoMunicipio,fecha_actualizacion as fechaActualizacion,tipo_unidad as tipoUnidad "
+        String sql = " select   unique  CODIGO_ENTIDAD as codigoEntidad, UNIDAD_ACTIVO_FIJO as unidadActivoFijo,NOMBRE_MUNICIPIO as nombreMunicipio,NOMBRE as nombre,"
+                + "  nvl(NUMBIENES,0) as numBienes, nvl(COSTO,0) as costo,codigo_municipio as codigoMunicipio,fecha_actualizacion as fechaActualizacion,tipo_unidad as tipoUnidad "
                 + " from  vw_solvencia " + condicion2;
-        Query q = em.createNativeQuery(sql, VwSolvencia.class);
-
-        return q.getResultList();
+        Query q = em.createNativeQuery(sql);
+         List lst = q.getResultList();
+        for (Object object : lst) {
+            Object[] datos = (Object[]) object;
+            VwSolvencia datPlan = new VwSolvencia();
+            datPlan.setCodigoEntidad(datos[0].toString());
+            datPlan.setUnidadActivoFijo(datos[1].toString());
+            datPlan.setNombreMunicipio(datos[2].toString());
+            datPlan.setNombre(datos[3].toString());
+            datPlan.setNumBienes(Long.parseLong(datos[4].toString()));
+            datPlan.setCosto((BigDecimal) datos[5]);
+            datPlan.setCodigoMunicipio(datos[6].toString());
+            datPlan.setFechaActualizacion((Date) datos[7]);
+            datPlan.setTipoUnidad(datos[7].toString());
+            lstEntidades.add(datPlan);
+        }
+        return lstEntidades;
+        //return q.getResultList();
     }
 
     public List<VwMunicipio> buscarMunicipios(String unidad) {
@@ -777,7 +793,7 @@ public class BienesEJB {
             condicion2 = " where " + condicion;
         }
 
-        String Sql = "select * from af_tipo_bienes a " + condicion2;
+        String Sql = "select * from af_tipo_bienes a " + condicion2+" order by a.codigo_tipo_bien";
         Query q = em.createNativeQuery(Sql, AfTipoBienes.class);
         if (!q.getResultList().isEmpty()) {
             return q.getResultList();
@@ -824,7 +840,7 @@ public class BienesEJB {
             condicion2 = " where " + condicion;
         }
 
-        String Sql = "select * from af_Empleados a " + condicion2;
+        String Sql = "select * from af_Empleados a " + condicion2+" order by a.nombres,a.apellidos";
         Query q = em.createNativeQuery(Sql, AfEmpleados.class);
         if (!q.getResultList().isEmpty()) {
             return q.getResultList();
@@ -1060,9 +1076,10 @@ public class BienesEJB {
 
     public List<VwDescargos> buscarDescargos(String condicion) {
 
-        String Sql = "select * from vw_descargos a " + condicion;
+        String Sql = "select a.DESCARGO_ID,a.CODIGO_DESCARGO,a.NOMBRE_UNIDAD,a.FECHA_DESCARGO,a.BIENES,a.TOTAL,a.NOMBRE_TIPO_DESCARGO,a.ESTADO," +
+                     "a.DES_ESTADO,a.UNIDAD_ACTIVO_FIJO,a.CODIGO_UNIDAD,a.TIPO_DESCARGO,a.FECHA_SOLICITUD,a.TIPO_UNIDAD from vw_descargos a " + condicion;
 
-        List<VwDescargos> lst = new ArrayList<VwDescargos>();
+        List<VwDescargos> lst = new ArrayList<>();
         Query q = em.createNativeQuery(Sql);
 
         for (Object dato : q.getResultList()) {
