@@ -248,10 +248,24 @@ public class LoginController implements Serializable {
     }
 
     public void resetearContrasena() {
-        if (seguridadBean.resetearContrasena(login.toUpperCase(), "mined")) {
-            JsfUtil.mensajeInsert();
-            String url = "/index?faces-redirect=true";
-            JsfUtil.redireccionar(url);
-        }
+         Map param = seguridadBean.getUsuario(usuario.getLogin(), usuario.getClaveAcceso());
+        String url = "";
+
+       if ((Boolean) param.get(Constantes.USUARIO_VALIDO)) {
+            usuario = (Usuario) param.get(Constantes.USUARIO);
+
+            if (!(Boolean) param.get(Constantes.USUARIO_EXPIRADO)) {
+       
+            if (seguridadBean.resetearContrasena(login.toUpperCase(), "mined")) {
+                JsfUtil.mensajeInsert();
+                url = "/index?faces-redirect=true";
+                JsfUtil.redireccionar(url);
+            }
+        }else {
+                JsfUtil.mensajeAlerta("Ha expirado su contraseña");
+            }
+        } else {
+            JsfUtil.mensajeAlerta("Usuario o Clave de Acceso inválidos!");
+       }
     }
 }

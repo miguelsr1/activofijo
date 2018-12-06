@@ -127,7 +127,13 @@ public class JsfUtil {
                         }catch(Exception e){
                             value = null;
                         }
-                    } else if (String.class.isAssignableFrom(field.getType())) {
+                    } else if (Long.class.isAssignableFrom(field.getType())) {
+                       try{
+                            value = new Long(o.toString());
+                        }catch(Exception e){
+                            value = null;
+                        }
+                    }else if (String.class.isAssignableFrom(field.getType())) {
                         value = o.toString();
                     }
 

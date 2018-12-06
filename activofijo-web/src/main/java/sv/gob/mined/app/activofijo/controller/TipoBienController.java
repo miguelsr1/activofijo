@@ -5,9 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -32,7 +29,6 @@ import sv.gob.mined.activofijo.ejb.CatalogosEJB;
 import sv.gob.mined.activofijo.model.AfCategoriasBien;
 import sv.gob.mined.activofijo.model.AfClasificacionBien;
 import sv.gob.mined.activofijo.model.AfTipoBienes;
-import sv.gob.mined.activofijo.model.VwDatosxCuentas;
 
 import sv.gob.mined.app.activofijo.util.JsfUtil;
 import sv.gob.mined.seguridad.model.Usuario;

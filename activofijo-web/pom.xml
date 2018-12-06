@@ -16,7 +16,7 @@
     
     <dependencies>
         <dependency>
-            <groupId>sv.gob.mined</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>sistemas-ejb</artifactId>
             <version>2.0.0</version>
         </dependency>

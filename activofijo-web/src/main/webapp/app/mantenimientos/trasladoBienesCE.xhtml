@@ -67,7 +67,7 @@
                         <p:column colspan="4" >
                             <p:panel id="pnlDest" header="Destino" >
                                <h:outputLabel  value="Tipo Unidad:      "/> 
-                               <h:selectOneMenu id="tipUni1" value="#{trasladoCEController.tipUniDes}" disabled="#{trasladoCEController.activarCampos}" >
+                               <h:selectOneMenu id="tipUni1" value="#{trasladoCEController.tipUniDes}" disabled="#{trasladoCEController.activarCampos}" required="true" >
                                    <p:ajax update="uadm1" listener="#{trasladoCEController.filtrarUnidadesAdmDestino}" process="@this,tipUni"/>
                                    <f:selectItem itemLabel="-Seleccione-" itemValue=""/>
                                    <f:selectItem itemLabel="Unidad Administrativa" itemValue="UA"/>

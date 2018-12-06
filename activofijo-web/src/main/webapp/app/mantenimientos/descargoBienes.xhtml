@@ -8,7 +8,6 @@
     <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
         <ui:define name="content">
             <p:menubar id="barBtns" > 
-                <p:menuitem value="Guardar" icon="fa fa-file-o" action="#{descargoController.guardarDescargo}" disabled="#{descargoController.btnGuardar}" />
                 <p:menuitem value="Enviar" icon="fa fa-save" action="#{descargoController.enviarDescargo}" disabled="#{descargoController.btnEnviar}" />
                 <p:menuitem id="btnSol2" value="Descargar" icon="fa fa-file-o" ajax="true" onclick="PF('dlgImprimir').show();" disabled="#{descargoController.btnDesc}" />
                 <p:menuitem value="Imprimir" icon="fa fa-print" action="#{descargoController.imprimirDescargo}" ajax="false" disabled="#{descargoController.btnImp}"/>
@@ -67,23 +66,51 @@
                         </p:column>
                     </p:row>
                     <p:row>
-                        <p:column colspan="3" >
-                            <p:panel id="pnlTraslado" header="BIENES A DESCARGAR" visible="#{descargoController.pnlTras}">
-                                <p:outputLabel value="CODIGO INVENTARIO:" for="idBien" />
-                                <p:autoComplete id="idBien" value="#{descargoController.bienes}" completeMethod="#{descargoController.completarBienes}" 
-                                                forceSelection="true" converter="afBienesConverter"
-                                                var="iBien" itemValue="#{iBien}" itemLabel="#{iBien.codigoInventario}">
-                                    <h:outputText id="inv" value="#{iBien.codigoInventario}"  />
-                                </p:autoComplete>  
-                                <p:commandLink action="#{descargoController.bienesDescargar}" update="pnlBienes pnlTraslado">
-                                    <i class="fa fa-dot-circle-o blue" style="font-size: 17px;"></i>
-                                </p:commandLink>
-                            </p:panel> 
+                         <p:column>
+                             <p:commandButton value="Agregar Bienes" action="#{descargoController.abrir}" process="@this">
+                                 <ajax update="bienesPickList"/>  
+                         </p:commandButton>
                         </p:column>
                     </p:row>
                 </h:panelGrid>
             </p:panel>
-              <p:panel>
+            <p:panel id="bienesDes">
+                <p:growl id="msg" showDetail="true" escape="false" />
+                <p:pickList id="bienesPickList" value="#{descargoController.bienes}" var="bien" effect="bounce"
+                            itemValue="#{bien}" itemLabel="#{bien.codigoInventario}" showSourceControls="false" showTargetControls="false" showCheckbox="true"
+                            showSourceFilter="true" showTargetFilter="false" filterMatchMode="contains" converter="classConverter" responsive="true" style="width: 50%">
+        
+                <f:facet name="sourceCaption">Activo</f:facet>
+                <f:facet name="targetCaption">a Descargar</f:facet>
+
+                <p:ajax event="transfer" listener="#{descargoController.onTransfer}" update="msg" />
+                <p:ajax event="select" listener="#{descargoController.onSelect}" update="msg"/>
+                <p:ajax event="unselect" listener="#{descargoController.onUnselect}" update="msg"/>
+                <p:ajax event="reorder" listener="#{descargoController.onReorder}" update="msg"/>
+                <p:column style="width:85%;">
+                    <h:outputText value="#{bien.codigoInventario}" />
+                </p:column>
+            </p:pickList>
+  <p:column>
+                            <p:commandButton value="Guardar" icon="fa fa-save"  action="#{descargoController.guardarDescargo}" disabled="#{descargoController.btnGuardar}"/>
+                        </p:column>
+          <p:commandButton id="pojoSubmit" value="Submit" update="displayBienes"  oncomplete="PF('BienesDialog').show()"  style="margin-top:5px" />
+         
+          <p:dialog modal="true" showEffect="fade" hideEffect="fade" widgetVar="BienesDialog">
+          <h:panelGrid id="displayBienes" columns="2">
+            <h:outputText value="Source: " style="font-weight:bold" />
+            <ui:repeat value="#{descargoController.bienes.source}" var="bien1">
+                <h:outputText value="#{bien.codigoInventario}" style="margin-right:5px" />
+            </ui:repeat>
+ 
+            <h:outputText value="Target: " style="font-weight:bold" />
+            <ui:repeat value="#{descargoController.bienes.target}" var="bien2">
+                <h:outputText value="#{bien.codigoInventario}" style="margin-right:5px" />
+            </ui:repeat>
+        </h:panelGrid>
+    </p:dialog>    
+             </p:panel>
+               <p:panel>
                    <p:dialog id="dlgImprimir" widgetVar="dlgImprimir" modal="true" >
                     <p:outputLabel value="Datos descargo" escape="false"/>
                     <h:panelGrid columns="2">
