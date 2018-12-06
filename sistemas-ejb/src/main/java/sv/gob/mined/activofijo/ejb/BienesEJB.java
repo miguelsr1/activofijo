@@ -851,13 +851,18 @@ public class BienesEJB {
 
     public List<VwBienes> buscarBien(String condicion) {
         String condicion2 = "";
+        String sql="";
         // System.out.println(condicion);
         if (!condicion.equals("")) {
             condicion2 = " where " + condicion;
         }
-
-        List<VwBienes> lstBienes = new ArrayList<VwBienes>();
-        Query q = em.createNativeQuery("select A.* from Vw_Bienes A " + condicion2 + " order by A.codigo_inventario");
+        sql="select a.ID_BIEN,a.CODIGO_INVENTARIO,a.CATEGORIA,a.DESCRIPCION_BIEN,a.MARCA,a.FECHA_ADQUISICION,a.VALOR_ADQUISICION,a.MODELO, " +
+            "a.NUMERO_SERIE,a.ACTIVO_FIJO,a.ESTADO,a.UNIDAD_ACTIVO_FIJO,a.CODIGO_UNIDAD,a.ESTADO_REGISTRO,a.iD_CAT_BIEN,a.ID_TIPO_BIEN,a.CODIGO_SECCION, " +
+            "a.CODIGO_CALIDAD_BIEN,a.ID_ESTATUS_BIEN,a.ID_FUENTE,a.iD_PROYECTO,a.FECHA_CREACION,a.USUARIO_CREA,a.FUENTE,a.NOMBRE_PROYECTO,a.DOCUMENTO_ADQUISICION,"+
+            "a.PROVEEDOR,a.ID_FORMA_ADQUISICION,a.CALIDAD,a.ASIGNADO,a.ID_TRASLADO_DETALLE,a.ID_TRASLADO,a.ID_DETALLE_DESCARGO,a.DESCARGO_ID, " +
+            "a.TIPO_DESCARGO,a.ESTADO_DESCARGO,a.FECHA_DESCARGO,a.CODIGO_DESCARGO,a.MONTO_DEPRECIACION,a.TIPO_UNIDAD from Vw_Bienes a "+ condicion2 + " order by A.codigo_inventario"; 
+        List<VwBienes> lstBienes = new ArrayList<>();
+        Query q = em.createNativeQuery(sql);
         List lst = q.getResultList();
         for (Object object : lst) {
             Object[] datos = (Object[]) object;
