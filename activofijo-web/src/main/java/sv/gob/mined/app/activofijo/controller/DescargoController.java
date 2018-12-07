@@ -5,7 +5,6 @@
  */
 package sv.gob.mined.app.activofijo.controller;
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -79,9 +78,9 @@ public class DescargoController implements Serializable {
     private CatalogosEJB cejb;
     @EJB
     private BienesEJB bejb;
-    @EJB 
+    @EJB
     private ReportesEJB reb;
-    
+
     private AfDescargosDetalle td = new AfDescargosDetalle();
     private AfDescargos tras = new AfDescargos();
     private VwBienes Vb = new VwBienes();
@@ -89,7 +88,7 @@ public class DescargoController implements Serializable {
     private Date fecFallo;
     private Date fec1;
     private Date fec2;
-    
+
     private String tipDescargo;
     private String estSolicitud;
     private String tipoUsu;
@@ -111,22 +110,22 @@ public class DescargoController implements Serializable {
     private boolean btnEnviar = true;
     private boolean btnImp = true;
     private boolean pnlDest = false;
-    private boolean pnlTras =true;
-    private boolean actTipo=false;
-    private boolean actAF=false;
-    private boolean actAd=false;
-    private boolean actCtrl=false;
-    private String tipoUnidad="UA";
+    private boolean pnlTras = true;
+    private boolean actTipo = false;
+    private boolean actAF = false;
+    private boolean actAd = false;
+    private boolean actCtrl = false;
+    private String tipoUnidad = "UA";
     private String observacion;
     private String obsFallo;
     private Long idBien;
     private Long cat;
-   
+
     private String codigoInv;
     private String numSolicitud;
     private Long idDescargo;
     private Usuario usuDao = new Usuario();
-  
+
     public DescargoController() {
 
     }
@@ -135,149 +134,145 @@ public class DescargoController implements Serializable {
         return bejb;
     }
 
-     private DualListModel<VwBienes> bienes;
+    private DualListModel<VwBienes> bienes;
     List<VwBienes> bienesSource = new ArrayList<>();
-     List<VwBienes> bienesTarget = new ArrayList<>();
-     
+    List<VwBienes> bienesTarget = new ArrayList<>();
+
     @PostConstruct
     public void cargarUnidad() {
- 
-         
+
         bienes = new DualListModel<>(bienesSource, bienesTarget);
-        
-          usuDao = ((LoginController) FacesContext.getCurrentInstance().getApplication().getELResolver().
+
+        usuDao = ((LoginController) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "loginController")).getUsuario();
-          tipoUsu = usuDao.getTipoUsuario().toString();
-          
-          
-          if (tipoUsu.equals("I")){
-              actTipo=false;
-              actAF = false;
-              actAd=false;
-              tipoUnidad="UA";
-            
-          }else {
-            if (tipoUsu.equals("D")){
-                actTipo=false;
+        tipoUsu = usuDao.getTipoUsuario().toString();
+
+        if (tipoUsu.equals("I")) {
+            actTipo = false;
+            actAF = false;
+            actAd = false;
+            tipoUnidad = "UA";
+
+        } else {
+            if (tipoUsu.equals("D")) {
+                actTipo = false;
                 actAF = true;
-                actAd=false;
-                tipoUnidad="UA";
-            }else{
-                if (tipoUsu.equals("A")){
-                     actTipo=true;
+                actAd = false;
+                tipoUnidad = "UA";
+            } else {
+                if (tipoUsu.equals("A")) {
+                    actTipo = true;
                     actAF = true;
-                    actAd=true;
-                    tipoUnidad="UA";
-                }
-                else{
-                    actTipo=true;
+                    actAd = true;
+                    tipoUnidad = "UA";
+                } else {
+                    actTipo = true;
                     actAF = true;
-                    actAd=true;
-                    tipoUnidad="CE";
+                    actAd = true;
+                    tipoUnidad = "CE";
                 }
-          }
-          }
-             
+            }
+        }
+
         unidadAdm = usuDao.getCodigoEntidad();
         unidadAF = cejb.getUnidadAf(usuDao.getCodigoEntidad(), tipoUnidad);
-        
-       // tipoUnidad = "UA";
+
+        // tipoUnidad = "UA";
         lstUnidadAdm = cejb.getUnidadAdm(unidadAF, tipoUnidad);
-       
+
         lstTipoDescargo = cejb.getTipoDescargo();
-       
-    //    lstBientmp.add(0l);
-        
-         if (JsfUtil.getRequestParameter("idDescargo")!=null){
-             tras = bejb.getDescargos(new Long(JsfUtil.getRequestParameter("idDescargo")));
-             td =  bejb.getDescargoDet(new Long(JsfUtil.getRequestParameter("idDescargo")));
-             unidadAF = tras.getUnidadActivoFijo();
-             unidadAdm = td.getCodigoUnidad();
-             tipoUnidad = cejb.getTipoUnidad(unidadAdm);
-             activo = tras.getTipoDescargo().toString();
-            lstBienesDescargar = bejb.buscarBien(" a.DESCARGO_id="+new Long(JsfUtil.getRequestParameter("idDescargo")));
+
+        //    lstBientmp.add(0l);
+        if (JsfUtil.getRequestParameter("idDescargo") != null) {
+            tras = bejb.getDescargos(new Long(JsfUtil.getRequestParameter("idDescargo")));
+            td = bejb.getDescargoDet(new Long(JsfUtil.getRequestParameter("idDescargo")));
+            unidadAF = tras.getUnidadActivoFijo();
+            unidadAdm = td.getCodigoUnidad();
+            tipoUnidad = cejb.getTipoUnidad(unidadAdm);
+            activo = tras.getTipoDescargo().toString();
+            lstBienesDescargar = bejb.buscarBien(" a.DESCARGO_id=" + new Long(JsfUtil.getRequestParameter("idDescargo")));
             numSolicitud = tras.getCodigoDescargo();
             fec1 = tras.getFechaDescargo();
             tipDescargo = tras.getIdTipoDescargo();
-            actTipo=true;
+            actTipo = true;
             actAF = true;
-            actAd=true;
-            actCtrl=true;
-            if (tras.getEstado()=='S') {
-                if (activo.equals("A")){
-                    if (tipoUsu.equals("I")){
-                        btnDesc=false;
-                        btnGuardar=false;
-                        btnDetalle=false;
-                        btnEnviar =false;
-                        btnImp=false;
-                   }
-                    else{ btnDesc=true;
-                          btnGuardar=false;
-                          btnDetalle=true;
-                           btnEnviar =false;
-                          btnImp=false;
-                    
+            actAd = true;
+            actCtrl = true;
+            if (tras.getEstado() == 'S') {
+                if (activo.equals("A")) {
+                    if (tipoUsu.equals("I")) {
+                        btnDesc = false;
+                        btnGuardar = false;
+                        btnDetalle = false;
+                        btnEnviar = false;
+                        btnImp = false;
+                    } else {
+                        btnDesc = true;
+                        btnGuardar = false;
+                        btnDetalle = true;
+                        btnEnviar = false;
+                        btnImp = false;
+
                     }
-                }else{
-                     if (tipoUsu.equals("I") || tipoUsu.equals("D") ){
-                        btnDesc=true;
-                        btnGuardar=false;
-                         btnDetalle=true;
-                         btnEnviar=false;
-                        btnImp=false;
-                   }
-                    else{ btnDesc=true;
-                          btnGuardar=false;
-                          btnEnviar= false;
-                          btnDetalle=false;
-                          btnImp=false;
-                     }
+                } else {
+                    if (tipoUsu.equals("I") || tipoUsu.equals("D")) {
+                        btnDesc = true;
+                        btnGuardar = false;
+                        btnDetalle = true;
+                        btnEnviar = false;
+                        btnImp = false;
+                    } else {
+                        btnDesc = true;
+                        btnGuardar = false;
+                        btnEnviar = false;
+                        btnDetalle = false;
+                        btnImp = false;
+                    }
                 }
-                
-            }else{
-              pnlTras = false;
-              if (tras.getEstado()=='D'){
-               
-                btnDesc=true;
-                btnGuardar=true;
-                btnDetalle=true;
-                btnEnviar=true;
-                btnImp=false;
-                
-            } else{
-               if (activo.equals("A")){
-                       if (tipoUsu.equals("I")){
-                         btnDesc=false;
-                       }else{
-                         btnDesc=true;  
-                       }
-                 btnGuardar=true;
-                 btnDetalle=true;
-                 btnEnviar=true;
-                   btnImp=false;
-                       
-               }else{
-                   if (tipoUsu.equals("A") || tipoUsu.equals("C")){
-                        btnDesc=true;
-                        btnGuardar=true;
-                        btnDetalle=true;
-                        btnEnviar =true;
-                        btnImp=false;
-                   }  else{ 
-                         btnDesc=false;
-                         btnGuardar=true;
-                          btnDetalle=true;
-                         btnEnviar=true;
-                         btnImp=false;
-                  }
-               }
-               
+
+            } else {
+                pnlTras = false;
+                if (tras.getEstado() == 'D') {
+
+                    btnDesc = true;
+                    btnGuardar = true;
+                    btnDetalle = true;
+                    btnEnviar = true;
+                    btnImp = false;
+
+                } else {
+                    if (activo.equals("A")) {
+                        if (tipoUsu.equals("I")) {
+                            btnDesc = false;
+                        } else {
+                            btnDesc = true;
+                        }
+                        btnGuardar = true;
+                        btnDetalle = true;
+                        btnEnviar = true;
+                        btnImp = false;
+
+                    } else {
+                        if (tipoUsu.equals("A") || tipoUsu.equals("C")) {
+                            btnDesc = true;
+                            btnGuardar = true;
+                            btnDetalle = true;
+                            btnEnviar = true;
+                            btnImp = false;
+                        } else {
+                            btnDesc = false;
+                            btnGuardar = true;
+                            btnDetalle = true;
+                            btnEnviar = true;
+                            btnImp = false;
+                        }
+                    }
+
+                }
             }
-            }
-         }
-         
-      }
+        }
+
+    }
 
     public DualListModel<VwBienes> getBienes() {
         return bienes;
@@ -298,7 +293,7 @@ public class DescargoController implements Serializable {
     public void bienesId(SelectEvent event) {
         lstDescargos = bejb.getDescargoById(tras.getDescargoId());
     }
-    
+
     public void filtrarTipotraslado() {
         lstTipoDescargo = cejb.getTipoDescargo();
     }
@@ -471,7 +466,6 @@ public class DescargoController implements Serializable {
         this.tipoUsu = tipoUsu;
     }
 
-  
     public Long getIdDescargo() {
         return idDescargo;
     }
@@ -524,8 +518,6 @@ public class DescargoController implements Serializable {
         this.numSolicitud = numSolicitud;
     }
 
- 
-
     public boolean isPnlTras() {
         return pnlTras;
     }
@@ -550,8 +542,6 @@ public class DescargoController implements Serializable {
         this.Vb = Vb;
     }
 
-
-
     public String getTipoUnidad() {
         return tipoUnidad;
     }
@@ -559,9 +549,6 @@ public class DescargoController implements Serializable {
     public void setTipoUnidad(String tipoUnidad) {
         this.tipoUnidad = tipoUnidad;
     }
-
-    
-  
 
     public int getRowDrop() {
         return rowDrop;
@@ -571,10 +558,6 @@ public class DescargoController implements Serializable {
         this.rowDrop = rowDrop;
     }
 
-        
-    
-
- 
     public String getCodigoInv() {
         return codigoInv;
     }
@@ -607,7 +590,7 @@ public class DescargoController implements Serializable {
         this.unidadAF = unidadAF;
     }
 
-      public String getUnidadAdm() {
+    public String getUnidadAdm() {
         return unidadAdm;
     }
 
@@ -631,22 +614,19 @@ public class DescargoController implements Serializable {
         this.lstDescargos = lstDescargos;
     }
 
-  
-    
-   /* public List<AfBienesDepreciables> completarBienes(String query) {
+    /* public List<AfBienesDepreciables> completarBienes(String query) {
         lstBienes = cejb.getBienesDescargo(unidadAdm, query,activo,  lstBientmp);
         return lstBienes;
     }*/
-
-    public void filtrarUnidadesAdm(){
-       lstUnidadAdm=cejb.getUnidadAdm(unidadAF,tipoUnidad);
+    public void filtrarUnidadesAdm() {
+        lstUnidadAdm = cejb.getUnidadAdm(unidadAF, tipoUnidad);
     }
-    
-      public List<AfUnidadesActivoFijo> getLstUnidadAF(){
+
+    public List<AfUnidadesActivoFijo> getLstUnidadAF() {
         return cejb.getUnidadAf();
     }
-    
-  /*  public void bienesDescargar() {
+
+    /*  public void bienesDescargar() {
         if (Bienes!=null){
             lstBienesDescargar.addAll(bejb.buscarBien(" id_bien="+Bienes.getIdBien())); //cejb.getBienesTrasladar());
             lstBientmp.add(Bienes.getIdBien());
@@ -655,7 +635,6 @@ public class DescargoController implements Serializable {
            JsfUtil.mensajeError("Ingrese el bien a descargar");
         }
     }*/
-
     public List<VwBienes> getLstBienes() {
         return lstBienes;
     }
@@ -663,16 +642,16 @@ public class DescargoController implements Serializable {
     public void setLstBienes(List<VwBienes> lstBienes) {
         this.lstBienes = lstBienes;
     }
-    
+
     public void trasladosId(SelectEvent event) {
-        lstDescargos  = bejb.getDescargoById(tras.getDescargoId());
+        lstDescargos = bejb.getDescargoById(tras.getDescargoId());
     }
-    
-    public void abrir(){
+
+    public void abrir() {
         buscarBienes();
         PrimeFaces.current().ajax().update("bienesPickList");
     }
-    
+
     public void buscarBienes() {
         String condicion;
         condicion = "A.ID_ESTATUS_BIEN=1 AND A.CODIGO_UNIDAD in (select CODIGO_UNIDAD from AF_UNIDADES_ADMINISTRATIVAS ";
@@ -688,7 +667,7 @@ public class DescargoController implements Serializable {
         if (!unidadAdm.equals("0")) {
             condicion = condicion + " A.CODIGO_UNIDAD ='" + unidadAdm + "' and ";
         }
-         if (activo != null && !activo.isEmpty() && !activo.equals("")) {
+        if (activo != null && !activo.isEmpty() && !activo.equals("")) {
 
             if (activo.equals("A")) {
                 condicion = condicion + " A.VALOR_ADQUISICION >=600 AND";
@@ -699,196 +678,231 @@ public class DescargoController implements Serializable {
         condicion = condicion.substring(0, condicion.length() - 4);
 
         bienesSource = bejb.buscarBien(condicion);
-        
-         bienes = new DualListModel<>(bienesSource, bienesTarget);
+
+        bienes = new DualListModel<>(bienesSource, bienesTarget);
     }
-    
+
     public void descargoSeleccionado(SelectEvent event) {
-       tras = bejb.getDescargos(idDescargo);
-       numSolicitud = tras.getCodigoDescargo();
-       fec1 = tras.getFechaDescargo();
-       tipDescargo = tras.getIdTipoDescargo();
-       
-       lstBienesDescargar=bejb.buscarBien(" id_descargo="+idDescargo);
-       
+        tras = bejb.getDescargos(idDescargo);
+        numSolicitud = tras.getCodigoDescargo();
+        fec1 = tras.getFechaDescargo();
+        tipDescargo = tras.getIdTipoDescargo();
+
+        lstBienesDescargar = bejb.buscarBien(" id_descargo=" + idDescargo);
+
     }
-    
-     public void imprimirDescargo() throws IOException, JRException {
-          List<JasperPrint> jasperPrintList = new ArrayList();
-         HashMap param = new HashMap();
-         param.put("p_codigoDescargo",tras.getDescargoId().toString());
-        param.put("p_unidadAF",unidadAF);
-        param.put("p_unidadAdm",unidadAdm);
+
+    public void imprimirDescargo() throws IOException, JRException {
+        List<JasperPrint> jasperPrintList = new ArrayList();
+        HashMap param = new HashMap();
+        param.put("p_codigoDescargo", tras.getDescargoId().toString());
+        param.put("p_unidadAF", unidadAF);
+        param.put("p_unidadAdm", unidadAdm);
         ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
         param.put("p_RutaImg", ctx.getRealPath(PATH_IMAGENES));
-        
-        
-         JasperPrint jp= reb.getRpt(param, DescargoController.class.getClassLoader().getResourceAsStream(("reportes" + File.separator + "rep_af10.jasper")));
-       
+
+        JasperPrint jp = reb.getRpt(param, DescargoController.class.getClassLoader().getResourceAsStream(("reportes" + File.separator + "rep_af10.jasper")));
+
         jasperPrintList.add(jp);
-     
+
         UtilReport.generarReporte(jasperPrintList, "rptAF10");
-    }   
-   
-     public void imprimirBienesDescargo() throws IOException, JRException {
+    }
+
+    public void imprimirBienesDescargo() throws IOException, JRException {
         HashMap param = new HashMap();
-        
+
         SimpleDateFormat formateador = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new Locale("es"));
-        Calendar cal= Calendar.getInstance();
-     
+        Calendar cal = Calendar.getInstance();
+
         String fecRep = formateador.format(cal.getTime());
-        
-        
-   //     param.put("p_af",unidadAF);
-   //     param.put("p_unidad",unidadAdm);
-        param.put("p_usuario",usuDao.getLogin());
-        param.put("p_fechaR",fecRep);
-       
-        
-        UtilReport.rptGenerico((HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse(), bejb.getLst(unidadAF,unidadAdm, fecRep, lstBienesDescargar, usuDao.getLogin()), param, "rep_bienesDescargar.jasper");
+
+        //     param.put("p_af",unidadAF);
+        //     param.put("p_unidad",unidadAdm);
+        param.put("p_usuario", usuDao.getLogin());
+        param.put("p_fechaR", fecRep);
+
+        UtilReport.rptGenerico((HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse(), bejb.getLst(unidadAF, unidadAdm, fecRep, lstBienesDescargar, usuDao.getLogin()), param, "rep_bienesDescargar.jasper");
 
         //  UtilReport.rptGenerico((HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse(),param, "rep_mobiliario.jasper", cejb.getEm());
     }
-    
-    public void buscarDescargos(){
-        String condicion="where";
+
+    public void buscarDescargos() {
+        String condicion = "where";
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        
-        if (!estSolicitud.equals("Y")){ condicion = condicion + " a.estado='"+estSolicitud.trim()+"' and ";}
-        if(!numSolicitud.isEmpty()){ condicion=condicion +" a.codigo_descargo='"+numSolicitud.trim()+"' and "; }
-        if (fec1!=null){ condicion=condicion+ " a.fecha_descargo>= to_date('"+sdf.format(fec1)+"','dd/mm/yyyy') and ";}
-        if (fec2!=null){ condicion=condicion+ " a.fecha_descargo<= to_date('"+sdf.format(fec2)+"','dd/mm/yyyy') and ";}
-        if (!activo.equals("0")){ condicion= condicion+ " trim(a.tipo_descargo)='"+activo+"' and "; }
-        if (!tipoUnidad.equals("0")){ condicion=condicion+" a.tipo_unidad='"+tipoUnidad +"' and ";}
-       if (!unidadAdm.equals("0")) { condicion=condicion+ " a.codigo_unidad="+unidadAdm+" and ";}
-       if (!unidadAF.equals("0")) { condicion=condicion+ " a.unidad_activo_fijo="+unidadAF+" and ";}
-        
-        if (condicion.trim().equals("where")){condicion="";}
-        else {   condicion =condicion.substring(0,condicion.length()-4);}
-        
-         listaDescargos = bejb.buscarDescargos(condicion);
-    }
-    
-     public void buscarDescargos2(){
-        String condicion=" ";
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-    
-        if (!tipoUnidad.equals("0")){ condicion=condicion+" a.tipo_unidad='"+tipoUnidad +"' and ";}
-        if (!unidadAdm.equals("0")) { condicion=condicion+ " a.codigo_unidad="+unidadAdm+" and ";}
-        if (!unidadAF.equals("0")) { condicion=condicion+ " a.unidad_activo_fijo="+unidadAF+" and ";}
-        if(!codigoInv.isEmpty()){ condicion=condicion +" a.codigo_inventario='"+codigoInv+"' and "; }
-        if (!estSolicitud.equals("Y")){ condicion = condicion + " a.estado_descargo='"+estSolicitud.trim()+"' and ";}
-        else {condicion = condicion + " a.estado_descargo in ('P','D') and ";}
-        if (cat!=0){condicion = condicion + "a.id_cat_bien="+cat+" and ";}
-         if(!numSolicitud.isEmpty()){ condicion=condicion +" a.codigo_descargo='"+numSolicitud.trim()+"' and "; }
-     
-        if (fec1!=null){ condicion=condicion+ " a.fecha_descargo>= to_date('"+sdf.format(fec1)+"','dd/mm/yyyy') and ";}
-        if (fec2!=null){ condicion=condicion+ " a.fecha_descargo<= to_date('"+sdf.format(fec2)+"','dd/mm/yyyy') and ";}
-        if (!activo.equals("X")){
-           condicion= condicion+ " trim(a.tipo_descargo)='"+activo+"' and ";
+
+        if (!estSolicitud.equals("Y")) {
+            condicion = condicion + " a.estado='" + estSolicitud.trim() + "' and ";
         }
-        if (!serie.isEmpty()){condicion = condicion +"a.numero_serie='"+serie+"' and "; }
-         
-         
-        
-        if (!condicion.trim().equals("")){   condicion =condicion.substring(0,condicion.length()-4);}
-        
-         lstBienesDescargar = bejb.buscarBien(condicion);
+        if (!numSolicitud.isEmpty()) {
+            condicion = condicion + " a.codigo_descargo='" + numSolicitud.trim() + "' and ";
+        }
+        if (fec1 != null) {
+            condicion = condicion + " a.fecha_descargo>= to_date('" + sdf.format(fec1) + "','dd/mm/yyyy') and ";
+        }
+        if (fec2 != null) {
+            condicion = condicion + " a.fecha_descargo<= to_date('" + sdf.format(fec2) + "','dd/mm/yyyy') and ";
+        }
+        if (!activo.equals("0")) {
+            condicion = condicion + " trim(a.tipo_descargo)='" + activo + "' and ";
+        }
+        if (!tipoUnidad.equals("0")) {
+            condicion = condicion + " a.tipo_unidad='" + tipoUnidad + "' and ";
+        }
+        if (!unidadAdm.equals("0")) {
+            condicion = condicion + " a.codigo_unidad=" + unidadAdm + " and ";
+        }
+        if (!unidadAF.equals("0")) {
+            condicion = condicion + " a.unidad_activo_fijo=" + unidadAF + " and ";
+        }
+
+        if (condicion.trim().equals("where")) {
+            condicion = "";
+        } else {
+            condicion = condicion.substring(0, condicion.length() - 4);
+        }
+
+        listaDescargos = bejb.buscarDescargos(condicion);
     }
-    
-     
-     
-       public void onTransfer(TransferEvent event) {
+
+    public void buscarDescargos2() {
+        String condicion = " ";
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+        if (!tipoUnidad.equals("0")) {
+            condicion = condicion + " a.tipo_unidad='" + tipoUnidad + "' and ";
+        }
+        if (!unidadAdm.equals("0")) {
+            condicion = condicion + " a.codigo_unidad=" + unidadAdm + " and ";
+        }
+        if (!unidadAF.equals("0")) {
+            condicion = condicion + " a.unidad_activo_fijo=" + unidadAF + " and ";
+        }
+        if (!codigoInv.isEmpty()) {
+            condicion = condicion + " a.codigo_inventario='" + codigoInv + "' and ";
+        }
+        if (!estSolicitud.equals("Y")) {
+            condicion = condicion + " a.estado_descargo='" + estSolicitud.trim() + "' and ";
+        } else {
+            condicion = condicion + " a.estado_descargo in ('P','D') and ";
+        }
+        if (cat != 0) {
+            condicion = condicion + "a.id_cat_bien=" + cat + " and ";
+        }
+        if (!numSolicitud.isEmpty()) {
+            condicion = condicion + " a.codigo_descargo='" + numSolicitud.trim() + "' and ";
+        }
+
+        if (fec1 != null) {
+            condicion = condicion + " a.fecha_descargo>= to_date('" + sdf.format(fec1) + "','dd/mm/yyyy') and ";
+        }
+        if (fec2 != null) {
+            condicion = condicion + " a.fecha_descargo<= to_date('" + sdf.format(fec2) + "','dd/mm/yyyy') and ";
+        }
+        if (!activo.equals("X")) {
+            condicion = condicion + " trim(a.tipo_descargo)='" + activo + "' and ";
+        }
+        if (!serie.isEmpty()) {
+            condicion = condicion + "a.numero_serie='" + serie + "' and ";
+        }
+
+        if (!condicion.trim().equals("")) {
+            condicion = condicion.substring(0, condicion.length() - 4);
+        }
+
+        lstBienesDescargar = bejb.buscarBien(condicion);
+    }
+
+    public void onTransfer(TransferEvent event) {
         StringBuilder builder = new StringBuilder();
-        for(Object item : event.getItems()) {
+        for (Object item : event.getItems()) {
             builder.append(((VwBienes) item).getCodigoInventario()).append("<br />");
         }
-         
+
         FacesMessage msg = new FacesMessage();
         msg.setSeverity(FacesMessage.SEVERITY_INFO);
         msg.setSummary("Items Transferred");
         msg.setDetail(builder.toString());
-         
+
         FacesContext.getCurrentInstance().addMessage(null, msg);
-    }  
+    }
+
     public void onSelect(SelectEvent event) {
         FacesContext context = FacesContext.getCurrentInstance();
         context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Item Selected", event.getObject().toString()));
     }
-     
+
     public void onUnselect(UnselectEvent event) {
         FacesContext context = FacesContext.getCurrentInstance();
         context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Item Unselected", event.getObject().toString()));
     }
-     
+
     public void onReorder() {
         FacesContext context = FacesContext.getCurrentInstance();
         context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "List Reordered", null));
     }
-        
-     public void guardarDescargo(){
-       if (!lstBienesDescargar.isEmpty()){
-      
-            if (tras.getDescargoId()==null){
-                tras =new AfDescargos();
-                tras.setUnidadActivoFijo(unidadAF); 
+
+    public void guardarDescargo() {
+        if (!lstBienesDescargar.isEmpty()) {
+
+            if (tras.getDescargoId() == null) {
+                tras = new AfDescargos();
+                tras.setUnidadActivoFijo(unidadAF);
                 tras.setTipoDescargo(activo.charAt(0));
-                tras.setIdTipoDescargo(tipDescargo); 
+                tras.setIdTipoDescargo(tipDescargo);
                 tras.setEstado('S');
             }
 
-             bejb.guardarDescargo(tras, usuDao.getLogin());
-             tras.getDescargoId();
-              if (tras.getDescargoId()!=null){
+            bejb.guardarDescargo(tras, usuDao.getLogin());
+            tras.getDescargoId();
+            if (tras.getDescargoId() != null) {
 
-                  bejb.guardarDescargoDetalle(lstBienesDescargar,tras);
-                  //bejb.actualizarEstadoBien(lstBienesDescargar,"S");
-              }
-              JsfUtil.mensajeInformacion("Solicitud Almacenada");
+                bejb.guardarDescargoDetalle(lstBienesDescargar, tras);
+                //bejb.actualizarEstadoBien(lstBienesDescargar,"S");
+            }
+            JsfUtil.mensajeInformacion("Solicitud Almacenada");
             //  JsfUtil.redireccionar("/app/mantenimientos/descargoBienes.mined?faces-redirect=true&idDescargo="+tras.getDescargoId());*/
-       }else{
-           JsfUtil.mensajeError("Descargo sin bienes asociados");
-       }  
-    }
-     
-    public void enviarDescargo(){
-       
-      if (tras.getDescargoId()!=null){
-          tras.setEstado('P');
-      }
-        
-          bejb.guardarDescargo(tras, usuDao.getLogin());
-      
-        if (tras.getDescargoId()!=null){
-            
-            bejb.guardarDescargoDetalle(lstBienesDescargar,tras);
-            bejb.actualizarEstadoBien(lstBienesDescargar,"P");
+        } else {
+            JsfUtil.mensajeError("Descargo sin bienes asociados");
         }
-        pnlTras=true;
-        JsfUtil.mensajeInformacion("Descargo enviado con éxito");
-       // JsfUtil.redireccionar("buscarDescargos.mined?faces-redirect=true");
     }
-    
-    
-     public void realizarDescargo(){
-  
+
+    public void enviarDescargo() {
+
+        if (tras.getDescargoId() != null) {
+            tras.setEstado('P');
+        }
+
+        bejb.guardarDescargo(tras, usuDao.getLogin());
+
+        if (tras.getDescargoId() != null) {
+
+            bejb.guardarDescargoDetalle(lstBienesDescargar, tras);
+            bejb.actualizarEstadoBien(lstBienesDescargar, "P");
+        }
+        pnlTras = true;
+        JsfUtil.mensajeInformacion("Descargo enviado con éxito");
+        // JsfUtil.redireccionar("buscarDescargos.mined?faces-redirect=true");
+    }
+
+    public void realizarDescargo() {
+
         tras.setEstado('D');
         tras.setCodigoDescargo(numSolicitud);
         tras.setFechaDescargo(fecDescargo);
-        tras.setNombreAutoriza(usuDao.getNombres()+" "+usuDao.getApellidos());
+        tras.setNombreAutoriza(usuDao.getNombres() + " " + usuDao.getApellidos());
         tras.setFechaFallo(fecFallo);
         tras.setObservacionFallo(obsFallo);
-                
+
         bejb.guardarDescargo(tras, usuDao.getLogin());
         tras.getDescargoId();
-        if (tras.getDescargoId()!=null){
-            bejb.actualizarEstadoBien(lstBienesDescargar,"D");
+        if (tras.getDescargoId() != null) {
+            bejb.actualizarEstadoBien(lstBienesDescargar, "D");
         }
-        
-       JsfUtil.redireccionar("buscarDescargos.mined?faces-redirect=true");
+
+        JsfUtil.redireccionar("buscarDescargos.mined?faces-redirect=true");
     }
 
-      public void generarXls_reporteBienesDescargar() throws IOException {
+    public void generarXls_reporteBienesDescargar() throws IOException {
         Workbook libro = new HSSFWorkbook();
         Sheet hoja = libro.createSheet("Reporte Listado Bienes");
 
@@ -901,7 +915,7 @@ public class DescargoController implements Serializable {
         font1.setBoldweight(HSSFFont.BOLDWEIGHT_NORMAL);
         font1.setColor(HSSFColor.BLACK.index);
         font1.setFontName(HSSFFont.FONT_ARIAL);
-        
+
         HSSFCellStyle style = (HSSFCellStyle) libro.createCellStyle();
         style.setFont(font);
 
@@ -910,7 +924,6 @@ public class DescargoController implements Serializable {
         short alig = 2;
         style.setAlignment(alig);
 
-             
         //fila = hoja.createRow((short) 1);
         Row fila = hoja.createRow((short) 1);
         Cell celdaEn1 = fila.createCell((short) 1);
@@ -918,26 +931,24 @@ public class DescargoController implements Serializable {
         celdaEn1.setCellValue("MINISTERIO DE EDUCACIÓN");
         hoja.addMergedRegion(new CellRangeAddress(1, 1, 1, 5));
 
-              
         fila = hoja.createRow((short) 2);
         Cell celdaEn2 = fila.createCell((short) 1);
         celdaEn2.setCellStyle(style);
-        if (!unidadAdm.equals("0")){
-           celdaEn2.setCellValue(cejb.NomUnidad(unidadAdm,tipoUnidad));
-        }else{
-           celdaEn2.setCellValue("");
-       }
+        if (!unidadAdm.equals("0")) {
+            celdaEn2.setCellValue(cejb.NomUnidad(unidadAdm, tipoUnidad));
+        } else {
+            celdaEn2.setCellValue("");
+        }
         hoja.addMergedRegion(new CellRangeAddress(2, 2, 1, 5));
-  
-        
+
         fila = hoja.createRow((short) 3);
         Cell celdaEn3 = fila.createCell((short) 1);
         celdaEn3.setCellStyle(style);
-        if (!unidadAF.equals("0")){
-           celdaEn3.setCellValue(cejb.nomUnidadAf(unidadAF));
-        }else{
-           celdaEn3.setCellValue("");
-       }   
+        if (!unidadAF.equals("0")) {
+            celdaEn3.setCellValue(cejb.nomUnidadAf(unidadAF));
+        } else {
+            celdaEn3.setCellValue("");
+        }
         hoja.addMergedRegion(new CellRangeAddress(3, 3, 1, 5));
 
         fila = hoja.createRow((short) 5);
@@ -946,58 +957,57 @@ public class DescargoController implements Serializable {
         celdaEn4.setCellValue("LISTADO DE BIENES DESCARGADOS ");
         hoja.addMergedRegion(new CellRangeAddress(5, 5, 1, 15));
 
-        
         fila = hoja.createRow((short) 7);
         Cell celdaEn5 = fila.createCell((short) 1);
         celdaEn5.setCellStyle(style);
         celdaEn5.setCellValue("INVENTARIO");
-        
-         Cell celdaEn6 = fila.createCell((short) 2);
+
+        Cell celdaEn6 = fila.createCell((short) 2);
         celdaEn6.setCellStyle(style);
         celdaEn6.setCellValue("CATEGORIA");
 
         Cell celdaEn7 = fila.createCell((short) 3);
         celdaEn7.setCellStyle(style);
         celdaEn7.setCellValue("DESCRIPCION");
-        
+
         Cell celdaEn8 = fila.createCell((short) 4);
         celdaEn8.setCellStyle(style);
         celdaEn8.setCellValue("MARCA");
-        
+
         Cell celdaEn9 = fila.createCell((short) 5);
         celdaEn9.setCellStyle(style);
         celdaEn9.setCellValue("MODELO");
-        
+
         Cell celdaEn10 = fila.createCell((short) 6);
         celdaEn10.setCellStyle(style);
         celdaEn10.setCellValue("SERIE");
-        
-        Cell celdaEn11 = fila.createCell((short)7);
+
+        Cell celdaEn11 = fila.createCell((short) 7);
         celdaEn11.setCellStyle(style);
         celdaEn11.setCellValue("FECHA ADQUISICIÓN");
-        
+
         Cell celdaEn12 = fila.createCell((short) 8);
         celdaEn12.setCellStyle(style);
         celdaEn12.setCellValue("COSTO ADQUISICIÓN");
-        
+
         Cell celdaEn13 = fila.createCell((short) 9);
         celdaEn13.setCellStyle(style);
         celdaEn13.setCellValue(" FECHA DESCARGO");
-        
+
         Cell celdaEn14 = fila.createCell((short) 10);
         celdaEn14.setCellStyle(style);
         celdaEn14.setCellValue("NUMERO ACTA");
-        
+
         Cell celdaEn15 = fila.createCell((short) 11);
         celdaEn15.setCellStyle(style);
         celdaEn15.setCellValue("DEPRECIACION ACUMULADA");
-     
+
         int x = 8;
-        BigDecimal total= new java.math.BigDecimal("0.00");;
+        BigDecimal total = new java.math.BigDecimal("0.00");;
         DecimalFormat df = new DecimalFormat();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         df.setMaximumFractionDigits(2);
-        for (VwBienes object : lstBienesDescargar ) {
+        for (VwBienes object : lstBienesDescargar) {
             fila = hoja.createRow((short) x);
 
             Cell celda4 = fila.createCell((short) 1);
@@ -1019,43 +1029,44 @@ public class DescargoController implements Serializable {
             Cell celda8 = fila.createCell((short) 5);
             celda8.setCellStyle(style2);
             celda8.setCellValue(object.getModelo());
-            
+
             Cell celda9 = fila.createCell((short) 6);
             celda9.setCellStyle(style2);
             celda9.setCellValue(object.getNumeroSerie());
-            
+
             Cell celda10 = fila.createCell((short) 7);
             celda10.setCellStyle(style2);
             Date getFechaAdq = object.getFechaAdquisicion();
             celda10.setCellValue(sdf.format(getFechaAdq));
-            
-            
+
             Cell celda11 = fila.createCell((short) 8);
             celda11.setCellStyle(style2);
             celda11.setCellType(celda11.CELL_TYPE_NUMERIC);
             celda11.setCellValue(object.getValorAdquisicion().doubleValue());
-            
-            
+
             Cell celda12 = fila.createCell((short) 9);
             celda12.setCellStyle(style2);
-             Date getFechaDes = object.getFechaDescargo();
-             if (getFechaDes==null){  celda12.setCellValue("");}
-             else { celda12.setCellValue(sdf.format(getFechaDes));}
-            
+            Date getFechaDes = object.getFechaDescargo();
+            if (getFechaDes == null) {
+                celda12.setCellValue("");
+            } else {
+                celda12.setCellValue(sdf.format(getFechaDes));
+            }
+
             Cell celda13 = fila.createCell((short) 10);
             celda13.setCellStyle(style2);
             celda13.setCellValue(object.getCodigoDescargo());
-            
-            total=total.add(object.getValorAdquisicion());
-            
+
+            total = total.add(object.getValorAdquisicion());
+
             Cell celda14 = fila.createCell((short) 11);
             celda14.setCellStyle(style2);
             celda14.setCellType(celda14.CELL_TYPE_NUMERIC);
-            if (object.getMontoDepreciacion()!=null){
-               celda14.setCellValue(object.getMontoDepreciacion().doubleValue());
-            }else{
+            if (object.getMontoDepreciacion() != null) {
+                celda14.setCellValue(object.getMontoDepreciacion().doubleValue());
+            } else {
                 celda14.setCellValue(0);
-            }    
+            }
             x++;
         }
         fila = hoja.createRow((short) x);
@@ -1063,7 +1074,7 @@ public class DescargoController implements Serializable {
         celda13.setCellStyle(style2);
         celda13.setCellType(celda13.CELL_TYPE_NUMERIC);
         celda13.setCellValue(total.doubleValue());
-        
+
         hoja.autoSizeColumn((short) 0);
         hoja.autoSizeColumn((short) 1);
         hoja.autoSizeColumn((short) 2);
@@ -1098,41 +1109,38 @@ public class DescargoController implements Serializable {
         outStream.flush();
         fc.responseComplete();
     }
-     
-     
-     
-       public void denegarDescargo(){
-  
+
+    public void denegarDescargo() {
+
         tras.setEstado('X');
         tras.setFechaFallo(cejb.getFechaActual());
         tras.setObservacionFallo(observacion);
-        tras.setNombreAutoriza(usuDao.getNombres()+" "+usuDao.getApellidos());
-                
+        tras.setNombreAutoriza(usuDao.getNombres() + " " + usuDao.getApellidos());
+
         bejb.guardarDescargo(tras, JsfUtil.getVariableSession("usuario").toString());
         tras.getDescargoId();
-        if (tras.getDescargoId()!=null){
-            bejb.actualizarEstadoBien(lstBienesDescargar,"D");
+        if (tras.getDescargoId() != null) {
+            bejb.actualizarEstadoBien(lstBienesDescargar, "D");
         }
         JsfUtil.mensajeInformacion("Descargo Realizado");
-        
+
     }
-    
+
     public void descargosId(SelectEvent event) {
-        lstDescargos  = bejb.getDescargoById(tras.getDescargoId());
+        lstDescargos = bejb.getDescargoById(tras.getDescargoId());
     }
-    
+
     public List<VwBienes> dropBienesDescargado() {
-         if(Vb.getDescargoId()==null){
+        if (Vb.getDescargoId() == null) {
             lstBienesDescargar.remove(rowDrop);
-         } else{
-             bejb.removeDetalleDescargo(Vb.getDescargoId(),idBien);
-             lstBienesDescargar = bejb.buscarBien(" a. descargo_id="+Vb.getDescargoId());
-         }   
-          
+        } else {
+            bejb.removeDetalleDescargo(Vb.getDescargoId(), idBien);
+            lstBienesDescargar = bejb.buscarBien(" a. descargo_id=" + Vb.getDescargoId());
+        }
+
         return lstBienesDescargar;
     }
-    
-  
+
     @FacesConverter(forClass = AfBienesDepreciables.class, value = "afBienesConverter")
     public static class AfBienesDepreciablesConverter implements Converter {
 
@@ -1161,12 +1169,13 @@ public class DescargoController implements Serializable {
             }
         }
     }
-    
+
     public void nuevoDescargo() {
-        
+
         JsfUtil.redireccionar("/app/mantenimientos/descargoBienes.mined?faces-redirect=true");
     }
+
     public void ingresaDescargo() {
-        JsfUtil.redireccionar("/app/mantenimientos/descargoBienes.mined?faces-redirect=true&idDescargo="+idDescargo);
+        JsfUtil.redireccionar("/app/mantenimientos/descargoBienes.mined?faces-redirect=true&idDescargo=" + idDescargo);
     }
 }

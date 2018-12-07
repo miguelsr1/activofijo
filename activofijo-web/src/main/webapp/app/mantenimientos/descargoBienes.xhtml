@@ -47,16 +47,16 @@
                         </p:column>
                     </p:row>
                     <p:row>
-                         <p:column><h:outputLabel value="Activos:     "/>
-                             <h:selectOneMenu id="activo" value="#{descargoController.activo}"  required="true" requiredMessage="Seleccione si es Activo" disabled="#{descargoController.actCtrl}">
-                               <p:ajax update="uadm" />
+                        <p:column><h:outputLabel value="Activos:     "/>
+                            <h:selectOneMenu id="activo" value="#{descargoController.activo}"  required="true" requiredMessage="Seleccione si es Activo" disabled="#{descargoController.actCtrl}">
+                                <p:ajax update="uadm" />
                                 <f:selectItem itemLabel="Seleccione" itemValue=""/>    
                                 <f:selectItem itemLabel="Mayores 600" itemValue="A"/>
                                 <f:selectItem itemLabel="Menores 600" itemValue="N"/>
                             </h:selectOneMenu> 
                         </p:column>
                     </p:row>
-                     <p:row>
+                    <p:row>
                         <p:column>
                             <h:outputLabel value="Tipo Descargo:" />
                             <p:selectOneMenu id="tipTras" value="#{descargoController.tipDescargo}" required="true" requiredMessage="Seleccione tipo traslado" disabled="#{descargoController.actCtrl}">
@@ -66,52 +66,52 @@
                         </p:column>
                     </p:row>
                     <p:row>
-                         <p:column>
-                             <p:commandButton value="Agregar Bienes" action="#{descargoController.abrir}" process="@this">
-                                 <ajax update="bienesPickList"/>  
-                         </p:commandButton>
+                        <p:column>
+                            <p:commandButton value="Agregar Bienes" action="#{descargoController.abrir}" process="@this">
+                                <ajax update="bienesPickList"/>  
+                            </p:commandButton>
                         </p:column>
                     </p:row>
                 </h:panelGrid>
             </p:panel>
             <p:panel id="bienesDes">
                 <p:growl id="msg" showDetail="true" escape="false" />
-                <p:pickList id="bienesPickList" value="#{descargoController.bienes}" var="bien" effect="bounce"
+                <p:pickList id="bienesPickList" value="#{descargoController.bienes}" var="bien" effect="bounce" 
                             itemValue="#{bien}" itemLabel="#{bien.codigoInventario}" showSourceControls="false" showTargetControls="false" showCheckbox="true"
                             showSourceFilter="true" showTargetFilter="false" filterMatchMode="contains" converter="classConverter" responsive="true" style="width: 50%">
-        
-                <f:facet name="sourceCaption">Activo</f:facet>
-                <f:facet name="targetCaption">a Descargar</f:facet>
 
-                <p:ajax event="transfer" listener="#{descargoController.onTransfer}" update="msg" />
-                <p:ajax event="select" listener="#{descargoController.onSelect}" update="msg"/>
-                <p:ajax event="unselect" listener="#{descargoController.onUnselect}" update="msg"/>
-                <p:ajax event="reorder" listener="#{descargoController.onReorder}" update="msg"/>
-                <p:column style="width:85%;">
-                    <h:outputText value="#{bien.codigoInventario}" />
+                    <f:facet name="sourceCaption">Activo</f:facet>
+                    <f:facet name="targetCaption">a Descargar</f:facet>
+
+                    <p:ajax event="transfer" listener="#{descargoController.onTransfer}" update="msg" />
+                    <p:ajax event="select" listener="#{descargoController.onSelect}" update="msg"/>
+                    <p:ajax event="unselect" listener="#{descargoController.onUnselect}" update="msg"/>
+                    <p:ajax event="reorder" listener="#{descargoController.onReorder}" update="msg"/>
+                    <p:column style="width:85%;">
+                        <h:outputText value="#{bien.codigoInventario}" />
+                    </p:column>
+                </p:pickList>
+                <p:column>
+                    <p:commandButton value="Guardar" icon="fa fa-save"  action="#{descargoController.guardarDescargo}" disabled="#{descargoController.btnGuardar}"/>
                 </p:column>
-            </p:pickList>
-  <p:column>
-                            <p:commandButton value="Guardar" icon="fa fa-save"  action="#{descargoController.guardarDescargo}" disabled="#{descargoController.btnGuardar}"/>
-                        </p:column>
-          <p:commandButton id="pojoSubmit" value="Submit" update="displayBienes"  oncomplete="PF('BienesDialog').show()"  style="margin-top:5px" />
-         
-          <p:dialog modal="true" showEffect="fade" hideEffect="fade" widgetVar="BienesDialog">
-          <h:panelGrid id="displayBienes" columns="2">
-            <h:outputText value="Source: " style="font-weight:bold" />
-            <ui:repeat value="#{descargoController.bienes.source}" var="bien1">
-                <h:outputText value="#{bien.codigoInventario}" style="margin-right:5px" />
-            </ui:repeat>
- 
-            <h:outputText value="Target: " style="font-weight:bold" />
-            <ui:repeat value="#{descargoController.bienes.target}" var="bien2">
-                <h:outputText value="#{bien.codigoInventario}" style="margin-right:5px" />
-            </ui:repeat>
-        </h:panelGrid>
-    </p:dialog>    
-             </p:panel>
-               <p:panel>
-                   <p:dialog id="dlgImprimir" widgetVar="dlgImprimir" modal="true" >
+                <p:commandButton id="pojoSubmit" value="Submit" update="displayBienes"  oncomplete="PF('BienesDialog').show()"  style="margin-top:5px" />
+
+                <p:dialog modal="true" showEffect="fade" hideEffect="fade" widgetVar="BienesDialog">
+                    <h:panelGrid id="displayBienes" columns="2">
+                        <h:outputText value="Source: " style="font-weight:bold" />
+                        <ui:repeat value="#{descargoController.bienes.source}" var="bien1">
+                            <h:outputText value="#{bien.codigoInventario}" style="margin-right:5px" />
+                        </ui:repeat>
+
+                        <h:outputText value="Target: " style="font-weight:bold" />
+                        <ui:repeat value="#{descargoController.bienes.target}" var="bien2">
+                            <h:outputText value="#{bien.codigoInventario}" style="margin-right:5px" />
+                        </ui:repeat>
+                    </h:panelGrid>
+                </p:dialog>    
+            </p:panel>
+            <p:panel>
+                <p:dialog id="dlgImprimir" widgetVar="dlgImprimir" modal="true" >
                     <p:outputLabel value="Datos descargo" escape="false"/>
                     <h:panelGrid columns="2">
                         <p:column> <h:outputLabel value="C&oacute;digo Descargo:"/></p:column>
@@ -123,13 +123,13 @@
                         <p:column><h:outputLabel value="Observación Fallo:"/> </p:column>
                         <p:column><p:inputTextarea id="obsFallo" rows="3" cols="60" value="#{descargoController.obsFallo}"/></p:column>
                     </h:panelGrid>
-                        <f:facet name="footer">
-                            <p:commandButton value="Aceptar" onclick="PF('dlgImprimir').hide();" ajax="false" action="#{descargoController.realizarDescargo}"/>
-                            <p:commandButton value="Cancelar" ajax="true" onclick="PF('dlgImprimir').hide();"/>
-                        </f:facet>
+                    <f:facet name="footer">
+                        <p:commandButton value="Aceptar" onclick="PF('dlgImprimir').hide();" ajax="false" action="#{descargoController.realizarDescargo}"/>
+                        <p:commandButton value="Cancelar" ajax="true" onclick="PF('dlgImprimir').hide();"/>
+                    </f:facet>
 
-                    </p:dialog>
-               </p:panel> 
+                </p:dialog>
+            </p:panel> 
             <p:panel id="pnlBienes">
                 <p:dataTable value="#{descargoController.lstBienesDescargar}" var="tras" rowKey="#{tras.idBien}" selectionMode="single"
                              rowIndexVar="id">
@@ -166,7 +166,7 @@
                             <f:setPropertyActionListener value="#{rowId}" target="#{descargoController.rowDrop}"/>  
                             <f:setPropertyActionListener value="#{tras}" target="#{descargoController.vb}"/>  
                             <f:setPropertyActionListener value="#{tras.idBien}" target="#{descargoController.idBien}"/>  
-                              <i class="fa fa-times blue" style="font-size: 17px;"></i>
+                            <i class="fa fa-times blue" style="font-size: 17px;"></i>
                         </p:commandLink>
                     </p:column>
                 </p:dataTable>

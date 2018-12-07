@@ -138,20 +138,20 @@ public class BienesEJB {
             System.out.println("Error al Almacenar el descargo " + e);
         }
     }
-    
-    public void eliminarUnidad (AfUnidadesAdministrativas adm){
+
+    public void eliminarUnidad(AfUnidadesAdministrativas adm) {
         try {
-           Query q = em.createNativeQuery("delete AF_UNIDADES_ADMINISTRATIVAS  WHERE ((TRIM(UNIDAD_ACTIVO_FIJO) = ?1) AND (TRIM(CODIGO_UNIDAD) = ?2))");
-           q.setParameter(1, adm.getAfUnidadesAdministrativasPK().getUnidadActivoFijo());
-           q.setParameter(2, adm.getAfUnidadesAdministrativasPK().getCodigoUnidad());
-          
-           System.out.println(q.executeUpdate());
-            
+            Query q = em.createNativeQuery("delete AF_UNIDADES_ADMINISTRATIVAS  WHERE ((TRIM(UNIDAD_ACTIVO_FIJO) = ?1) AND (TRIM(CODIGO_UNIDAD) = ?2))");
+            q.setParameter(1, adm.getAfUnidadesAdministrativasPK().getUnidadActivoFijo());
+            q.setParameter(2, adm.getAfUnidadesAdministrativasPK().getCodigoUnidad());
+
+            System.out.println(q.executeUpdate());
+
         } catch (Exception e) {
             System.out.println("Error al Almacenar Unidad administrativa " + e);
         }
     }
-    
+
     public void editarUnidadAdmin(AfUnidadesAdministrativas adm, String usu) {
         try {
             Query q = em.createNativeQuery("UPDATE AF_UNIDADES_ADMINISTRATIVAS SET CARGO_DIRECTOR = ?1, DIRECCION = ?2, NOMBRE_DIRECTOR = ?3, "
@@ -167,10 +167,9 @@ public class BienesEJB {
             q.setParameter(9, new Date());
             q.setParameter(10, adm.getAfUnidadesAdministrativasPK().getUnidadActivoFijo());
             q.setParameter(11, adm.getAfUnidadesAdministrativasPK().getCodigoUnidad());
-          
-            
+
             System.out.println(q.executeUpdate());
-            
+
         } catch (Exception e) {
             System.out.println("Error al Almacenar Unidad administrativa " + e);
         }
@@ -185,8 +184,9 @@ public class BienesEJB {
             System.out.println("Error al Almacenar el empleado " + e);
         }
     }
-    public boolean getUnidadBienes (String codigo, String adm) {
-        Query q = em.createQuery("select a from AfBienesDepreciables a where trim(a.codigoUnidad)=:adm and trim(a.unidadActivoFijo)=:codigo",AfBienesDepreciables.class);
+
+    public boolean getUnidadBienes(String codigo, String adm) {
+        Query q = em.createQuery("select a from AfBienesDepreciables a where trim(a.codigoUnidad)=:adm and trim(a.unidadActivoFijo)=:codigo", AfBienesDepreciables.class);
         q.setParameter("codigo", codigo);
         q.setParameter("adm", adm);
         if (q.getResultList().isEmpty()) {
@@ -195,8 +195,7 @@ public class BienesEJB {
             return false;
         }
     }
-    
-    
+
     public AfUnidadesAdministrativas getUnidadPk(String codigo, String adm) {
         Query q = em.createQuery("Select a from AfUnidadesAdministrativas a where trim(a.afUnidadesAdministrativasPK.unidadActivoFijo)=:codigo and trim(a.afUnidadesAdministrativasPK.codigoUnidad)=:adm ", AfUnidadesAdministrativas.class);
         q.setParameter("codigo", codigo);
@@ -226,59 +225,62 @@ public class BienesEJB {
             System.out.println("Error al Almacenar el empleado " + e);
         }
     }
-    public void removeEmpleado(AfEmpleados emp){
-        try{
+
+    public void removeEmpleado(AfEmpleados emp) {
+        try {
             if (!em.contains(emp)) {
                 emp = em.merge(emp);
             }
             em.remove(emp);
-            
+
         } catch (Exception e) {
             System.out.println("Error al eliminar empleado " + e);
         }
     }
-    public void removeUnidadAdm(AfUnidadesAdministrativas adm){
-        try{
 
-           /* if (!em.contains(adm)) {
+    public void removeUnidadAdm(AfUnidadesAdministrativas adm) {
+        try {
+
+            /* if (!em.contains(adm)) {
                 adm = em.merge(adm);
             }*/
             em.remove(adm);
-            
+
         } catch (Exception e) {
             System.out.println("Error al eliminar Unidad Administrativa " + e);
         }
     }
-  public boolean bienesEmpleado(Long idEmp){
-        Query q = em.createQuery("select a from AfBienesDepreciables a where a.idEmpleado="+idEmp,AfBienesDepreciables.class);
-        if (q.getResultList().isEmpty()){
+
+    public boolean bienesEmpleado(Long idEmp) {
+        Query q = em.createQuery("select a from AfBienesDepreciables a where a.idEmpleado=" + idEmp, AfBienesDepreciables.class);
+        if (q.getResultList().isEmpty()) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
-  
-    public boolean bienesTipo(Long tipo){
-         Query q = em.createQuery("select a from AfBienesDepreciables a where a.idTipoBien="+tipo,AfBienesDepreciables.class);
-        if (q.getResultList().isEmpty()){
+
+    public boolean bienesTipo(Long tipo) {
+        Query q = em.createQuery("select a from AfBienesDepreciables a where a.idTipoBien=" + tipo, AfBienesDepreciables.class);
+        if (q.getResultList().isEmpty()) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
-  
+
     public void removeTipoBien(AfTipoBienes tipo) {
         try {
-               if (!em.contains(tipo)) {
+            if (!em.contains(tipo)) {
                 tipo = em.merge(tipo);
             }
             em.remove(tipo);
-            
-       } catch (Exception e) {
+
+        } catch (Exception e) {
             System.out.println("Error al Eliminar el tipo de bien " + e);
         }
     }
-    
+
     public void inactivarTipoBien(AfTipoBienes tipo, String usu) {
         try {
 
@@ -390,9 +392,9 @@ public class BienesEJB {
                 q = em.createNativeQuery("select * from af_traslados_detalle where id_traslado=" + idTd, AfTrasladosDetalle.class);
                 if (!q.getResultList().isEmpty() && q.getResultList() != null) {
                     try {
-                       q= em.createNativeQuery("delete af_traslados_detalle where id_traslado="+idTd);
-                       q.executeUpdate();
-                        
+                        q = em.createNativeQuery("delete af_traslados_detalle where id_traslado=" + idTd);
+                        q.executeUpdate();
+
                         em.remove(td);
                     } catch (Exception e) {
                         System.out.println("Error al eliminar traslados detalle " + e);
@@ -661,7 +663,7 @@ public class BienesEJB {
 
     public List<VwSolvencia> buscarEntidades(String condicion) {
         String condicion2 = "";
-       List<VwSolvencia> lstEntidades = new ArrayList();
+        List<VwSolvencia> lstEntidades = new ArrayList();
         if (!condicion.equals("")) {
             condicion2 = "where " + condicion;
         }
@@ -669,7 +671,7 @@ public class BienesEJB {
                 + "  nvl(NUMBIENES,0) as numBienes, nvl(COSTO,0) as costo,codigo_municipio as codigoMunicipio,fecha_actualizacion as fechaActualizacion,tipo_unidad as tipoUnidad "
                 + " from  vw_solvencia " + condicion2;
         Query q = em.createNativeQuery(sql);
-         List lst = q.getResultList();
+        List lst = q.getResultList();
         for (Object object : lst) {
             Object[] datos = (Object[]) object;
             VwSolvencia datPlan = new VwSolvencia();
@@ -793,7 +795,7 @@ public class BienesEJB {
             condicion2 = " where " + condicion;
         }
 
-        String Sql = "select * from af_tipo_bienes a " + condicion2+" order by a.codigo_tipo_bien";
+        String Sql = "select * from af_tipo_bienes a " + condicion2 + " order by a.codigo_tipo_bien";
         Query q = em.createNativeQuery(Sql, AfTipoBienes.class);
         if (!q.getResultList().isEmpty()) {
             return q.getResultList();
@@ -817,6 +819,7 @@ public class BienesEJB {
             return null;
         }
     }
+
     public List<AfBienesDepreciables> buscarBienes(String condicion) {
         String condicion2 = "";
         // System.out.println(condicion);
@@ -840,7 +843,7 @@ public class BienesEJB {
             condicion2 = " where " + condicion;
         }
 
-        String Sql = "select * from af_Empleados a " + condicion2+" order by a.nombres,a.apellidos";
+        String Sql = "select * from af_Empleados a " + condicion2 + " order by a.nombres,a.apellidos";
         Query q = em.createNativeQuery(Sql, AfEmpleados.class);
         if (!q.getResultList().isEmpty()) {
             return q.getResultList();
@@ -851,16 +854,16 @@ public class BienesEJB {
 
     public List<VwBienes> buscarBien(String condicion) {
         String condicion2 = "";
-        String sql="";
+        String sql = "";
         // System.out.println(condicion);
         if (!condicion.equals("")) {
             condicion2 = " where " + condicion;
         }
-        sql="select a.ID_BIEN,a.CODIGO_INVENTARIO,a.CATEGORIA,a.DESCRIPCION_BIEN,a.MARCA,a.FECHA_ADQUISICION,a.VALOR_ADQUISICION,a.MODELO, " +
-            "a.NUMERO_SERIE,a.ACTIVO_FIJO,a.ESTADO,a.UNIDAD_ACTIVO_FIJO,a.CODIGO_UNIDAD,a.ESTADO_REGISTRO,a.iD_CAT_BIEN,a.ID_TIPO_BIEN,a.CODIGO_SECCION, " +
-            "a.CODIGO_CALIDAD_BIEN,a.ID_ESTATUS_BIEN,a.ID_FUENTE,a.iD_PROYECTO,a.FECHA_CREACION,a.USUARIO_CREA,a.FUENTE,a.NOMBRE_PROYECTO,a.DOCUMENTO_ADQUISICION,"+
-            "a.PROVEEDOR,a.ID_FORMA_ADQUISICION,a.CALIDAD,a.ASIGNADO,a.ID_TRASLADO_DETALLE,a.ID_TRASLADO,a.ID_DETALLE_DESCARGO,a.DESCARGO_ID, " +
-            "a.TIPO_DESCARGO,a.ESTADO_DESCARGO,a.FECHA_DESCARGO,a.CODIGO_DESCARGO,a.MONTO_DEPRECIACION,a.TIPO_UNIDAD from Vw_Bienes a "+ condicion2 + " order by A.codigo_inventario"; 
+        sql = "select a.ID_BIEN,a.CODIGO_INVENTARIO,a.CATEGORIA,a.DESCRIPCION_BIEN,a.MARCA,a.FECHA_ADQUISICION,a.VALOR_ADQUISICION,a.MODELO, "
+                + "a.NUMERO_SERIE,a.ACTIVO_FIJO,a.ESTADO,a.UNIDAD_ACTIVO_FIJO,a.CODIGO_UNIDAD,a.ESTADO_REGISTRO,a.iD_CAT_BIEN,a.ID_TIPO_BIEN,a.CODIGO_SECCION, "
+                + "a.CODIGO_CALIDAD_BIEN,a.ID_ESTATUS_BIEN,a.ID_FUENTE,a.iD_PROYECTO,a.FECHA_CREACION,a.USUARIO_CREA,a.FUENTE,a.NOMBRE_PROYECTO,a.DOCUMENTO_ADQUISICION,"
+                + "a.PROVEEDOR,a.ID_FORMA_ADQUISICION,a.CALIDAD,a.ASIGNADO,a.ID_TRASLADO_DETALLE,a.ID_TRASLADO,a.ID_DETALLE_DESCARGO,a.DESCARGO_ID, "
+                + "a.TIPO_DESCARGO,a.ESTADO_DESCARGO,a.FECHA_DESCARGO,a.CODIGO_DESCARGO,a.MONTO_DEPRECIACION,a.TIPO_UNIDAD from Vw_Bienes a " + condicion2 + " order by A.codigo_inventario";
         List<VwBienes> lstBienes = new ArrayList<>();
         Query q = em.createNativeQuery(sql);
         List lst = q.getResultList();
@@ -1081,8 +1084,8 @@ public class BienesEJB {
 
     public List<VwDescargos> buscarDescargos(String condicion) {
 
-        String Sql = "select a.DESCARGO_ID,a.CODIGO_DESCARGO,a.NOMBRE_UNIDAD,a.FECHA_DESCARGO,a.BIENES,a.TOTAL,a.NOMBRE_TIPO_DESCARGO,a.ESTADO," +
-                     "a.DES_ESTADO,a.UNIDAD_ACTIVO_FIJO,a.CODIGO_UNIDAD,a.TIPO_DESCARGO,a.FECHA_SOLICITUD,a.TIPO_UNIDAD from vw_descargos a " + condicion;
+        String Sql = "select a.DESCARGO_ID,a.CODIGO_DESCARGO,a.NOMBRE_UNIDAD,a.FECHA_DESCARGO,a.BIENES,a.TOTAL,a.NOMBRE_TIPO_DESCARGO,a.ESTADO,"
+                + "a.DES_ESTADO,a.UNIDAD_ACTIVO_FIJO,a.CODIGO_UNIDAD,a.TIPO_DESCARGO,a.FECHA_SOLICITUD,a.TIPO_UNIDAD from vw_descargos a " + condicion;
 
         List<VwDescargos> lst = new ArrayList<>();
         Query q = em.createNativeQuery(Sql);
@@ -1320,33 +1323,31 @@ public class BienesEJB {
         return lst;
     }
 
-    
-    
-    public List<DatosBienxEmpleado> getLstEmp(String UnidadAF, String codUnidad, String fecReporte,String Responsable,String cargoRes,Long IdEmpleado, List<AfBienesDepreciables> lstBienes, String usuario) {
+    public List<DatosBienxEmpleado> getLstEmp(String UnidadAF, String codUnidad, String fecReporte, String Responsable, String cargoRes, Long IdEmpleado, List<AfBienesDepreciables> lstBienes, String usuario) {
         List<DatosBienxEmpleado> lst = new ArrayList();
         String Sql;
-            Sql = "select ua.NOMBRE_UNIDAD institucion,af.NOMBRE_UNIDAD_AF DIRECCION, e.nombres||' '||e.apellidos nomEmpleado,e.cargo cargoEmpleado,to_char(sysdate,'HH24:MI') hora " +
-                   " from af_empleados e inner join af_unidades_administrativas ua on ua.CODIGO_UNIDAD = e.CODIGO_UNIDAD and ua.UNIDAD_ACTIVO_FIJO=e.UNIDAD_ACTIVO_FIJO " +
-                   " inner join AF_UNIDADES_ACTIVO_FIJO af on af.UNIDAD_ACTIVO_FIJO=ua.UNIDAD_ACTIVO_FIJO where trim(e.CODIGO_UNIDAD)='" + codUnidad + "' and e.id_empleado="+IdEmpleado;
-            Query q = em.createNativeQuery(Sql);
+        Sql = "select ua.NOMBRE_UNIDAD institucion,af.NOMBRE_UNIDAD_AF DIRECCION, e.nombres||' '||e.apellidos nomEmpleado,e.cargo cargoEmpleado,to_char(sysdate,'HH24:MI') hora "
+                + " from af_empleados e inner join af_unidades_administrativas ua on ua.CODIGO_UNIDAD = e.CODIGO_UNIDAD and ua.UNIDAD_ACTIVO_FIJO=e.UNIDAD_ACTIVO_FIJO "
+                + " inner join AF_UNIDADES_ACTIVO_FIJO af on af.UNIDAD_ACTIVO_FIJO=ua.UNIDAD_ACTIVO_FIJO where trim(e.CODIGO_UNIDAD)='" + codUnidad + "' and e.id_empleado=" + IdEmpleado;
+        Query q = em.createNativeQuery(Sql);
 
-            for (Object dato : q.getResultList()) {
-                Object[] ob = (Object[]) dato;
-                DatosBienxEmpleado d = new DatosBienxEmpleado();
-                d.setInstitucion(ob[0].toString());
-                d.setUnidad(ob[1].toString());
-                d.setNomEmpleado(ob[2].toString());
-                d.setCargoEmpleado(ob[3].toString());
-                d.setHora(ob[4].toString());
-                d.setResponsable(Responsable);
-                d.setCargoRes(cargoRes);
-                d.setFecReporte(fecReporte);
-                d.setUsuario(usuario);
+        for (Object dato : q.getResultList()) {
+            Object[] ob = (Object[]) dato;
+            DatosBienxEmpleado d = new DatosBienxEmpleado();
+            d.setInstitucion(ob[0].toString());
+            d.setUnidad(ob[1].toString());
+            d.setNomEmpleado(ob[2].toString());
+            d.setCargoEmpleado(ob[3].toString());
+            d.setHora(ob[4].toString());
+            d.setResponsable(Responsable);
+            d.setCargoRes(cargoRes);
+            d.setFecReporte(fecReporte);
+            d.setUsuario(usuario);
 
-                d.setLstDatos(lstBienes);
-                lst.add(d);
-            }
-        
+            d.setLstDatos(lstBienes);
+            lst.add(d);
+        }
+
         return lst;
     }
 
@@ -1469,5 +1470,214 @@ public class BienesEJB {
         }
         return lst;
     }
-  
+
+    public VwBienes findVwBienesByIdBien(Long idBien) {
+        String sql = "select a.ID_BIEN,a.CODIGO_INVENTARIO,a.CATEGORIA,a.DESCRIPCION_BIEN,a.MARCA,a.FECHA_ADQUISICION,a.VALOR_ADQUISICION,a.MODELO, "
+                + "a.NUMERO_SERIE,a.ACTIVO_FIJO,a.ESTADO,a.UNIDAD_ACTIVO_FIJO,a.CODIGO_UNIDAD,a.ESTADO_REGISTRO,a.iD_CAT_BIEN,a.ID_TIPO_BIEN,a.CODIGO_SECCION, "
+                + "a.CODIGO_CALIDAD_BIEN,a.ID_ESTATUS_BIEN,a.ID_FUENTE,a.iD_PROYECTO,a.FECHA_CREACION,a.USUARIO_CREA,a.FUENTE,a.NOMBRE_PROYECTO,a.DOCUMENTO_ADQUISICION,"
+                + "a.PROVEEDOR,a.ID_FORMA_ADQUISICION,a.CALIDAD,a.ASIGNADO,a.ID_TRASLADO_DETALLE,a.ID_TRASLADO,a.ID_DETALLE_DESCARGO,a.DESCARGO_ID, "
+                + "a.TIPO_DESCARGO,a.ESTADO_DESCARGO,a.FECHA_DESCARGO,a.CODIGO_DESCARGO,a.MONTO_DEPRECIACION,a.TIPO_UNIDAD from Vw_Bienes a WHERE a.ID_BIEN = " + idBien;
+        VwBienes datPlan = new VwBienes();
+        Query q = em.createNativeQuery(sql);
+        List lst = q.getResultList();
+        for (Object object : lst) {
+            Object[] datos = (Object[]) object;
+
+            datPlan.setIdBien(Long.parseLong(datos[0].toString()));
+            if (datos[1] != null) {
+                datPlan.setCodigoInventario(datos[1].toString());
+            } else {
+                datPlan.setCodigoInventario(null);
+            }
+            if (datos[2] != null) {
+                datPlan.setCategoria(datos[2].toString());
+            } else {
+                datPlan.setCategoria(null);
+            }
+            if (datos[3] != null) {
+                datPlan.setDescripcionBien(datos[3].toString());
+            } else {
+                datPlan.setDescripcionBien(null);
+            }
+            if (datos[4] != null) {
+                datPlan.setMarca(datos[4].toString());
+            } else {
+                datPlan.setMarca(null);
+            }
+            if (datos[5] != null) {
+                datPlan.setFechaAdquisicion((Date) datos[5]);
+            } else {
+                datPlan.setFechaAdquisicion(null);
+            }
+            if (datos[6] != null) {
+                datPlan.setValorAdquisicion((BigDecimal) datos[6]);
+            } else {
+                datPlan.setValorAdquisicion(null);
+            }
+            if (datos[7] != null) {
+                datPlan.setModelo(datos[7].toString());
+            } else {
+                datPlan.setModelo(null);
+            }
+            if (datos[8] != null) {
+                datPlan.setNumeroSerie(datos[8].toString());
+            } else {
+                datPlan.setNumeroSerie(null);
+            }
+            if (datos[9] != null) {
+                datPlan.setActivoFijo(datos[9].toString().charAt(0));
+            } else {
+                datPlan.setActivoFijo(null);
+            }
+            if (datos[10] != null) {
+                datPlan.setEstado(datos[10].toString());
+            } else {
+                datPlan.setEstado(null);
+            }
+            if (datos[11] != null) {
+                datPlan.setUnidadActivoFijo(datos[11].toString());
+            } else {
+                datPlan.setUnidadActivoFijo(null);
+            }
+            if (datos[12] != null) {
+                datPlan.setCodigoUnidad(datos[12].toString());
+            } else {
+                datPlan.setCodigoUnidad(null);
+            }
+            if (datos[13] != null) {
+                datPlan.setEstadoRegistro(datos[13].toString());
+            } else {
+                datPlan.setEstadoRegistro(null);
+            }
+            if (datos[14] != null) {
+                datPlan.setIdCatBien(Long.parseLong(datos[14].toString()));
+            } else {
+                datPlan.setIdCatBien(null);
+            }
+            if (datos[15] != null) {
+                datPlan.setCodigoTipoBien(datos[15].toString());
+            } else {
+                datPlan.setCodigoTipoBien(null);
+            }
+            if (datos[16] != null) {
+                datPlan.setCodigoSeccion(datos[16].toString());
+            } else {
+                datPlan.setCodigoSeccion(null);
+            }
+            if (datos[17] != null) {
+                datPlan.setCodigoCalidadBien(Long.parseLong(datos[17].toString()));
+            } else {
+                datPlan.setCodigoCalidadBien(null);
+            }
+            if (datos[18] != null) {
+                datPlan.setIdEstatusBien(Long.parseLong(datos[18].toString()));
+            } else {
+                datPlan.setIdEstatusBien(null);
+            }
+            if (datos[19] != null) {
+                datPlan.setIdFuente(Long.parseLong(datos[19].toString()));
+            } else {
+                datPlan.setIdFuente(null);
+            }
+            if (datos[20] != null) {
+                datPlan.setIdProyecto(Long.parseLong(datos[20].toString()));
+            } else {
+                datPlan.setIdProyecto(null);
+            }
+            if (datos[21] != null) {
+                datPlan.setFechaCreacion((Date) datos[21]);
+            } else {
+                datPlan.setFechaCreacion(null);
+            }
+            if (datos[22] != null) {
+                datPlan.setUsuarioCreacion(datos[22].toString());
+            } else {
+                datPlan.setUsuarioCreacion("");
+            }
+
+            if (datos[23] != null) {
+                datPlan.setFuente(datos[23].toString());
+            } else {
+                datPlan.setFuente("");
+            }
+            if (datos[24] != null) {
+                datPlan.setNombreProyecto(datos[24].toString());
+            } else {
+                datPlan.setNombreProyecto("");
+            }
+            if (datos[25] != null) {
+                datPlan.setDocumentoAdquisicion(datos[25].toString());
+            } else {
+                datPlan.setDocumentoAdquisicion("");
+            }
+            if (datos[26] != null) {
+                datPlan.setProveedor(datos[26].toString());
+            } else {
+                datPlan.setProveedor("");
+            }
+            if (datos[27] != null) {
+                datPlan.setIdFormaAdquisicion(Long.parseLong(datos[27].toString()));
+            } else {
+                datPlan.setIdFormaAdquisicion(null);
+            }
+            if (datos[28] != null) {
+                datPlan.setCalidad(datos[28].toString());
+            } else {
+                datPlan.setCalidad("");
+            }
+            if (datos[29] != null) {
+                datPlan.setAsignado(datos[29].toString());
+            } else {
+                datPlan.setAsignado("");
+            }
+            if (datos[30] != null) {
+                datPlan.setIdTrasladoDet(Long.parseLong(datos[30].toString()));
+            } else {
+                datPlan.setIdTrasladoDet(null);
+            }
+            if (datos[31] != null) {
+                datPlan.setIdTraslado(Long.parseLong(datos[31].toString()));
+            } else {
+                datPlan.setIdTraslado(null);
+            }
+            if (datos[32] != null) {
+                datPlan.setIdDetalleDescargo(Long.parseLong(datos[32].toString()));
+            } else {
+                datPlan.setIdDetalleDescargo(null);
+            }
+            if (datos[33] != null) {
+                datPlan.setDescargoId(Long.parseLong(datos[33].toString()));
+            } else {
+                datPlan.setDescargoId(null);
+            }
+            if (datos[34] != null) {
+                datPlan.setTipoDescargo(datos[34].toString().charAt(0));
+            } else {
+                datPlan.setTipoDescargo(null);
+            }
+            if (datos[35] != null) {
+                datPlan.setEstadoDescargo(datos[35].toString().charAt(0));
+            } else {
+                datPlan.setEstadoDescargo(null);
+            }
+            if (datos[36] != null) {
+                datPlan.setFechaDescargo((Date) datos[36]);
+            } else {
+                datPlan.setFechaDescargo(null);
+            }
+            if (datos[37] != null) {
+                datPlan.setCodigoDescargo(datos[37].toString());
+            } else {
+                datPlan.setCodigoDescargo(null);
+            }
+
+            if (datos[38] != null) {
+                datPlan.setMontoDepreciacion((BigDecimal) datos[38]);
+            } else {
+                datPlan.setMontoDepreciacion(null);
+            }
+        }
+
+        return datPlan;
+    }
 }

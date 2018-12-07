@@ -12,12 +12,12 @@ package sv.gob.mined.seguridad.web.converter;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+import javax.faces.bean.ManagedProperty;
 import javax.faces.component.UIComponent;
-import javax.faces.component.UISelectItems;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import sv.gob.mined.activofijo.model.VwBienes;
+import sv.gob.mined.app.activofijo.controller.UtilController;
 import sv.gob.mined.seguridad.web.controller.LoginController;
 import sv.gob.mined.seguridad.web.util.JsfUtil;
 
@@ -30,12 +30,13 @@ public class ClassConverter implements Converter {
 
     @Override
     public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
-        if (value == null || value.length() == 0 || value.toString().contains("Seleccione")) {
+        if (value == null || value.length() == 0 || value.contains("Seleccione")) {
             return null;
         }
-        LoginController controller = (LoginController) facesContext.getApplication().getELResolver().
-                getValue(facesContext.getELContext(), null, "loginController");
-        return controller.find(VwBienes.class, JsfUtil.newInstanceValuePK(VwBienes.class, value));
+        UtilController controller = (UtilController) facesContext.getApplication().getELResolver().
+                getValue(facesContext.getELContext(), null, "utilController");
+
+        return controller.findVwBienByIdBien(Long.parseLong(value));
     }
 
     @Override
