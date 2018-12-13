@@ -19,7 +19,7 @@ import javax.persistence.Transient;
 @Entity
 public class VwBienes implements Serializable {
     @Id
-    private long idBien;
+    private Long idBien;
     private String codigoInventario;
     private String categoria;
     private String descripcionBien;
@@ -68,11 +68,11 @@ public class VwBienes implements Serializable {
     public VwBienes() {
     }
 
-    public long getIdBien() {
+    public Long getIdBien() {
         return idBien;
     }
 
-    public void setIdBien(long idBien) {
+    public void setIdBien(Long idBien) {
         this.idBien = idBien;
     }
 
