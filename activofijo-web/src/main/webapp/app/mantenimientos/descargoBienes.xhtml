@@ -1,136 +1,145 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://java.sun.com/jsf/core">
-    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
-        <ui:define name="content">
-            <p:menubar id="barBtns" > 
-                <p:menuitem value="Enviar" icon="fa fa-save" action="#{descargoController.enviarDescargo}" disabled="#{descargoController.btnEnviar}" />
-                <p:menuitem id="btnSol2" value="Descargar" icon="fa fa-file-o" ajax="true" onclick="PF('dlgImprimir').show();" disabled="#{descargoController.btnDesc}" />
-                <p:menuitem value="Imprimir" icon="fa fa-print" action="#{descargoController.imprimirDescargo}" ajax="false" disabled="#{descargoController.btnImp}"/>
-                <p:menuitem value="atras" icon="fa fa-arrow-circle-left" action="buscarDescargos.mined" process="@this"/>
-            </p:menubar>
-            <p:panel  header="Descargo Bienes">
-                <h:panelGrid>
-                    <p:row>
-                        <p:column> <h:outputLabel  value="Tipo Unidad:      "/> </p:column> 
-                        <p:column>
-                            <p:selectOneMenu id="tipUni" value="#{descargoController.tipoUnidad}" disabled="#{descargoController.actTipo}">
-                                <p:ajax update="uadm" listener="#{descargoController.filtrarUnidadesAdm}" process="@this,tipUni"/>
-                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
-                                <f:selectItem itemLabel="Unidad Administrativa" itemValue="UA"/>
-                                <f:selectItem itemLabel="Centro Escolar" itemValue="CE"/>
-                            </p:selectOneMenu> 
-                        </p:column> 
-                    </p:row>  
-                    <p:row>
-                        <p:column>
-                            <h:outputLabel value="Unidad Activo Fijo:       " />
-                            <p:selectOneMenu id="uaf" value="#{descargoController.unidadAF}" disabled="#{descargoController.actAF}">
-                                <p:ajax update="uadm" listener="#{descargoController.filtrarUnidadesAdm}" process="@this,tipUni"/>
-                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
-                                <f:selectItems value="#{descargoController.lstUnidadAF}" var="uAF" itemLabel="#{uAF.unidadActivoFijo} - #{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
-                            </p:selectOneMenu> 
-                        </p:column>
-                    </p:row>
-                    <p:row>
-                        <p:column>
-                            <h:outputLabel value="Unidad Administrativa:     " />
-                            <p:selectOneMenu  id="uadm" value="#{descargoController.unidadAdm}" disabled="#{descargoController.actAd}">
-                                <p:ajax update="uadm" />
-                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
-                                <f:selectItems value="#{descargoController.lstUnidadAdm}" var="uadm" itemLabel="#{uadm.afUnidadesAdministrativasPK.codigoUnidad} - #{uadm.nombreUnidad}" itemValue="#{uadm.afUnidadesAdministrativasPK.codigoUnidad}"/>
-                            </p:selectOneMenu> 
-                        </p:column>
-                    </p:row>
-                    <p:row>
-                        <p:column><h:outputLabel value="Activos:     "/>
-                            <h:selectOneMenu id="activo" value="#{descargoController.activo}"  required="true" requiredMessage="Seleccione si es Activo" disabled="#{descargoController.actCtrl}">
-                               <p:ajax update="activo" /> 
-                                <f:selectItem itemLabel="Seleccione" itemValue=""/>    
-                                <f:selectItem itemLabel="Mayores 600" itemValue="A"/>
-                                <f:selectItem itemLabel="Menores 600" itemValue="N"/>
-                            </h:selectOneMenu> 
-                        </p:column>
-                    </p:row>
-                    <p:row>
-                        <p:column>
-                            <h:outputLabel value="Tipo Descargo:" />
-                            <p:selectOneMenu id="tipo" value="#{descargoController.tipDescargo}" required="true" requiredMessage="Seleccione tipo traslado" disabled="#{descargoController.actCtrl}">
-                                 <p:ajax update="tipo" />
-                                <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
-                                <f:selectItems value="#{descargoController.lstTipoDescargo}" var="tipo" itemLabel="#{tipo.nombreTipoDescargo}" itemValue="#{tipo.idTipoDescargo}"/>
-                            </p:selectOneMenu>     
-                        </p:column>
-                    </p:row>
-                    <p:row>
-                        <p:column>
-                            <p:commandButton value="Agregar Bienes" action="#{descargoController.abrir}" process="@this" disabled="#{descargoController.actCtrl}">
-                                <ajax update="bienesPickList"/>  
-                            </p:commandButton>
-                        </p:column>
-                    </p:row>
-                </h:panelGrid>
-            </p:panel>
-            <p:panel id="bienesDes">
-               
-                <p:pickList id="bienesPickList" value="#{descargoController.bienes}" var="bien"  
-                            itemValue="#{bien}" itemLabel="#{bien.codigoInventario}" showSourceControls="false" showTargetControls="false" showCheckbox="#{descargoController.actCtrl}"
-                            showSourceFilter="#{descargoController.actCtrl}" showTargetFilter="false" filterMatchMode="contains" converter="classConverter" responsive="true" style="width: 50%">
+      xmlns:f="http://java.sun.com/jsf/core"
+      template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
 
-                    <f:facet name="sourceCaption">Activo</f:facet>
-                    <f:facet name="targetCaption">a Descargar</f:facet>
-
-                    <p:ajax event="transfer" listener="#{descargoController.onTransfer}" disabled="#{descargoController.btnGuardar}" />
-                    <p:ajax event="select" listener="#{descargoController.onSelect}" disabled="#{descargoController.btnGuardar}"/>
-                    <p:ajax event="unselect" listener="#{descargoController.onUnselect}" disabled="#{descargoController.btnGuardar}"/>
-                    <p:ajax event="reorder" listener="#{descargoController.onReorder}" disabled="#{descargoController.btnGuardar}"/>
-                    <p:column style="width:85%;">
-                        <h:outputText value="#{bien.codigoInventario}" />
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-picklist-button-add-all{
+                visibility: hidden !important;
+            }
+            .ui-picklist-button-remove-all{
+                visibility: hidden !important;
+            }
+        </style>
+    </ui:define>
+    <ui:define name="content">
+        <p:menubar id="barBtns" > 
+            <p:menuitem value="Enviar" icon="fa fa-save" action="#{descargoController.enviarDescargo}" disabled="#{descargoController.btnEnviar}" />
+            <p:menuitem id="btnSol2" value="Descargar" icon="fa fa-file-o" ajax="true" onclick="PF('dlgImprimir').show();" disabled="#{descargoController.btnDesc}" />
+            <p:menuitem value="Imprimir" icon="fa fa-print" action="#{descargoController.imprimirDescargo}" ajax="false" disabled="#{descargoController.btnImp}"/>
+            <p:menuitem value="atras" icon="fa fa-arrow-circle-left" action="buscarDescargos.mined" process="@this"/>
+        </p:menubar>
+        <p:panel  header="Descargo Bienes">
+            <h:panelGrid>
+                <p:row>
+                    <p:column> <h:outputLabel  value="Tipo Unidad:      "/> </p:column> 
+                    <p:column>
+                        <p:selectOneMenu id="tipUni" value="#{descargoController.tipoUnidad}" disabled="#{descargoController.actTipo}">
+                            <p:ajax update="uadm" listener="#{descargoController.filtrarUnidadesAdm}" process="@this,tipUni"/>
+                            <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                            <f:selectItem itemLabel="Unidad Administrativa" itemValue="UA"/>
+                            <f:selectItem itemLabel="Centro Escolar" itemValue="CE"/>
+                        </p:selectOneMenu> 
+                    </p:column> 
+                </p:row>  
+                <p:row>
+                    <p:column>
+                        <h:outputLabel value="Unidad Activo Fijo:       " />
+                        <p:selectOneMenu id="uaf" value="#{descargoController.unidadAF}" disabled="#{descargoController.actAF}">
+                            <p:ajax update="uadm" listener="#{descargoController.filtrarUnidadesAdm}" process="@this,tipUni"/>
+                            <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                            <f:selectItems value="#{descargoController.lstUnidadAF}" var="uAF" itemLabel="#{uAF.unidadActivoFijo} - #{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
+                        </p:selectOneMenu> 
                     </p:column>
-                </p:pickList>
-                <p:column>
-                    <p:commandButton value="Guardar"   action="#{descargoController.guardarDescargo}" process="@this" disabled="#{descargoController.btnGuardar}"/>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <h:outputLabel value="Unidad Administrativa:     " />
+                        <p:selectOneMenu  id="uadm" value="#{descargoController.unidadAdm}" disabled="#{descargoController.actAd}">
+                            <p:ajax update="uadm" />
+                            <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                            <f:selectItems value="#{descargoController.lstUnidadAdm}" var="uadm" itemLabel="#{uadm.afUnidadesAdministrativasPK.codigoUnidad} - #{uadm.nombreUnidad}" itemValue="#{uadm.afUnidadesAdministrativasPK.codigoUnidad}"/>
+                        </p:selectOneMenu> 
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column><h:outputLabel value="Activos:     "/>
+                        <h:selectOneMenu id="activo" value="#{descargoController.activo}"  required="true" requiredMessage="Seleccione si es Activo" disabled="#{descargoController.actCtrl}">
+                            <p:ajax update="activo" /> 
+                            <f:selectItem itemLabel="Seleccione" itemValue=""/>    
+                            <f:selectItem itemLabel="Mayores 600" itemValue="A"/>
+                            <f:selectItem itemLabel="Menores 600" itemValue="N"/>
+                        </h:selectOneMenu> 
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <h:outputLabel value="Tipo Descargo:" />
+                        <p:selectOneMenu id="tipo" value="#{descargoController.tipDescargo}" required="true" requiredMessage="Seleccione tipo traslado" disabled="#{descargoController.actCtrl}">
+                            <p:ajax update="tipo" />
+                            <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
+                            <f:selectItems value="#{descargoController.lstTipoDescargo}" var="tipo" itemLabel="#{tipo.nombreTipoDescargo}" itemValue="#{tipo.idTipoDescargo}"/>
+                        </p:selectOneMenu>     
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:commandButton value="Agregar Bienes" action="#{descargoController.abrir}" process="@this" disabled="#{descargoController.actCtrl}">
+                            <ajax update="bienesPickList"/>  
+                        </p:commandButton>
+                    </p:column>
+                </p:row>
+            </h:panelGrid>
+        </p:panel>
+        <p:panel id="bienesDes">
+
+            <p:pickList id="bienesPickList" value="#{descargoController.bienes}" var="bien"  itemValue="#{bien}" itemLabel="#{bien.codigoInventario}"
+                        showSourceControls="false" showTargetControls="false" showCheckbox="#{descargoController.actCtrl}" 
+                        showSourceFilter="#{descargoController.actCtrl}" showTargetFilter="false" filterMatchMode="contains" converter="classConverter" responsive="true" style="width: 50%">
+
+                <f:facet name="sourceCaption">Activo</f:facet>
+                <f:facet name="targetCaption">a Descargar</f:facet>
+
+                <p:ajax event="transfer" listener="#{descargoController.onTransfer}" disabled="#{descargoController.btnGuardar}" />
+                <p:ajax event="select" listener="#{descargoController.onSelect}" disabled="#{descargoController.btnGuardar}"/>
+                <p:ajax event="unselect" listener="#{descargoController.onUnselect}" disabled="#{descargoController.btnGuardar}"/>
+                <p:ajax event="reorder" listener="#{descargoController.onReorder}" disabled="#{descargoController.btnGuardar}"/>
+                <p:column style="width:85%;">
+                    <h:outputText value="#{bien.codigoInventario}" />
                 </p:column>
-                <p:dialog modal="true" showEffect="fade" hideEffect="fade" widgetVar="BienesDialog">
-                    <h:panelGrid id="displayBienes" columns="2">
-                        <h:outputText value="Source: " style="font-weight:bold" />
-                        <ui:repeat value="#{descargoController.bienes.source}" var="bien1">
-                            <h:outputText value="#{bien.codigoInventario}" style="margin-right:5px" />
-                        </ui:repeat>
+            </p:pickList>
+            <p:column>
+                <p:commandButton value="Guardar"   action="#{descargoController.guardarDescargo}" process="@this" disabled="#{descargoController.btnGuardar}"/>
+            </p:column>
+            <p:dialog modal="true" showEffect="fade" hideEffect="fade" widgetVar="BienesDialog">
+                <h:panelGrid id="displayBienes" columns="2">
+                    <h:outputText value="Source: " style="font-weight:bold" />
+                    <ui:repeat value="#{descargoController.bienes.source}" var="bien1">
+                        <h:outputText value="#{bien.codigoInventario}" style="margin-right:5px" />
+                    </ui:repeat>
 
-                        <h:outputText value="Target: " style="font-weight:bold" />
-                        <ui:repeat value="#{descargoController.bienes.target}" var="bien2">
-                            <h:outputText value="#{bien.codigoInventario}" style="margin-right:5px" />
-                        </ui:repeat>
-                    </h:panelGrid>
-                </p:dialog>    
-            </p:panel>
-            <p:panel>
-                <p:dialog id="dlgImprimir" widgetVar="dlgImprimir" modal="true" >
-                    <p:outputLabel value="Datos descargo" escape="false"/>
-                    <h:panelGrid columns="2">
-                        <p:column> <h:outputLabel value="C&oacute;digo Descargo:"/></p:column>
-                        <p:column><p:inputText id="numsol" value="#{descargoController.numSolicitud}"/></p:column>
-                        <p:column> <h:outputLabel value="Fecha Descargo:"/></p:column>
-                        <p:column><p:calendar id="fechaDes" value="#{descargoController.fecDescargo}" pattern="dd/MM/yyyy"/></p:column>
-                        <p:column> <h:outputLabel value="Fecha Fallo"/></p:column>
-                        <p:column><p:calendar id="fechaFallo" value="#{descargoController.fecFallo}" pattern="dd/MM/yyyy"/></p:column>
-                        <p:column><h:outputLabel value="Observación Fallo:"/> </p:column>
-                        <p:column><p:inputTextarea id="obsFallo" rows="3" cols="60" value="#{descargoController.obsFallo}"/></p:column>
-                    </h:panelGrid>
-                    <f:facet name="footer">
-                        <p:commandButton value="Aceptar" onclick="PF('dlgImprimir').hide();" ajax="false" action="#{descargoController.realizarDescargo}"/>
-                        <p:commandButton value="Cancelar" ajax="true" onclick="PF('dlgImprimir').hide();"/>
-                    </f:facet>
+                    <h:outputText value="Target: " style="font-weight:bold" />
+                    <ui:repeat value="#{descargoController.bienes.target}" var="bien2">
+                        <h:outputText value="#{bien.codigoInventario}" style="margin-right:5px" />
+                    </ui:repeat>
+                </h:panelGrid>
+            </p:dialog>    
+        </p:panel>
+        <p:panel>
+            <p:dialog id="dlgImprimir" widgetVar="dlgImprimir" modal="true" >
+                <p:outputLabel value="Datos descargo" escape="false"/>
+                <h:panelGrid columns="2">
+                    <p:column> <h:outputLabel value="C&oacute;digo Descargo:"/></p:column>
+                    <p:column><p:inputText id="numsol" value="#{descargoController.numSolicitud}"/></p:column>
+                    <p:column> <h:outputLabel value="Fecha Descargo:"/></p:column>
+                    <p:column><p:calendar id="fechaDes" value="#{descargoController.fecDescargo}" pattern="dd/MM/yyyy"/></p:column>
+                    <p:column> <h:outputLabel value="Fecha Fallo"/></p:column>
+                    <p:column><p:calendar id="fechaFallo" value="#{descargoController.fecFallo}" pattern="dd/MM/yyyy"/></p:column>
+                    <p:column><h:outputLabel value="Observación Fallo:"/> </p:column>
+                    <p:column><p:inputTextarea id="obsFallo" rows="3" cols="60" value="#{descargoController.obsFallo}"/></p:column>
+                </h:panelGrid>
+                <f:facet name="footer">
+                    <p:commandButton value="Aceptar" onclick="PF('dlgImprimir').hide();" ajax="false" action="#{descargoController.realizarDescargo}"/>
+                    <p:commandButton value="Cancelar" ajax="true" onclick="PF('dlgImprimir').hide();"/>
+                </f:facet>
 
-                </p:dialog>
-            </p:panel> 
-        </ui:define>
-    </ui:composition>
-
-</html>
+            </p:dialog>
+        </p:panel> 
+    </ui:define>
+</ui:composition>
 
