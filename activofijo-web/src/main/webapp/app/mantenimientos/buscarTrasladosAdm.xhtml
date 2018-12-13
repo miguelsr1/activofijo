@@ -8,24 +8,24 @@
        <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
            <ui:define name="content">
                 <p:menubar id="barBtns" > 
-                    <p:menuitem value="Buscar" icon="fa fa-search" action="#{empleadosController.buscarTraslados}" update="pnlBienes" />
-                    <p:menuitem value="Nuevo" icon="fa fa-file-o" action="#{empleadosController.nuevoTraslado}"/>
-                    <p:menuitem value="Limpiar" icon="fa fa-trash-o" action="#{empleadosController.limpiarFiltro}" update="pnlFiltros pnlBienes"/>
+                    <p:menuitem value="Buscar" icon="fa fa-search" action="#{trasladoAdmController.buscarTraslados}" update="pnlBienes" />
+                    <p:menuitem value="Nuevo" icon="fa fa-file-o" action="#{trasladoAdmController.nuevoTraslado}"/>
+                    <p:menuitem value="Limpiar" icon="fa fa-trash-o" action="#{trasladoAdmController.limpiarFiltro}" update="pnlFiltros pnlBienes"/>
                     <p:menuitem value="Salir" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
                 </p:menubar>
                   <p:panel id="pnlFiltros"  header="Traslados de Bienes">
                       <h:panelGrid>
                           <p:row>
                               <p:column> <h:outputLabel  value="Codigo Traslado:      "/> </p:column> 
-                              <p:column><h:inputText id="codigoTras" value="#{empleadosController.codigoTras}"/></p:column>   
+                              <p:column><h:inputText id="codigoTras" value="#{trasladoAdmController.codigoTras}"/></p:column>   
                           </p:row>    
                           <p:row>
                             <p:column><h:outputLabel value="Fecha Traslado:     "/>
-                                <p:calendar id="fechaTras" value="#{empleadosController.fecTraslado}" pattern="dd/MM/yyyy"/></p:column>
+                                <p:calendar id="fechaTras" value="#{trasladoAdmController.fecTraslado}" pattern="dd/MM/yyyy"/></p:column>
                            </p:row>
                            <p:row>
                             <p:column><h:outputLabel value="Estado Traslado:     "/>
-                                <h:selectOneMenu id="estadoSol" value="#{empleadosController.estado}" >
+                                <h:selectOneMenu id="estadoSol" value="#{trasladoAdmController.estado}" >
                                 <f:selectItem itemLabel="-Seleccione-" itemValue="3"/>
                                 <f:selectItem itemLabel="Solicitud" itemValue="0"/>
                                 <f:selectItem itemLabel="Enviada" itemValue="2"/>
@@ -37,23 +37,23 @@
                         <p:column colspan="4" >
                             <p:panel id="pnlOrg" header="Origen" >
                                <h:outputLabel  value="Tipo Unidad:      "/> 
-                               <h:selectOneMenu id="tipUni" value="#{empleadosController.tipUniOrg}" disabled="true">
-                                   <p:ajax update="uadm" listener="#{empleadosController.filtrarUnidadesAdm}" process="@this,tipUni"/>
+                               <h:selectOneMenu id="tipUni" value="#{trasladoAdmController.tipUniOrg}" disabled="true">
+                                   <p:ajax update="uadm" listener="#{trasladoAdmController.filtrarUnidadesAdm}" process="@this,tipUni"/>
                                    <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
                                    <f:selectItem itemLabel="Unidad Administrativa" itemValue="UA"/>
                                    <f:selectItem itemLabel="Centro Escolar" itemValue="CE"/>
                                 </h:selectOneMenu> 
                                <p:spacer width="16"/>
                                <h:outputLabel  value="Unidad AF:      "/> 
-                               <h:selectOneMenu id="uaf" value="#{empleadosController.unidadAFOrig}" disabled="true">
-                                    <p:ajax update="uaf uadm" listener="#{empleadosController.filtrarUnidadesAdm}"/>
+                               <h:selectOneMenu id="uaf" value="#{trasladoAdmController.unidadAFOrig}" disabled="true">
+                                    <p:ajax update="uaf uadm" listener="#{trasladoAdmController.filtrarUnidadesAdm}"/>
                                     <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
-                                    <f:selectItems value="#{empleadosController.lstAFOrg}" var="uAF" itemLabel="#{uAF.unidadActivoFijo}-#{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
+                                    <f:selectItems value="#{trasladoAdmController.lstAFOrg}" var="uAF" itemLabel="#{uAF.unidadActivoFijo}-#{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
                                 </h:selectOneMenu> 
                                 <h:outputLabel  value="Unidad Administrativa:      "/> 
-                                <p:selectOneMenu  id="uadm" value="#{empleadosController.unidadAdmOrg}" disabled="true">
+                                <p:selectOneMenu  id="uadm" value="#{trasladoAdmController.unidadAdmOrg}" disabled="true">
                                     <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>     
-                                    <f:selectItems value="#{empleadosController.lstUnidadAdm}" var="uadm" itemLabel="#{uadm.afUnidadesAdministrativasPK.codigoUnidad}-#{uadm.nombreUnidad}" itemValue="#{uadm.afUnidadesAdministrativasPK.codigoUnidad}"/>
+                                    <f:selectItems value="#{trasladoAdmController.lstUnidadAdm}" var="uadm" itemLabel="#{uadm.afUnidadesAdministrativasPK.codigoUnidad}-#{uadm.nombreUnidad}" itemValue="#{uadm.afUnidadesAdministrativasPK.codigoUnidad}"/>
                                 </p:selectOneMenu>  
                             </p:panel>  
                            </p:column> 
@@ -62,23 +62,23 @@
                         <p:column colspan="4" >
                             <p:panel id="pnlDest" header="Destino" >
                                <h:outputLabel  value="Tipo Unidad:      "/> 
-                               <h:selectOneMenu id="tipUni1" value="#{empleadosController.tipUniDes}">
-                                   <p:ajax update="uadm1" listener="#{empleadosController.filtrarUnidadesAdmDestino}" process="@this,tipUni"/>
+                               <h:selectOneMenu id="tipUni1" value="#{trasladoAdmController.tipUniDes}">
+                                   <p:ajax update="uadm1" listener="#{trasladoAdmController.filtrarUnidadesAdmDestino}" process="@this,tipUni"/>
                                    <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
                                    <f:selectItem itemLabel="Unidad Administrativa" itemValue="UA"/>
                                    <f:selectItem itemLabel="Centro Escolar" itemValue="CE"/>
                                 </h:selectOneMenu> 
                                <h:outputLabel  value="Unidad AF:      "/> 
-                               <h:selectOneMenu id="uaf1" value="#{empleadosController.unidadAfDest}">
-                                    <p:ajax update="uaf1 uadm1" listener="#{empleadosController.filtrarUnidadesAdmDestino}"/>
+                               <h:selectOneMenu id="uaf1" value="#{trasladoAdmController.unidadAfDest}">
+                                    <p:ajax update="uaf1 uadm1" listener="#{trasladoAdmController.filtrarUnidadesAdmDestino}"/>
                                     <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
-                                    <f:selectItems value="#{empleadosController.lstAFDes}" var="uAF" itemLabel="#{uAF.unidadActivoFijo}-#{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
+                                    <f:selectItems value="#{trasladoAdmController.lstAFDes}" var="uAF" itemLabel="#{uAF.unidadActivoFijo}-#{uAF.nombreUnidadAf}" itemValue="#{uAF.unidadActivoFijo}"/>
                                 </h:selectOneMenu> 
                                 <p:spacer width="8"/>
                                 <h:outputLabel  value="Unidad Administrativa:      "/> 
-                                <p:selectOneMenu  id="uadm1" value="#{empleadosController.unidadAdmDes}">
+                                <p:selectOneMenu  id="uadm1" value="#{trasladoAdmController.unidadAdmDes}">
                                     <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>     
-                                    <f:selectItems value="#{empleadosController.lstUnidadAdmDes}" var="uadm1" itemLabel="#{uadm1.afUnidadesAdministrativasPK.codigoUnidad}-#{uadm1.nombreUnidad}" itemValue="#{uadm1.afUnidadesAdministrativasPK.codigoUnidad}"/>
+                                    <f:selectItems value="#{trasladoAdmController.lstUnidadAdmDes}" var="uadm1" itemLabel="#{uadm1.afUnidadesAdministrativasPK.codigoUnidad}-#{uadm1.nombreUnidad}" itemValue="#{uadm1.afUnidadesAdministrativasPK.codigoUnidad}"/>
                                 </p:selectOneMenu>  
                             </p:panel> 
                               </p:column> 
@@ -87,8 +87,8 @@
                     </h:panelGrid>                        
                    </p:panel>   
                     <p:panel id="pnlBienes">
-                        <p:dataTable id="tBienes" value="#{empleadosController.lstTraslados}" var="tras" rowKey="#{tras.idTraslado}" selectionMode="single">
-                            <p:ajax event="rowSelect" listener="#{empleadosController.trasladosId}"/>
+                        <p:dataTable id="tBienes" value="#{trasladoAdmController.lstTraslados}" var="tras" rowKey="#{tras.idTraslado}" selectionMode="single">
+                            <p:ajax event="rowSelect" listener="#{trasladoAdmController.trasladosId}"/>
                      <p:column headerText="Id"  style="width: 15px">
                          <h:outputText value="#{tras.idTraslado}"/>
                        </p:column>
@@ -101,20 +101,20 @@
                             </h:outputLabel>
                        </p:column>
                         <p:column headerText="Unidad origen" style="width: 250px">
-                           <h:outputText value="#{empleadosController.getNombreAdm(tras.codigoUnidadOrigen,empleadosController.getTipoUnidad(tras.codigoUnidadOrigen))}"/>
+                           <h:outputText value="#{trasladoAdmController.getNombreAdm(tras.codigoUnidadOrigen,empleadosController.getTipoUnidad(tras.codigoUnidadOrigen))}"/>
                        </p:column>
                        <p:column headerText="Unidad Destino" style="width: 250px">
-                           <h:outputText value="#{empleadosController.getNombreAdm(tras.codigoUnidadDest,empleadosController.getTipoUnidad(tras.codigoUnidadDest))}"/>
+                           <h:outputText value="#{trasladoAdmController.getNombreAdm(tras.codigoUnidadDest,empleadosController.getTipoUnidad(tras.codigoUnidadDest))}"/>
                        </p:column>     
                      <p:column headerText="Acci&oacute;n">
-                         <p:commandButton  action="#{empleadosController.ingresaTraslado}" icon="fa fa-edit" disabled="false">
-                             <f:setPropertyActionListener value="#{tras.idTraslado}" target="#{empleadosController.idTraslado}" />
-                             <p:ajax event="dialogReturn" listener="#{empleadosController.trasladoSeleccionado}"/>
+                         <p:commandButton  action="#{trasladoAdmController.ingresaTraslado}" icon="fa fa-edit" disabled="false">
+                             <f:setPropertyActionListener value="#{tras.idTraslado}" target="#{trasladoAdmController.idTraslado}" />
+                             <p:ajax event="dialogReturn" listener="#{trasladoAdmController.trasladoSeleccionado}"/>
                                 </p:commandButton>
 
                                 <p:panel visible="false">
-                                    <p:commandButton id="btnmodMet" actionListener="#{empleadosController.ingresaTraslado}" value="mod" >
-                                        <p:ajax event="dialogReturn" listener="#{empleadosController.trasladoSeleccionado}"/>
+                                    <p:commandButton id="btnmodMet" actionListener="#{trasladoAdmController.ingresaTraslado}" value="mod" >
+                                        <p:ajax event="dialogReturn" listener="#{trasladoAdmController.trasladoSeleccionado}"/>
                                     </p:commandButton>
                                 </p:panel>   
                         </p:column>   

@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -43,7 +42,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.primefaces.PrimeFaces;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TransferEvent;
 import org.primefaces.event.UnselectEvent;
@@ -105,7 +103,7 @@ public class DescargoController implements Serializable {
     private String acta;
     private String serie;
     private boolean btnDesc = true;
-    private boolean btnGuardar = true;
+    private boolean btnGuardar = false;
     private boolean btnDetalle = true;
     private boolean btnEnviar = true;
     private boolean btnImp = true;
@@ -186,11 +184,13 @@ public class DescargoController implements Serializable {
         if (JsfUtil.getRequestParameter("idDescargo") != null) {
             tras = bejb.getDescargos(new Long(JsfUtil.getRequestParameter("idDescargo")));
             td = bejb.getDescargoDet(new Long(JsfUtil.getRequestParameter("idDescargo")));
+            
             unidadAF = tras.getUnidadActivoFijo();
             unidadAdm = td.getCodigoUnidad();
             tipoUnidad = cejb.getTipoUnidad(unidadAdm);
             activo = tras.getTipoDescargo().toString();
             lstBienesDescargar = bejb.buscarBien(" a.DESCARGO_id=" + new Long(JsfUtil.getRequestParameter("idDescargo")));
+         //   bienesTarget =lstBienesDescargar;
             numSolicitud = tras.getCodigoDescargo();
             fec1 = tras.getFechaDescargo();
             tipDescargo = tras.getIdTipoDescargo();
@@ -270,8 +270,11 @@ public class DescargoController implements Serializable {
 
                 }
             }
+            bienesTarget =lstBienesDescargar; 
+            buscarBienes();
         }
-
+    
+     
     }
 
     public DualListModel<VwBienes> getBienes() {
@@ -650,11 +653,12 @@ public class DescargoController implements Serializable {
     public void abrir() {
         buscarBienes();
         PrimeFaces.current().ajax().update("bienesPickList");
+        btnGuardar=false;
     }
 
     public void buscarBienes() {
         String condicion;
-        condicion = "A.ID_ESTATUS_BIEN=1 AND A.CODIGO_UNIDAD in (select CODIGO_UNIDAD from AF_UNIDADES_ADMINISTRATIVAS ";
+        condicion = "A.ID_ESTATUS_BIEN=1 AND A.ID_BIEN NOT IN (SELECT ID_BIEN FROM AF_DESCARGOS_DETALLE) AND A.CODIGO_UNIDAD in (select CODIGO_UNIDAD from AF_UNIDADES_ADMINISTRATIVAS ";
 
         if (tipoUnidad.equals("0")) {
             condicion = condicion + ") and ";
@@ -816,14 +820,15 @@ public class DescargoController implements Serializable {
         StringBuilder builder = new StringBuilder();
         for (Object item : event.getItems()) {
             builder.append(((VwBienes) item).getCodigoInventario()).append("<br />");
+            lstBienesDescargar.add(((VwBienes) item));
         }
 
-        FacesMessage msg = new FacesMessage();
+       /* FacesMessage msg = new FacesMessage();
         msg.setSeverity(FacesMessage.SEVERITY_INFO);
         msg.setSummary("Items Transferred");
         msg.setDetail(builder.toString());
 
-        FacesContext.getCurrentInstance().addMessage(null, msg);
+        FacesContext.getCurrentInstance().addMessage(null, msg);*/
     }
 
     public void onSelect(SelectEvent event) {
@@ -843,7 +848,7 @@ public class DescargoController implements Serializable {
 
     public void guardarDescargo() {
         if (!lstBienesDescargar.isEmpty()) {
-
+          if (!tipDescargo.equals("0")){
             if (tras.getDescargoId() == null) {
                 tras = new AfDescargos();
                 tras.setUnidadActivoFijo(unidadAF);
@@ -860,7 +865,11 @@ public class DescargoController implements Serializable {
                 //bejb.actualizarEstadoBien(lstBienesDescargar,"S");
             }
             JsfUtil.mensajeInformacion("Solicitud Almacenada");
-            //  JsfUtil.redireccionar("/app/mantenimientos/descargoBienes.mined?faces-redirect=true&idDescargo="+tras.getDescargoId());*/
+            JsfUtil.redireccionar("/app/mantenimientos/descargoBienes.mined?faces-redirect=true&idDescargo="+tras.getDescargoId());
+          } else {
+            JsfUtil.mensajeError("Seleccione el tipo de Descargo");
+        }
+                    
         } else {
             JsfUtil.mensajeError("Descargo sin bienes asociados");
         }

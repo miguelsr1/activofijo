@@ -49,7 +49,7 @@
                     <p:row>
                         <p:column><h:outputLabel value="Activos:     "/>
                             <h:selectOneMenu id="activo" value="#{descargoController.activo}"  required="true" requiredMessage="Seleccione si es Activo" disabled="#{descargoController.actCtrl}">
-                                <p:ajax update="uadm" />
+                               <p:ajax update="activo" /> 
                                 <f:selectItem itemLabel="Seleccione" itemValue=""/>    
                                 <f:selectItem itemLabel="Mayores 600" itemValue="A"/>
                                 <f:selectItem itemLabel="Menores 600" itemValue="N"/>
@@ -59,7 +59,8 @@
                     <p:row>
                         <p:column>
                             <h:outputLabel value="Tipo Descargo:" />
-                            <p:selectOneMenu id="tipTras" value="#{descargoController.tipDescargo}" required="true" requiredMessage="Seleccione tipo traslado" disabled="#{descargoController.actCtrl}">
+                            <p:selectOneMenu id="tipo" value="#{descargoController.tipDescargo}" required="true" requiredMessage="Seleccione tipo traslado" disabled="#{descargoController.actCtrl}">
+                                 <p:ajax update="tipo" />
                                 <f:selectItem itemLabel="-Seleccione-" itemValue="0"/>
                                 <f:selectItems value="#{descargoController.lstTipoDescargo}" var="tipo" itemLabel="#{tipo.nombreTipoDescargo}" itemValue="#{tipo.idTipoDescargo}"/>
                             </p:selectOneMenu>     
@@ -67,7 +68,7 @@
                     </p:row>
                     <p:row>
                         <p:column>
-                            <p:commandButton value="Agregar Bienes" action="#{descargoController.abrir}" process="@this">
+                            <p:commandButton value="Agregar Bienes" action="#{descargoController.abrir}" process="@this" disabled="#{descargoController.actCtrl}">
                                 <ajax update="bienesPickList"/>  
                             </p:commandButton>
                         </p:column>
@@ -75,27 +76,25 @@
                 </h:panelGrid>
             </p:panel>
             <p:panel id="bienesDes">
-                <p:growl id="msg" showDetail="true" escape="false" />
-                <p:pickList id="bienesPickList" value="#{descargoController.bienes}" var="bien" effect="bounce" 
-                            itemValue="#{bien}" itemLabel="#{bien.codigoInventario}" showSourceControls="false" showTargetControls="false" showCheckbox="true"
-                            showSourceFilter="true" showTargetFilter="false" filterMatchMode="contains" converter="classConverter" responsive="true" style="width: 50%">
+               
+                <p:pickList id="bienesPickList" value="#{descargoController.bienes}" var="bien"  
+                            itemValue="#{bien}" itemLabel="#{bien.codigoInventario}" showSourceControls="false" showTargetControls="false" showCheckbox="#{descargoController.actCtrl}"
+                            showSourceFilter="#{descargoController.actCtrl}" showTargetFilter="false" filterMatchMode="contains" converter="classConverter" responsive="true" style="width: 50%">
 
                     <f:facet name="sourceCaption">Activo</f:facet>
                     <f:facet name="targetCaption">a Descargar</f:facet>
 
-                    <p:ajax event="transfer" listener="#{descargoController.onTransfer}" update="msg" />
-                    <p:ajax event="select" listener="#{descargoController.onSelect}" update="msg"/>
-                    <p:ajax event="unselect" listener="#{descargoController.onUnselect}" update="msg"/>
-                    <p:ajax event="reorder" listener="#{descargoController.onReorder}" update="msg"/>
+                    <p:ajax event="transfer" listener="#{descargoController.onTransfer}" disabled="#{descargoController.btnGuardar}" />
+                    <p:ajax event="select" listener="#{descargoController.onSelect}" disabled="#{descargoController.btnGuardar}"/>
+                    <p:ajax event="unselect" listener="#{descargoController.onUnselect}" disabled="#{descargoController.btnGuardar}"/>
+                    <p:ajax event="reorder" listener="#{descargoController.onReorder}" disabled="#{descargoController.btnGuardar}"/>
                     <p:column style="width:85%;">
                         <h:outputText value="#{bien.codigoInventario}" />
                     </p:column>
                 </p:pickList>
                 <p:column>
-                    <p:commandButton value="Guardar" icon="fa fa-save"  action="#{descargoController.guardarDescargo}" disabled="#{descargoController.btnGuardar}"/>
+                    <p:commandButton value="Guardar"   action="#{descargoController.guardarDescargo}" process="@this" disabled="#{descargoController.btnGuardar}"/>
                 </p:column>
-                <p:commandButton id="pojoSubmit" value="Submit" update="displayBienes"  oncomplete="PF('BienesDialog').show()"  style="margin-top:5px" />
-
                 <p:dialog modal="true" showEffect="fade" hideEffect="fade" widgetVar="BienesDialog">
                     <h:panelGrid id="displayBienes" columns="2">
                         <h:outputText value="Source: " style="font-weight:bold" />
@@ -130,50 +129,6 @@
 
                 </p:dialog>
             </p:panel> 
-            <p:panel id="pnlBienes">
-                <p:dataTable value="#{descargoController.lstBienesDescargar}" var="tras" rowKey="#{tras.idBien}" selectionMode="single"
-                             rowIndexVar="id">
-                    <p:column headerText="Id"  style="width: 100px">
-                        <h:outputText value="#{tras.idBien}"/>
-                    </p:column>
-                    <p:column headerText="C&oacute;digo Inventario" style="width: 120px">
-                        <h:outputText value="#{tras.codigoInventario}"/>
-                    </p:column>
-                    <p:column headerText="Descripci&oacute;n" style="width: 200px">
-                        <h:outputText value="#{tras.descripcionBien}"/>
-                    </p:column>
-                    <p:column headerText="Marca" style="width: 80px">
-                        <h:outputText value="#{tras.marca}"/>
-                    </p:column>
-                    <p:column headerText="Modelo" style="width: 80px">
-                        <h:outputText value="#{tras.modelo}"/>
-                    </p:column>
-                    <p:column headerText="Serie" style="width: 80px">
-                        <h:outputText value="#{tras.numeroSerie}"/>
-                    </p:column>
-                    <p:column headerText="Fecha " style="width: 60px">
-                        <h:outputLabel value="#{tras.fechaAdquisicion}">
-                            <f:convertDateTime pattern="dd/MM/yyyy" />
-                        </h:outputLabel>    
-                    </p:column>
-                    <p:column headerText="Precio" style="width: 60px">
-                        <h:outputText value="#{tras.valorAdquisicion}">
-                            <f:convertNumber pattern="#0.00" />
-                        </h:outputText>    
-                    </p:column>
-                    <p:column headerText="borrar">
-                        <p:commandLink action="#{descargoController.dropBienesDescargado}" ajax="true" update="pnlBienes" disabled="#{descargoController.btnGuardar}">
-                            <f:setPropertyActionListener value="#{rowId}" target="#{descargoController.rowDrop}"/>  
-                            <f:setPropertyActionListener value="#{tras}" target="#{descargoController.vb}"/>  
-                            <f:setPropertyActionListener value="#{tras.idBien}" target="#{descargoController.idBien}"/>  
-                            <i class="fa fa-times blue" style="font-size: 17px;"></i>
-                        </p:commandLink>
-                    </p:column>
-                </p:dataTable>
-            </p:panel>
-
-
-
         </ui:define>
     </ui:composition>
 
