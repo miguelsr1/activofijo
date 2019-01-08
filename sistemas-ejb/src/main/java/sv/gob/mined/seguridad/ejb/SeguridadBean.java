@@ -64,13 +64,17 @@ public class SeguridadBean {
         String claveMd5 = UtilSeguridad.getMD5(claveAcesso).toUpperCase();
         try {
 
-            Query q = em.createQuery("SELECT u FROM Usuario u WHERE u.activo='A' AND u.login=:usu AND u.claveAcceso=:clave", Usuario.class);
+            Query q = em.createQuery("SELECT u FROM Usuario u WHERE u.activo='A' AND u.login=:usu", Usuario.class);
             q.setParameter("usu", usuario);
-            q.setParameter("clave", claveMd5);
             param.put(Constantes.USUARIO_VALIDO, !q.getResultList().isEmpty());
-
+            Usuario usu = (Usuario) q.getResultList().get(0);
+            if (!usu.getClaveAcceso().equals(claveMd5)){
+                param.put(Constantes.CLAVE_VALIDA, false);
+            }else{
+                param.put(Constantes.CLAVE_VALIDA, true);
+            }
             if ((Boolean) param.get(Constantes.USUARIO_VALIDO)) {
-                Usuario usu = (Usuario) q.getResultList().get(0);
+            
                 param.put(Constantes.USUARIO, usu);
                 param.put(Constantes.USUARIO_EXPIRADO, usu.getFechaExpiracion().before(new Date()));
                 param.put(Constantes.USUARIO_CAMBIAR_CLAVE, usu.getCambiarClave().equals('S'));
@@ -97,7 +101,7 @@ public class SeguridadBean {
         Map<String, Object> param = new HashMap();
 
         try {
-            Query q = em.createNativeQuery("SELECT u FROM Usuario u WHERE u.activo='A' AND u.login=:usu", Usuario.class);
+            Query q = em.createQuery("SELECT u FROM Usuario u WHERE u.activo='A' AND u.login=:usu", Usuario.class);
             q.setParameter("usu", usuario);
 
             param.put(Constantes.USUARIO_VALIDO, !q.getResultList().isEmpty());

@@ -16,13 +16,18 @@ import java.util.List;
 import java.util.Locale;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.JRException;
+import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.event.TransferEvent;
+import org.primefaces.event.UnselectEvent;
+import org.primefaces.model.DualListModel;
 import sv.gob.mined.activofijo.ejb.BienesEJB;
 import sv.gob.mined.activofijo.ejb.CatalogosEJB;
 import sv.gob.mined.activofijo.model.AfBienesDepreciables;
@@ -54,15 +59,15 @@ public class TrasladoController implements Serializable {
     public VwBienes Vb = new VwBienes();
     public Date fecTraslado;
     public Character tipTraslado;
-    public List<AfTipoTraslados> lstTipoTraslado = new ArrayList<AfTipoTraslados>();
-    public List<AfTraslados> lstTraslados = new ArrayList<AfTraslados>();
+    public List<AfTipoTraslados> lstTipoTraslado = new ArrayList<>();
+    public List<AfTraslados> lstTraslados = new ArrayList<>();
     public List<AfTraslados> lstTdtmp = new ArrayList();
-    public List<AfUnidadesActivoFijo> lstAFOrg = new ArrayList<AfUnidadesActivoFijo>();
-    public List<AfUnidadesActivoFijo> lstAFDes = new ArrayList<AfUnidadesActivoFijo>();
-    public List<AfUnidadesAdministrativas> lstUnidadAdm = new ArrayList<AfUnidadesAdministrativas>();
-    public List<AfUnidadesAdministrativas> lstUnidadAdmDes = new ArrayList<AfUnidadesAdministrativas>();
-    public List<AfBienesDepreciables> lstBienes = new ArrayList<AfBienesDepreciables>();
-    public List<VwBienes> lstBienesTrasladar = new ArrayList<VwBienes>();
+    public List<AfUnidadesActivoFijo> lstAFOrg = new ArrayList<>();
+    public List<AfUnidadesActivoFijo> lstAFDes = new ArrayList<>();
+    public List<AfUnidadesAdministrativas> lstUnidadAdm = new ArrayList<>();
+    public List<AfUnidadesAdministrativas> lstUnidadAdmDes = new ArrayList<>();
+    public List<AfBienesDepreciables> lstBienes = new ArrayList<>();
+    public List<VwBienes> lstBienesTrasladar = new ArrayList<>();
     
     private int rowDrop = 0;
     public String unidadAdm;
@@ -77,7 +82,7 @@ public class TrasladoController implements Serializable {
     public String cargoRecibe;
     public String AdmDestino;
     public String unidadAF;
-    private List<Long> lstBientmp = new ArrayList<Long>();
+    private List<Long> lstBientmp = new ArrayList<>();
     public boolean pnlDest = false;
     public boolean pnlTras =true;
     public boolean activarCampos=true;
@@ -92,7 +97,6 @@ public class TrasladoController implements Serializable {
     public String estado;   
     private String tipoUsu;
     public Long idBien;
-    public AfBienesDepreciables Bienes;
     public Date fec1;
     public Date fec2;
     public String codigoInv;
@@ -106,10 +110,16 @@ public class TrasladoController implements Serializable {
     public BienesEJB getBejb() {
         return bejb;
     }
-
+    
+    private DualListModel<VwBienes> bienes;
+    List<VwBienes> bienesSource = new ArrayList<>();
+    List<VwBienes> bienesTarget = new ArrayList<>();
+   
     @PostConstruct
     public void cargarUnidad() {
         
+         bienes = new DualListModel<>(bienesSource, bienesTarget);
+
          usuDao = ((LoginController) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "loginController")).getUsuario();
           tipoUsu = usuDao.getTipoUsuario().toString();
@@ -168,10 +178,21 @@ public class TrasladoController implements Serializable {
                     btnImprime=false;
                 }
             }
+            bienesTarget =lstBienesTrasladar; 
+            buscarBienes();
          }
          
       }
 
+    
+     public DualListModel<VwBienes> getBienes() {
+        return bienes;
+    }
+
+    public void setBienes(DualListModel<VwBienes> bienes) {
+        this.bienes = bienes;
+    }
+    
     public List<AfTraslados> getLstTdtmp() {
         return lstTdtmp;
     }
@@ -521,13 +542,7 @@ public class TrasladoController implements Serializable {
         this.tras = tras;
     }
 
-    public AfBienesDepreciables getBienes() {
-        return Bienes;
-    }
-
-    public void setBienes(AfBienesDepreciables Bienes) {
-        this.Bienes = Bienes;
-    }
+  
 
   
     public String getCodigoInv() {
@@ -604,6 +619,12 @@ public class TrasladoController implements Serializable {
         return cejb.getUnidadAf();
     }
     
+     public void abrir() {
+        buscarBienes();
+        PrimeFaces.current().ajax().update("bienesPickList");
+        btnGuardar=false;
+    }
+     
      public void abrirDialog() {
         if (!lstTdtmp.isEmpty()) {
             RequestContext.getCurrentInstance().execute("PF('dlg1').show()");
@@ -611,16 +632,8 @@ public class TrasladoController implements Serializable {
             JsfUtil.mensajeError("Seleccione Traslado a Eliminar");
         }
     }
-    public void bienesTrasladar() {
-        
-        if (Bienes!=null){
-            lstBienesTrasladar.addAll(bejb.buscarBien(" id_bien="+Bienes.getIdBien())); //cejb.getBienesTrasladar());
-            lstBientmp.add(Bienes.getIdBien());
-            Bienes=null;
-        }else{
-           JsfUtil.mensajeError("Ingrese el bien a trasladar");
-        }
-    }
+ 
+     
      public void eliminarTraslado() {
          if (!lstTdtmp.isEmpty()){
         for (AfTraslados td : lstTdtmp) {
@@ -643,6 +656,48 @@ public class TrasladoController implements Serializable {
        tras = bejb.getTraslado(idTraslado);
        lstBienesTrasladar=bejb.buscarBien(" a.id_traslado="+idTraslado);
     }
+    
+    public void buscarBienes() {
+        String condicion;
+        condicion = "A.ID_ESTATUS_BIEN=1 AND A.ID_BIEN NOT IN (SELECT ID_BIEN FROM AF_TRASLADOS_DETALLE) AND A.CODIGO_UNIDAD in (select CODIGO_UNIDAD from AF_UNIDADES_ADMINISTRATIVAS ";
+
+        if (tipUniOrg.equals("0")) {
+            condicion = condicion + ") and ";
+        } else {
+            condicion = condicion + " where TIPO_UNIDAD='" + tipUniOrg + "') and ";
+        }
+        if (!unidadAFOrig.equals("0")) { condicion=condicion+ " a.unidad_activo_fijo='"+unidadAFOrig+"' and ";}
+        if (!unidadAdmOrg.equals("0")) { condicion=condicion+ " a.codigo_unidad='"+unidadAdmOrg+"' and ";}
+        condicion = condicion.substring(0, condicion.length() - 4);
+
+        bienesSource = bejb.buscarBien(condicion);
+
+        bienes = new DualListModel<>(bienesSource, bienesTarget);
+    }
+
+      public void onTransfer(TransferEvent event) {
+        StringBuilder builder = new StringBuilder();
+        for (Object item : event.getItems()) {
+            builder.append(((VwBienes) item).getCodigoInventario()).append("<br />");
+            lstBienesTrasladar.add(((VwBienes) item));
+        }
+    }
+
+    public void onSelect(SelectEvent event) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Item Selected", event.getObject().toString()));
+    }
+
+    public void onUnselect(UnselectEvent event) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Item Unselected", event.getObject().toString()));
+    }
+
+    public void onReorder() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "List Reordered", null));
+    }
+
     
     public void buscarTraslados(){
         String condicion="";

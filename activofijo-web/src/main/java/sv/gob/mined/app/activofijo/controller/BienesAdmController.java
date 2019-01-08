@@ -130,10 +130,7 @@ public class BienesAdmController implements Serializable{
     private List<AfBienesDepreciables> lstBienesDepreciable = new ArrayList();
     private List<AfUnidadesAdministrativas> lstUnidadAdm = new ArrayList();
     private List<AfTipoBienes> lstTipoBienes = new ArrayList();
-    private List<AfCategoriasBien> lstCatBien = new ArrayList();
-    private List<AfFormaAdquisicion> lstFormaAdq = new ArrayList();
-    private List<AfEjercicioFiscal> lstAnios = new ArrayList();
-    private List<AfProyectos> lstProyectos = new ArrayList();
+     private List<AfProyectos> lstProyectos = new ArrayList();
     private List<VwBienes> lstBienes = new ArrayList();
     private List<VwCorrelativos> lstCorrelativos = new ArrayList();
     private List<AfEmpleados> lstEmpleados = new ArrayList<>();

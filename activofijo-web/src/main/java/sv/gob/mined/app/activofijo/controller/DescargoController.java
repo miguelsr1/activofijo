@@ -139,7 +139,7 @@ public class DescargoController implements Serializable {
     @PostConstruct
     public void cargarUnidad() {
 
-        bienes = new DualListModel<>(bienesSource, bienesTarget);
+      
 
         usuDao = ((LoginController) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "loginController")).getUsuario();
@@ -190,88 +190,77 @@ public class DescargoController implements Serializable {
             tipoUnidad = cejb.getTipoUnidad(unidadAdm);
             activo = tras.getTipoDescargo().toString();
             lstBienesDescargar = bejb.buscarBien(" a.DESCARGO_id=" + new Long(JsfUtil.getRequestParameter("idDescargo")));
-         //   bienesTarget =lstBienesDescargar;
             numSolicitud = tras.getCodigoDescargo();
             fec1 = tras.getFechaDescargo();
             tipDescargo = tras.getIdTipoDescargo();
             actTipo = true;
             actAF = true;
             actAd = true;
-            actCtrl = true;
+            
             if (tras.getEstado() == 'S') {
+                 btnGuardar = false;
+                 btnEnviar = false;
+                 btnImp = false;
+                 actCtrl = true;
                 if (activo.equals("A")) {
                     if (tipoUsu.equals("I")) {
                         btnDesc = false;
-                        btnGuardar = false;
                         btnDetalle = false;
-                        btnEnviar = false;
-                        btnImp = false;
                     } else {
                         btnDesc = true;
-                        btnGuardar = false;
                         btnDetalle = true;
-                        btnEnviar = false;
-                        btnImp = false;
-
                     }
                 } else {
                     if (tipoUsu.equals("I") || tipoUsu.equals("D")) {
                         btnDesc = true;
-                        btnGuardar = false;
                         btnDetalle = true;
-                        btnEnviar = false;
-                        btnImp = false;
                     } else {
                         btnDesc = true;
-                        btnGuardar = false;
-                        btnEnviar = false;
                         btnDetalle = false;
-                        btnImp = false;
                     }
                 }
 
             } else {
                 pnlTras = false;
+               
+                 btnGuardar = true;
+                 btnDetalle = true;
+                 btnEnviar = true;
+                 btnImp = false;
                 if (tras.getEstado() == 'D') {
-
-                    btnDesc = true;
-                    btnGuardar = true;
-                    btnDetalle = true;
-                    btnEnviar = true;
-                    btnImp = false;
-
+                   btnDesc = true;
+                    actCtrl = true;
                 } else {
+                     if (tras.getEstado() == 'P') {
+                       actCtrl = true;
+                        btnDesc = true;
+                   } else {
+                         
+                     actCtrl = false;
                     if (activo.equals("A")) {
                         if (tipoUsu.equals("I")) {
                             btnDesc = false;
                         } else {
                             btnDesc = true;
                         }
-                        btnGuardar = true;
-                        btnDetalle = true;
-                        btnEnviar = true;
-                        btnImp = false;
-
                     } else {
                         if (tipoUsu.equals("A") || tipoUsu.equals("C")) {
                             btnDesc = true;
-                            btnGuardar = true;
-                            btnDetalle = true;
-                            btnEnviar = true;
-                            btnImp = false;
                         } else {
                             btnDesc = false;
-                            btnGuardar = true;
-                            btnDetalle = true;
-                            btnEnviar = true;
-                            btnImp = false;
                         }
                     }
 
                 }
+                }
             }
             bienesTarget =lstBienesDescargar; 
             buscarBienes();
+        }else{
+              btnGuardar = false;
+              btnEnviar = true;
+              btnImp = false;
+              actCtrl = false;
         }
     
      
@@ -628,16 +617,7 @@ public class DescargoController implements Serializable {
     public List<AfUnidadesActivoFijo> getLstUnidadAF() {
         return cejb.getUnidadAf();
     }
-
-    /*  public void bienesDescargar() {
-        if (Bienes!=null){
-            lstBienesDescargar.addAll(bejb.buscarBien(" id_bien="+Bienes.getIdBien())); //cejb.getBienesTrasladar());
-            lstBientmp.add(Bienes.getIdBien());
-            Bienes=null;
-        }else{
-           JsfUtil.mensajeError("Ingrese el bien a descargar");
-        }
-    }*/
+   
     public List<VwBienes> getLstBienes() {
         return lstBienes;
     }
@@ -820,15 +800,7 @@ public class DescargoController implements Serializable {
         StringBuilder builder = new StringBuilder();
         for (Object item : event.getItems()) {
             builder.append(((VwBienes) item).getCodigoInventario()).append("<br />");
-            lstBienesDescargar.add(((VwBienes) item));
         }
-
-       /* FacesMessage msg = new FacesMessage();
-        msg.setSeverity(FacesMessage.SEVERITY_INFO);
-        msg.setSummary("Items Transferred");
-        msg.setDetail(builder.toString());
-
-        FacesContext.getCurrentInstance().addMessage(null, msg);*/
     }
 
     public void onSelect(SelectEvent event) {
@@ -846,10 +818,12 @@ public class DescargoController implements Serializable {
         context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "List Reordered", null));
     }
 
-    public void guardarDescargo() {
-        if (!lstBienesDescargar.isEmpty()) {
+public void guardarDescargo() {
+      
+        if (!bienesTarget.isEmpty()) {
           if (!tipDescargo.equals("0")){
             if (tras.getDescargoId() == null) {
+                
                 tras = new AfDescargos();
                 tras.setUnidadActivoFijo(unidadAF);
                 tras.setTipoDescargo(activo.charAt(0));
@@ -860,9 +834,8 @@ public class DescargoController implements Serializable {
             bejb.guardarDescargo(tras, usuDao.getLogin());
             tras.getDescargoId();
             if (tras.getDescargoId() != null) {
-
-                bejb.guardarDescargoDetalle(lstBienesDescargar, tras);
-                //bejb.actualizarEstadoBien(lstBienesDescargar,"S");
+                bejb.guardarDescargoDetalle(bienesTarget, tras);
+              
             }
             JsfUtil.mensajeInformacion("Solicitud Almacenada");
             JsfUtil.redireccionar("/app/mantenimientos/descargoBienes.mined?faces-redirect=true&idDescargo="+tras.getDescargoId());
@@ -876,7 +849,6 @@ public class DescargoController implements Serializable {
     }
 
     public void enviarDescargo() {
-
         if (tras.getDescargoId() != null) {
             tras.setEstado('P');
         }
@@ -885,12 +857,12 @@ public class DescargoController implements Serializable {
 
         if (tras.getDescargoId() != null) {
 
-            bejb.guardarDescargoDetalle(lstBienesDescargar, tras);
-            bejb.actualizarEstadoBien(lstBienesDescargar, "P");
+            bejb.guardarDescargoDetalle(bienesTarget, tras);
+            bejb.actualizarEstadoBien(bienesTarget, "P");
         }
         pnlTras = true;
         JsfUtil.mensajeInformacion("Descargo enviado con éxito");
-        // JsfUtil.redireccionar("buscarDescargos.mined?faces-redirect=true");
+        JsfUtil.redireccionar("buscarDescargos.mined?faces-redirect=true");
     }
 
     public void realizarDescargo() {

@@ -10,6 +10,7 @@ package sv.gob.mined.seguridad.util;
  */
 public class Constantes {
     public static final String USUARIO = "usuario";
+    public static final String CLAVE_VALIDA ="claveValida";
     public static final String TIPO_USUARIO = "tipoUsuario";
     public static final String COD_ENTIDAD = "codigoEntidad";
     public static final String COD_DEPARTAMENTO = "codigoDepartamento";

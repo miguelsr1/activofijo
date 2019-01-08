@@ -6,9 +6,18 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://java.sun.com/jsf/core">
     <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+          <ui:define name="head">
+        <style type="text/css">
+            .ui-picklist-button-add-all{
+                visibility: hidden !important;
+            }
+            .ui-picklist-button-remove-all{
+                visibility: hidden !important;
+            }
+        </style>
+    </ui:define>
         <ui:define name="content">
             <p:menubar id="barBtns" > 
-                <p:menuitem value="Guardar" icon="fa fa-file-o"  action="#{trasladoController.guardarTraslado}" disabled="#{trasladoController.btnGuardar}"/>
                 <p:menuitem value="Enviar" icon="fa fa-file-o" onclick="PF('dlgGuardar').show();" ajax="true" disabled="#{trasladoController.btnEnviar}"/>
                 <p:menuitem value="Autorizar" icon="fa fa-file-o" onclick="PF('dlgAutorizar').show();" ajax="true" disabled="#{trasladoController.btnAuto}"/>
                 <p:menuitem value="Imprimir" icon="fa fa-print" action="#{trasladoController.imprimirTraslado}" ajax="false" disabled="#{trasladoController.btnImprime}"/>
@@ -92,23 +101,49 @@
                               </p:column> 
                           </p:row>  
                     <p:row>
-                        <p:column colspan="3" >
-                            <p:panel id="pnlTraslado" header="BIENES A TRASLADAR" visible="#{trasladoController.pnlTras}">
-                                <p:outputLabel value="CODIGO INVENTARIO:" for="idBien" />
-                                <p:autoComplete id="idBien" value="#{trasladoController.bienes}" completeMethod="#{trasladoController.completarBienes}" 
-                                                forceSelection="true" converter="afBienesConverter"
-                                                var="iBien" itemValue="#{iBien}" itemLabel="#{iBien.codigoInventario}">
-                                    <h:outputText value="#{iBien.codigoInventario}" />
-                                </p:autoComplete>  
-                                <p:commandLink action="#{trasladoController.bienesTrasladar}" update="pnlBienes pnlTraslado">
-                                    <i class="fa fa-dot-circle-o blue" style="font-size: 17px;"></i>
-                                </p:commandLink>
-                            </p:panel> 
-                        </p:column>
+                       <p:column>
+                        <p:commandButton value="Agregar Bienes" action="#{trasladoController.abrir}" process="@this" disabled="#{trasladoController.activarCampos}" >
+                            <ajax update="bienesPickList"/>  
+                        </p:commandButton>
+                    </p:column>
                     </p:row>
                 </h:panelGrid>
             </p:panel>
-  <p:panel>
+               <p:panel id="bienesDes">
+
+                   <p:pickList id="bienesPickList" value="#{trasladoController.bienes}" var="bien"  itemValue="#{bien}" itemLabel="#{bien.codigoInventario}"
+                        showSourceControls="false" showTargetControls="false" showCheckbox="#{!trasladoController.btnGuardar}" 
+                        showSourceFilter="#{!trasladoController.btnGuardar}" showTargetFilter="false" filterMatchMode="contains" converter="classConverter" responsive="true" style="width: 50%">
+
+                <f:facet name="sourceCaption">Activo</f:facet>
+                <f:facet name="targetCaption">a Descargar</f:facet>
+
+                <p:ajax event="transfer" listener="#{trasladoController.onTransfer}" />
+                <p:ajax event="select" listener="#{trasladoController.onSelect}" />
+                <p:ajax event="unselect" listener="#{trasladoController.onUnselect}" />
+                <p:ajax event="reorder" listener="#{trasladoController.onReorder}"/>
+                <p:column style="width:85%;">
+                    <h:outputText value="#{bien.codigoInventario}" />
+                </p:column>
+            </p:pickList>
+            <p:column>
+                <p:commandButton value="Guardar"   action="#{trasladoController.guardarTraslado}" process="@this" disabled="#{trasladoController.btnGuardar}"/>
+            </p:column>
+            <p:dialog modal="true" showEffect="fade" hideEffect="fade" widgetVar="BienesDialog">
+                <h:panelGrid id="displayBienes" columns="2">
+                    <h:outputText value="Source: " style="font-weight:bold" />
+                    <ui:repeat value="#{trasladoController.bienes.source}" var="bien1">
+                        <h:outputText value="#{bien.codigoInventario}" style="margin-right:5px" />
+                    </ui:repeat>
+
+                    <h:outputText value="Target: " style="font-weight:bold" />
+                    <ui:repeat value="#{descargoController.bienes.target}" var="bien2">
+                        <h:outputText value="#{bien.codigoInventario}" style="margin-right:5px" />
+                    </ui:repeat>
+                </h:panelGrid>
+            </p:dialog>    
+        </p:panel>
+            <p:panel>
                    <p:dialog id="dlgGuardar" widgetVar="dlgGuardar" modal="true" >
                     <p:outputLabel value="Datos Traslado" escape="false"/>
                     <h:panelGrid columns="2">
@@ -144,49 +179,6 @@
 
                     </p:dialog>
                </p:panel> 
-            <p:panel id="pnlBienes">
-                <p:dataTable value="#{trasladoController.lstBienesTrasladar}" var="tras" rowKey="#{tras.idBien}" selectionMode="single"    rowIndexVar="id">
-                    <p:column headerText="Id"  style="width: 20px">
-                        <h:outputText value="#{tras.idBien}"/>
-                    </p:column>
-                    <p:column headerText="C&oacute;digo Inventario" style="width: 100px">
-                        <h:outputText value="#{tras.codigoInventario}"/>
-                    </p:column>
-                    <p:column headerText="Descripci&oacute;n" style="width: 120px">
-                        <h:outputText value="#{tras.descripcionBien}"/>
-                    </p:column>
-                    <p:column headerText="Marca" style="width: 80px">
-                        <h:outputText value="#{tras.marca}"/>
-                    </p:column>
-                    <p:column headerText="Modelo" style="width: 80px">
-                        <h:outputText value="#{tras.modelo}"/>
-                    </p:column>
-                    <p:column headerText="Serie" style="width: 80px">
-                        <h:outputText value="#{tras.numeroSerie}"/>
-                    </p:column>
-                    <p:column headerText="Fecha " style="width: 60px">
-                        <h:outputLabel value="#{tras.fechaAdquisicion}">
-                            <f:convertDateTime pattern="dd/MM/yyyy" />
-                        </h:outputLabel>    
-                    </p:column>
-                    <p:column headerText="Precio" style="width: 60px">
-                        <h:outputText value="#{tras.valorAdquisicion}">
-                            <f:convertNumber pattern="#0.00" />
-                        </h:outputText>    
-                    </p:column>
-                    <p:column headerText="borrar">
-                        <p:commandLink action="#{trasladoController.dropBienesTrasladar}" ajax="true" update="pnlBienes" disabled="#{!trasladoController.pnlTras}">
-                            <f:setPropertyActionListener value="#{rowId}" target="#{trasladoController.rowDrop}"/>  
-                            <f:setPropertyActionListener value="#{tras}" target="#{trasladoController.vb}"/>  
-                            <f:setPropertyActionListener value="#{tras.idBien}" target="#{trasladoController.idBien}"/>  
-                              <i class="fa fa-times blue" style="font-size: 17px;"></i>
-                        </p:commandLink>
-                    </p:column>
-                </p:dataTable>
-            </p:panel>
-
-
-
         </ui:define>
     </ui:composition>
 

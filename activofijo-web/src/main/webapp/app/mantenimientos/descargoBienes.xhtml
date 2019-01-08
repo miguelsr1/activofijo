@@ -89,16 +89,16 @@
         <p:panel id="bienesDes">
 
             <p:pickList id="bienesPickList" value="#{descargoController.bienes}" var="bien"  itemValue="#{bien}" itemLabel="#{bien.codigoInventario}"
-                        showSourceControls="false" showTargetControls="false" showCheckbox="#{descargoController.actCtrl}" 
-                        showSourceFilter="#{descargoController.actCtrl}" showTargetFilter="false" filterMatchMode="contains" converter="classConverter" responsive="true" style="width: 50%">
+                        showSourceControls="false" showTargetControls="false" showCheckbox="#{!descargoController.btnGuardar}" 
+                        showSourceFilter="#{!descargoController.btnGuardar}" showTargetFilter="false" filterMatchMode="contains" converter="classConverter" responsive="true" style="width: 50%">
 
                 <f:facet name="sourceCaption">Activo</f:facet>
                 <f:facet name="targetCaption">a Descargar</f:facet>
 
-                <p:ajax event="transfer" listener="#{descargoController.onTransfer}" disabled="#{descargoController.btnGuardar}" />
-                <p:ajax event="select" listener="#{descargoController.onSelect}" disabled="#{descargoController.btnGuardar}"/>
-                <p:ajax event="unselect" listener="#{descargoController.onUnselect}" disabled="#{descargoController.btnGuardar}"/>
-                <p:ajax event="reorder" listener="#{descargoController.onReorder}" disabled="#{descargoController.btnGuardar}"/>
+                <p:ajax event="transfer" listener="#{descargoController.onTransfer}" />
+                <p:ajax event="select" listener="#{descargoController.onSelect}" />
+                <p:ajax event="unselect" listener="#{descargoController.onUnselect}" />
+                <p:ajax event="reorder" listener="#{descargoController.onReorder}"/>
                 <p:column style="width:85%;">
                     <h:outputText value="#{bien.codigoInventario}" />
                 </p:column>

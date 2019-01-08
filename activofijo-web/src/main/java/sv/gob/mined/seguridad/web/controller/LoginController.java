@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -51,6 +52,7 @@ public class LoginController implements Serializable {
     public LoginController() {
     }
 
+    
     public <T extends Object> T find(Class<T> type, Object o) {
         return seguridadBean.find(type, o);
     }
@@ -93,7 +95,7 @@ public class LoginController implements Serializable {
 
         if ((Boolean) param.get(Constantes.USUARIO_VALIDO)) {
             usuario = (Usuario) param.get(Constantes.USUARIO);
-
+            if ((Boolean) param.get(Constantes.CLAVE_VALIDA)) {
             if (!(Boolean) param.get(Constantes.USUARIO_EXPIRADO)) {
                 if ((Boolean) param.get(Constantes.USUARIO_CAMBIAR_CLAVE)) {
                     url = "contrasena?faces-redirect=true";
@@ -107,8 +109,13 @@ public class LoginController implements Serializable {
             } else {
                 JsfUtil.mensajeAlerta("Ha expirado su contraseña");
             }
+            }
+            else{
+                    
+             JsfUtil.mensajeAlerta("Contraseña inválida!");       
+                    }        
         } else {
-            JsfUtil.mensajeAlerta("Usuario o Clave de Acceso inválidos!");
+            JsfUtil.mensajeAlerta("Usuario inválido!");
         }
 
         return url;
@@ -248,7 +255,8 @@ public class LoginController implements Serializable {
     }
 
     public void resetearContrasena() {
-         Map param = seguridadBean.getUsuario(usuario.getLogin(), usuario.getClaveAcceso());
+        
+         Map param = seguridadBean.getUsuario(login);
         String url = "";
 
        if ((Boolean) param.get(Constantes.USUARIO_VALIDO)) {

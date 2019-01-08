@@ -566,31 +566,46 @@ public class BienesEJB {
 
     }
 
-    public AfDescargosDetalle buscarDetalle(Long idDes, Long desDet) {
+    public void eliminarDetalle(Long idDes, Long idBien) {
         AfDescargosDetalle td = new AfDescargosDetalle();
         if (idDes != null) {
-            Query q = em.createNativeQuery("select * from af_descargos_detalle A  where a.descargo_id=" + idDes + " and id_detalle_descargo=" + desDet, AfDescargosDetalle.class);
+            Query q = em.createNativeQuery("select * from af_descargos_detalle A  where a.descargo_id=" + idDes + " and a.id_bien=" + idBien, AfDescargosDetalle.class);
             if (q.getResultList() != null) {
                 td = (AfDescargosDetalle) q.getResultList().get(0);
+                em.remove(td);
             }
         }
-        return td;
+       
 
     }
 
-    public void guardarDescargoDetalle(List<VwBienes> vb, AfDescargos des) {
-        try {
-            for (VwBienes object : vb) {
-                AfDescargosDetalle td = buscarDetalle(object.getDescargoId(), object.getIdDetalleDescargo());
-                if (td.getIdDetalleDescargo() == null) { //nuevos
-                    td.setDescargoId(des);
-                    td.setIdBien(BigInteger.valueOf(object.getIdBien()));
-                    td.setCodigoUnidad(object.getCodigoUnidad());
-                    td.setIdTipoDescargo(des.getIdTipoDescargo());
+    public void eliminarDetalle(Long idDes) {
+        AfDescargosDetalle td = new AfDescargosDetalle();
+        if (idDes != null) {
+            em.createNativeQuery("delete af_descargos_detalle A  where a.descargo_id=" + idDes);
+        }
+        
 
-                    em.persist(td);
-                }
-            }
+    }
+    
+    public void guardarDescargoDetalle(List<VwBienes> vb, AfDescargos des) {
+        Query q = em.createQuery("delete FROM AfDescargosDetalle a where a.descargoId.descargoId=:descargoId");
+        q.setParameter("descargoId", des.getDescargoId());
+        q.executeUpdate();
+        
+        try {
+            AfDescargosDetalle td ;
+            for (VwBienes object : vb) {
+                    td = new AfDescargosDetalle();
+                            td.setDescargoId(des);
+                            td.setIdBien(BigInteger.valueOf(object.getIdBien()));
+                            td.setCodigoUnidad(object.getCodigoUnidad());
+                            td.setIdTipoDescargo(des.getIdTipoDescargo());
+                       em.persist(td);
+                    
+            }         
+               
+            
         } catch (Exception e) {
             System.out.println("Error al guardar descargo detalle " + e);
         }
@@ -1085,7 +1100,7 @@ public class BienesEJB {
     public List<VwDescargos> buscarDescargos(String condicion) {
 
         String Sql = "select a.DESCARGO_ID,a.CODIGO_DESCARGO,a.NOMBRE_UNIDAD,a.FECHA_DESCARGO,a.BIENES,a.TOTAL,a.NOMBRE_TIPO_DESCARGO,a.ESTADO,"
-                + "a.DES_ESTADO,a.UNIDAD_ACTIVO_FIJO,a.CODIGO_UNIDAD,a.TIPO_DESCARGO,a.FECHA_SOLICITUD,a.TIPO_UNIDAD from vw_descargos a " + condicion;
+                + "a.DES_ESTADO,a.UNIDAD_ACTIVO_FIJO,a.CODIGO_UNIDAD,a.TIPO_DESCARGO,a.FECHA_SOLICITUD,a.TIPO_UNIDAD from vw_descargos a " + condicion+" order by a.DESCARGO_ID";
 
         List<VwDescargos> lst = new ArrayList<>();
         Query q = em.createNativeQuery(Sql);
