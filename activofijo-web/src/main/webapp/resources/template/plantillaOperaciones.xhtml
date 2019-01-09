@@ -33,30 +33,27 @@
         </style>
         <script type="text/javascript" language="javascript">
             function compararFecha() {
-                var fechaTmp = $('#fechaAdq_input').val();
-                var fecha = PF('fechaAdq').getDate();
-                
-                var fMinima = new Date('01/01/1950 00:00:00');
-                var fechaAct = new Date();
-                
-                var fTemp = new Date(fechaTmp);
-                
-                if(fTemp &lt;= fMinima){
-                    PF('growl').renderMessage({"summary": "Alerta",
-                        "detail": "La fecha de adquisición no es valida y se sustituira por 01/01/1950",
-                        "severity": "warn"});
-                    PF('fechaAdq').setDate(fMinima)
-                }else {
-                    if (fecha > fechaAct) {
-                        PF('growl').renderMessage({"summary": "Alerta",
-                            "detail": "La fecha introducida es mayor a la actual",
-                            "severity": "warn"})
-                        PF('fechaAdq').setDate(fechaAct)
-                    }
-                }
+            var fechaTmp = $('#fechaAdq_input').val();
+            var fecha = PF('fechaAdq').getDate();
+            var fMinima = new Date('01/01/1950 00:00:00');
+            var fechaAct = new Date();
+            var fTemp = new Date(fechaTmp);
+            if (fTemp &lt;= fMinima){
+            PF('growl').renderMessage({"summary": "Alerta",
+                    "detail": "La fecha de adquisición no es valida y se sustituira por 01/01/1950",
+                    "severity": "warn"});
+            PF('fechaAdq').setDate(fMinima)
+            } else {
+            if (fecha > fechaAct) {
+            PF('growl').renderMessage({"summary": "Alerta",
+                    "detail": "La fecha introducida es mayor a la actual",
+                    "severity": "warn"})
+                    PF('fechaAdq').setDate(fechaAct)
+            }
+            }
             }
         </script>
-        
+
         <ui:insert name="head"/>
     </h:head>
 
@@ -100,27 +97,24 @@
                                 <i class="fa fa-user"></i>
                                 #{loginController.usuario.nombres} #{loginController.usuario.apellidos}, #{loginController.usuario.login}
                             </a>
-                        </li>
-                        <li class="fa fa-ellipsis-v menu-separator"></li>
-                        <li>
-                            <a class="Animated05 CursPointer" tabindex="-1">
-                                <p:ajaxStatus >
-                                    <f:facet name="start">
-                                        <i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size: 16px; font-weight: bold; color: blue;" aria-hidden="true"></i> 
-                                        <h:outputText value="Espere por favor"/>
-                                    </f:facet>
+                            <p:ajaxStatus >
+                                <f:facet name="start">
+                                    <i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size: 16px; font-weight: bold; color: blue;" aria-hidden="true"></i> 
+                                    <h:outputText value="Espere por favor" style="font-size: 12px;"/>
+                                </f:facet>
 
-                                    <f:facet name="complete">
-                                        <h:outputText value="" />
-                                    </f:facet>
+                                <f:facet name="complete">
+                                    <h:outputText value="" />
+                                </f:facet>
 
-                                    <f:facet name="default">
-                                        <h:outputText value="" />
-                                    </f:facet>
-                                </p:ajaxStatus>
-                            </a>
+                                <f:facet name="default">
+                                    <h:outputText value=""/>
+                                </f:facet>
+                            </p:ajaxStatus>
                         </li>
                     </ul>
+
+
                 </div>
             </div>
 

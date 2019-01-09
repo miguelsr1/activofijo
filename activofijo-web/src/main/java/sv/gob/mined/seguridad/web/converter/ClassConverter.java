@@ -12,13 +12,11 @@ package sv.gob.mined.seguridad.web.converter;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-import javax.faces.bean.ManagedProperty;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import sv.gob.mined.app.activofijo.controller.UtilController;
-import sv.gob.mined.seguridad.web.controller.LoginController;
 import sv.gob.mined.seguridad.web.util.JsfUtil;
 
 /**

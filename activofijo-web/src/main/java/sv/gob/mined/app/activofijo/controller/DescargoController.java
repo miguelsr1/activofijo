@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Locale;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIComponent;
@@ -43,8 +42,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.event.TransferEvent;
-import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.DualListModel;
 import sv.gob.mined.activofijo.ejb.BienesEJB;
 import sv.gob.mined.activofijo.ejb.CatalogosEJB;
@@ -134,7 +131,7 @@ public class DescargoController implements Serializable {
 
     private DualListModel<VwBienes> bienes;
     List<VwBienes> bienesSource = new ArrayList<>();
-    List<VwBienes> bienesTarget = new ArrayList<>();
+    //List<VwBienes> bienesTarget = new ArrayList<>();
 
     @PostConstruct
     public void cargarUnidad() {
@@ -254,7 +251,7 @@ public class DescargoController implements Serializable {
                 }
                 }
             }
-            bienesTarget =lstBienesDescargar; 
+            //bienesTarget =lstBienesDescargar; 
             buscarBienes();
         }else{
               btnGuardar = false;
@@ -663,7 +660,7 @@ public class DescargoController implements Serializable {
 
         bienesSource = bejb.buscarBien(condicion);
 
-        bienes = new DualListModel<>(bienesSource, bienesTarget);
+        bienes = new DualListModel(bienesSource, lstBienesDescargar);
     }
 
     public void descargoSeleccionado(SelectEvent event) {
@@ -795,32 +792,32 @@ public class DescargoController implements Serializable {
 
         lstBienesDescargar = bejb.buscarBien(condicion);
     }
+//
+//    public void onTransfer(TransferEvent event) {
+//        StringBuilder builder = new StringBuilder();
+//        for (Object item : event.getItems()) {
+//            builder.append(((VwBienes) item).getCodigoInventario()).append("<br />");
+//        }
+//    }
 
-    public void onTransfer(TransferEvent event) {
-        StringBuilder builder = new StringBuilder();
-        for (Object item : event.getItems()) {
-            builder.append(((VwBienes) item).getCodigoInventario()).append("<br />");
-        }
-    }
+//    public void onSelect(SelectEvent event) {
+//        FacesContext context = FacesContext.getCurrentInstance();
+//        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Item Selected", event.getObject().toString()));
+//    }
+//
+//    public void onUnselect(UnselectEvent event) {
+//        FacesContext context = FacesContext.getCurrentInstance();
+//        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Item Unselected", event.getObject().toString()));
+//    }
 
-    public void onSelect(SelectEvent event) {
-        FacesContext context = FacesContext.getCurrentInstance();
-        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Item Selected", event.getObject().toString()));
-    }
-
-    public void onUnselect(UnselectEvent event) {
-        FacesContext context = FacesContext.getCurrentInstance();
-        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Item Unselected", event.getObject().toString()));
-    }
-
-    public void onReorder() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "List Reordered", null));
-    }
+//    public void onReorder() {
+//        FacesContext context = FacesContext.getCurrentInstance();
+//        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "List Reordered", null));
+//    }
 
 public void guardarDescargo() {
       
-        if (!bienesTarget.isEmpty()) {
+        if (!getBienes().getTarget() .isEmpty()) {
           if (!tipDescargo.equals("0")){
             if (tras.getDescargoId() == null) {
                 
@@ -834,7 +831,7 @@ public void guardarDescargo() {
             bejb.guardarDescargo(tras, usuDao.getLogin());
             tras.getDescargoId();
             if (tras.getDescargoId() != null) {
-                bejb.guardarDescargoDetalle(bienesTarget, tras);
+                bejb.guardarDescargoDetalle(getBienes().getTarget(), tras);
               
             }
             JsfUtil.mensajeInformacion("Solicitud Almacenada");
@@ -855,10 +852,10 @@ public void guardarDescargo() {
 
         bejb.guardarDescargo(tras, usuDao.getLogin());
 
-        if (tras.getDescargoId() != null) {
+        if (tras.getDescargoId() != null) {  
 
-            bejb.guardarDescargoDetalle(bienesTarget, tras);
-            bejb.actualizarEstadoBien(bienesTarget, "P");
+            bejb.guardarDescargoDetalle(getBienes().getTarget(), tras);
+            bejb.actualizarEstadoBien(getBienes().getTarget(), "P");
         }
         pnlTras = true;
         JsfUtil.mensajeInformacion("Descargo enviado con éxito");

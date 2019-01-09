@@ -161,7 +161,7 @@
     </h:head>
 
     <h:body>
-          <p:idleMonitor onactive="PF('sessionTimeOutDialog').show();" 
+        <p:idleMonitor onactive="PF('sessionTimeOutDialog').show();" 
                        timeout="600000" >
             <p:ajax event="active" />
         </p:idleMonitor>
@@ -180,7 +180,7 @@
                 <p:commandButton id="confirmBackToLogin" value="Iniciar sesión" action="#{loginController.logout}" />
             </f:facet>
         </p:dialog>
-          <div id="layout-topbar" class="ShadowGray">
+        <div id="layout-topbar" class="ShadowGray">
             <div id="layout-topbar-indent">
                 <div class="columnRight">
                     <p:graphicImage styleClass="img1" value="#{pageContext.servletContext.contextPath}/resources/images/mined.png" height="85px"/> 

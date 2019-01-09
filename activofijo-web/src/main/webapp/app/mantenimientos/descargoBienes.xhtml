@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://java.sun.com/jsf/core"
-      template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="#{pageContext.servletContext.contextPath}/resources/template/plantillaOperaciones.xhtml">
 
     <ui:define name="head">
         <style type="text/css">
@@ -89,23 +89,10 @@
         <p:panel id="bienesDes">
 
             <p:pickList id="bienesPickList" value="#{descargoController.bienes}" var="bien"  itemValue="#{bien}" itemLabel="#{bien.codigoInventario}"
-                        showSourceControls="false" showTargetControls="false" showCheckbox="#{!descargoController.btnGuardar}" 
-                        showSourceFilter="#{!descargoController.btnGuardar}" showTargetFilter="false" filterMatchMode="contains" converter="classConverter" responsive="true" style="width: 50%">
+                        converter="classConverter" responsive="true" style="width: 50%"/>
+            <br/>
+            <p:commandButton value="Guardar" actionListener="#{descargoController.guardarDescargo}" disabled="#{descargoController.btnGuardar}"/>
 
-                <f:facet name="sourceCaption">Activo</f:facet>
-                <f:facet name="targetCaption">a Descargar</f:facet>
-
-                <p:ajax event="transfer" listener="#{descargoController.onTransfer}" />
-                <p:ajax event="select" listener="#{descargoController.onSelect}" />
-                <p:ajax event="unselect" listener="#{descargoController.onUnselect}" />
-                <p:ajax event="reorder" listener="#{descargoController.onReorder}"/>
-                <p:column style="width:85%;">
-                    <h:outputText value="#{bien.codigoInventario}" />
-                </p:column>
-            </p:pickList>
-            <p:column>
-                <p:commandButton value="Guardar"   action="#{descargoController.guardarDescargo}" process="@this" disabled="#{descargoController.btnGuardar}"/>
-            </p:column>
             <p:dialog modal="true" showEffect="fade" hideEffect="fade" widgetVar="BienesDialog">
                 <h:panelGrid id="displayBienes" columns="2">
                     <h:outputText value="Source: " style="font-weight:bold" />
