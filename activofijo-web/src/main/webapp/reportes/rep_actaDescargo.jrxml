@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rep_actaDescargo" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="a3aaae0d-7f8f-4f6e-a53a-ae3e0a954290">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="p_unidadAF" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="p_unidadAdm" class="java.lang.String"/>
+	<parameter name="p_codigoDescargo" class="java.lang.String"/>
+	<parameter name="p_accion" class="java.lang.String"/>
+	<parameter name="p_FecReporte" class="java.util.Date"/>
+	<parameter name="p_RutaImg" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="p_fecAcuerdo" class="java.util.Date"/>
+	<parameter name="p_numAcuerdo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select a.unidad_activo_fijo,a.fecha_descargo, a.codigo_descargo, a.descargo_id, d.codigo_unidad, f.nombre_unidad_af,
+u.nombre_unidad, sum(b.valor_adquisicion) as monto_total,
+a.FECHA_FALLO,c.DIRECCION_DEPA,c.REPRESENTANTE1,c.REPRESENTANTE2,c.REPRESENTANTE3,
+c.CARGOREPRESENTANTE1,c.CARGOREPRESENTANTE2,c.CARGOREPRESENTANTE3
+from af_descargos a inner join af_descargos_detalle d on
+a.descargo_id = d.descargo_id
+inner join af_unidades_activo_fijo f on
+a.unidad_activo_fijo= f.unidad_activo_fijo inner join af_unidades_administrativas u on
+d.codigo_unidad = u.codigo_unidad and
+a.unidad_activo_fijo = u.unidad_activo_fijo
+inner join af_bienes_depreciables b on d.id_bien = b.id_bien
+inner join af_comision_descargo c on a.unidad_activo_fijo=c.unidad_activo_fijo
+where a.descargo_id=$P{p_codigoDescargo}
+group by a.unidad_activo_fijo,  a.fecha_descargo, a.codigo_descargo, a.descargo_id, d.codigo_unidad, f.nombre_unidad_af,
+u.nombre_unidad,FECHA_FALLO,c.DIRECCION_DEPA,c.REPRESENTANTE1,c.REPRESENTANTE2,c.REPRESENTANTE3,
+c.CARGOREPRESENTANTE1,c.CARGOREPRESENTANTE2,c.CARGOREPRESENTANTE3]]>
+	</queryString>
+	<field name="UNIDAD_ACTIVO_FIJO" class="java.lang.String"/>
+	<field name="FECHA_DESCARGO" class="java.sql.Timestamp"/>
+	<field name="CODIGO_DESCARGO" class="java.lang.String"/>
+	<field name="DESCARGO_ID" class="java.math.BigDecimal"/>
+	<field name="CODIGO_UNIDAD" class="java.lang.String"/>
+	<field name="NOMBRE_UNIDAD_AF" class="java.lang.String"/>
+	<field name="NOMBRE_UNIDAD" class="java.lang.String"/>
+	<field name="MONTO_TOTAL" class="java.math.BigDecimal"/>
+	<field name="FECHA_FALLO" class="java.sql.Timestamp"/>
+	<field name="DIRECCION_DEPA" class="java.lang.String"/>
+	<field name="REPRESENTANTE1" class="java.lang.String"/>
+	<field name="REPRESENTANTE2" class="java.lang.String"/>
+	<field name="REPRESENTANTE3" class="java.lang.String"/>
+	<field name="CARGOREPRESENTANTE1" class="java.lang.String"/>
+	<field name="CARGOREPRESENTANTE2" class="java.lang.String"/>
+	<field name="CARGOREPRESENTANTE3" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="75" splitType="Stretch">
+			<textField>
+				<reportElement uuid="5c70e633-5aea-4e31-bf75-bc853883847c" x="261" y="28" width="86" height="24"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CODIGO_DESCARGO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="c0540595-e860-4110-94c3-56521a8691a1" mode="Transparent" x="204" y="28" width="57" height="24" forecolor="#000000" backcolor="#99CCFF"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ACTA  N°]]></text>
+			</staticText>
+			<image>
+				<reportElement uuid="abfdfa5a-36c3-42ae-9ae1-38f883925bca" x="16" y="14" width="49" height="38"/>
+				<imageExpression><![CDATA[$P{p_RutaImg}+File.separator+"escudo.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="596" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6cc12325-d8a6-4203-9c79-b760dfbf14dc" x="3" y="5" width="563" height="74"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["En las instalaciones de "+$F{NOMBRE_UNIDAD_AF}.trim()+", ubicadas en: "+$F{DIRECCION_DEPA}.trim()+" a "+Herramientas.getFormatoLetrasHoraYFecha($P{p_FecReporte}) +" Los suscritos miembros de la comisión Departamental de Descargo de Bienes Muebles, nombrados según Acuerdo Ejecutivo número "+$P{p_numAcuerdo}.trim()+" de fecha "+$P{p_fecAcuerdo}+"."]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6cc12325-d8a6-4203-9c79-b760dfbf14dc" x="0" y="114" width="563" height="142"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["a) Que mediante el descargo de la fecha "+Herramientas.getFormatoLetrasFecha($F{FECHA_DESCARGO})+" el Director de "+$F{NOMBRE_UNIDAD}.trim()+" solicita a la Comisión Departamental de Descargo de Bienes Muebles, el descargo de Mobiliario y Equipo de Oficina por inservibles los cuales se detallan en el AF-10, b) Que esta comisión después de haber analizado la documentación presentada, se realizó la visita de verificación física en done se encuentran los bienes a descargar; pudiendo comprobar que debido al uso que fueron sometidos y al deterioro sufrido por el paso del tiempo están inservibles, c) Que las características físicas de cada uno de los bienes fueron debidamente revisados por esta Comisión, d) Que el costo de adquisición de los bienes muebles a dar de baja ascienda a la cantidad "+Herramientas.aLetras($F{MONTO_TOTAL})+" dólares de los Estados Unidos de Norte América "+'$'+$F{MONTO_TOTAL}.toString().trim()+". Los cuales están catalogados como gastos de gestión según normativa contable por ser bienes con un costo unitario menor de "+'$'+"600.00."]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6cc12325-d8a6-4203-9c79-b760dfbf14dc" x="0" y="92" width="184" height="17"/>
+				<textElement textAlignment="Justified">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CONSIDERANDO :"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6cc12325-d8a6-4203-9c79-b760dfbf14dc" x="0" y="256" width="184" height="17"/>
+				<textElement textAlignment="Justified">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["POR TANTO :"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6cc12325-d8a6-4203-9c79-b760dfbf14dc" x="0" y="283" width="563" height="112"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["Con base a los considerandos antes mencionado y con fundamento a lo establecido en el articulo 307 inciso segundo del Reglamento de Normas Técnicas de Control Interno Especificas del MINED, en el relación al romano I inciso 1, así también al romano VI numeral 2 inciso segundo y romano VII procedimientos 1,2,4 y 5 del Instructivo Para la Conformación de las Comisiones Nacionales y Departamentales de Descargo, Venta y/o Permuta de Bienes Muebles Propiedad del Estado en el Ramo de Educación y su Procedimiento. Esta comisión AUTORIZA LA BAJA del inventario de bienes muebles de "+$F{NOMBRE_UNIDAD}.trim()+" así también que estos sean "+$P{p_accion}.trim()+". Y no habiendo más que hacer constar damos por finalizada la presente que consta de una hoja útil impresa a dos frentes en el lugar, hora y día arriba mencionados y para constancia firmamos."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ae686afc-041a-4a7b-8c1f-7b3bddc34126" x="0" y="437" width="219" height="20"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REPRESENTANTE1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="174abb17-e7a5-4afd-bcf9-c56bd8064ef0" x="0" y="457" width="219" height="15"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CARGOREPRESENTANTE1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="aa4164ce-d2ca-40ec-b17e-dd6b00767464" x="344" y="457" width="219" height="15"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CARGOREPRESENTANTE2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="847ed3f9-c9f1-46e5-8bf9-c7520b2479cb" x="0" y="537" width="221" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{REPRESENTANTE3}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="48313985-87a8-45a5-89be-ae4c8e88cd5f" x="0" y="557" width="221" height="14"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CARGOREPRESENTANTE3}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d0bba100-82f7-4208-a027-fa7e64b2dd0c" x="347" y="437" width="216" height="20"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REPRESENTANTE2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e90c0e48-1590-4cdf-b27e-fcc4b2535a55" x="0" y="472" width="219" height="13"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_UNIDAD_AF}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e90c0e48-1590-4cdf-b27e-fcc4b2535a55" x="344" y="472" width="219" height="13"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_UNIDAD_AF}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e90c0e48-1590-4cdf-b27e-fcc4b2535a55" x="2" y="571" width="219" height="13"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_UNIDAD_AF}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

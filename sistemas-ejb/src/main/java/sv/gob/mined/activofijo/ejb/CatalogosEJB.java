@@ -5,6 +5,7 @@
 package sv.gob.mined.activofijo.ejb;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -459,7 +460,7 @@ public class CatalogosEJB {
     }
 
     public List<AfTipoBienes> getTipoBien() {
-        Query q = em.createQuery("select a from AfTipoBienes a order by a.codigoTipoBien", AfTipoBienes.class);
+        Query q = em.createQuery("select a from AfTipoBienes where a.estadoTipo=1 a order by a.codigoTipoBien", AfTipoBienes.class);
         if (q.getResultList().isEmpty()) {
             return null;
         } else {
@@ -612,6 +613,16 @@ public class CatalogosEJB {
         }
     }
 
+     public String getFecha(){
+        Query q = em.createNativeQuery("select to_char(sysdate, 'Day, DD \"de\" Month de YYYY', 'NLS_DATE_LANGUAGE=SPANISH') from dual" );
+
+        if (q.getSingleResult() != null) {
+            return  q.getSingleResult().toString();
+        } else {
+            return null;
+        } 
+    }
+    
     public Date getFechaActual(){
         Query q = em.createNativeQuery("select sysdate from dual" );
 

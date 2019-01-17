@@ -22,6 +22,8 @@
             <p:menuitem value="Enviar" icon="fa fa-save" action="#{descargoController.enviarDescargo}" disabled="#{descargoController.btnEnviar}" />
             <p:menuitem id="btnSol2" value="Descargar" icon="fa fa-file-o" ajax="true" onclick="PF('dlgImprimir').show();" disabled="#{descargoController.btnDesc}" />
             <p:menuitem value="Imprimir" icon="fa fa-print" action="#{descargoController.imprimirDescargo}" ajax="false" disabled="#{descargoController.btnImp}"/>
+            <p:menuitem id="btnAct" value="Acta" icon="fa fa-file-text-o" ajax="true" onclick="PF('dlgActa').show();"  />
+          
             <p:menuitem value="atras" icon="fa fa-arrow-circle-left" action="buscarDescargos.mined" process="@this"/>
         </p:menubar>
         <p:panel  header="Descargo Bienes">
@@ -89,7 +91,16 @@
         <p:panel id="bienesDes">
 
             <p:pickList id="bienesPickList" value="#{descargoController.bienes}" var="bien"  itemValue="#{bien}" itemLabel="#{bien.codigoInventario}"
-                        converter="classConverter" responsive="true" style="width: 50%"/>
+                        showSourceControls="false" showTargetControls="false" showCheckbox="#{!descargoController.btnGuardar}" itemDisabled="#{descargoController.btnGuardar}"
+                        showSourceFilter="#{!descargoController.btnGuardar}" showTargetFilter="false" filterMatchMode="contains" converter="classConverter" responsive="true" style="width: 50%">
+
+                <f:facet name="sourceCaption">Activo</f:facet>
+                <f:facet name="targetCaption">a Descargar</f:facet>
+
+                <p:column style="width:85%;">
+                    <h:outputText value="#{bien.codigoInventario}" />
+                </p:column>
+            </p:pickList>
             <br/>
             <p:commandButton value="Guardar" actionListener="#{descargoController.guardarDescargo}" disabled="#{descargoController.btnGuardar}"/>
 
@@ -115,9 +126,7 @@
                     <p:column><p:inputText id="numsol" value="#{descargoController.numSolicitud}"/></p:column>
                     <p:column> <h:outputLabel value="Fecha Descargo:"/></p:column>
                     <p:column><p:calendar id="fechaDes" value="#{descargoController.fecDescargo}" pattern="dd/MM/yyyy"/></p:column>
-                    <p:column> <h:outputLabel value="Fecha Fallo"/></p:column>
-                    <p:column><p:calendar id="fechaFallo" value="#{descargoController.fecFallo}" pattern="dd/MM/yyyy"/></p:column>
-                    <p:column><h:outputLabel value="Observación Fallo:"/> </p:column>
+                     <p:column><h:outputLabel value="Observación Fallo:"/> </p:column>
                     <p:column><p:inputTextarea id="obsFallo" rows="3" cols="60" value="#{descargoController.obsFallo}"/></p:column>
                 </h:panelGrid>
                 <f:facet name="footer">
@@ -127,6 +136,25 @@
 
             </p:dialog>
         </p:panel> 
+        <p:panel>
+            <p:dialog id="dlgActa" widgetVar="dlgActa" modal="true" >
+                <p:outputLabel value="Datos acta descargo" escape="false"/>
+                <h:panelGrid columns="2">
+                    <p:column><h:outputLabel value="N&uacute;mero de acuerdo:"/> </p:column>
+                    <p:column><p:inputText id="numAcuerdo" value="#{descargoController.numAcuerdo}"/></p:column>
+                      <p:column> <h:outputLabel value="Fecha Acuerdo"/></p:column>
+                    <p:column><p:calendar id="fechaAcuerdo" value="#{descargoController.fecAcuerdo}" pattern="dd/MM/yyyy"/></p:column>
+                    <p:column><h:outputLabel value="Se autoriza:"/> </p:column>
+                    <p:column><p:inputTextarea id="accionAutoriza" rows="3" cols="60" value="#{descargoController.accionAutorizada}"/></p:column>
+                </h:panelGrid>
+                <f:facet name="footer">
+                    <p:commandButton value="Aceptar" onclick="PF('dlgActa').hide();" ajax="false" action="#{descargoController.imprimirActaDescargo}"/>
+                    <p:commandButton value="Cancelar" ajax="true" onclick="PF('dlgActa').hide();"/>
+                </f:facet>
+
+            </p:dialog>
+        </p:panel> 
+        
     </ui:define>
 </ui:composition>
 

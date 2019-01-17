@@ -116,12 +116,12 @@
                         <f:selectItems value="#{bienesController.lstFormaAdq}" var="forma" itemLabel="#{forma.nombreFormaAdquisicion}" itemValue="#{forma.idFormaAdquisicion}"/>
                     </p:selectOneMenu>
                     <p:outputLabel value="Fecha Adquisici&oacute;n:" />
-                  <p:calendar id="fechaAdq" value="#{bienesController.bd.fechaAdquisicion}" pattern="dd/MM/yyyy" disabled="#{bienesController.modifica}"/>
+                  <p:calendar id="fechaAdq" value="#{bienesController.bd.fechaAdquisicion}" pattern="dd/MM/yyyy" disabled="#{(bienesController.bd.valorAdquisicion>600)?true:false}"/>
                 
                     <p:outputLabel value="Documento Adquisici&oacute;n:"/>
                   <p:inputText value="#{bienesController.bd.documentoAdquisicion}"/>
                     <p:outputLabel value="Valor Adquisici&oacute;n:"/>
-                    <p:inputNumber value="#{bienesController.bd.valorAdquisicion}" disabled="#{bienesController.modifica}"/>
+                    <p:inputNumber value="#{bienesController.bd.valorAdquisicion}" disabled="#{(bienesController.bd.valorAdquisicion>600)?true:false}"/>
                   <p:outputLabel value="Es valor estimado:"/>
                   <p:selectOneRadio id="est" value="#{bienesController.bd.esValorEstimado}">
                      <f:selectItem itemLabel="Si" itemValue="S" />

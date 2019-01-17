@@ -80,14 +80,15 @@ public class DescargoController implements Serializable {
     private AfDescargos tras = new AfDescargos();
     private VwBienes Vb = new VwBienes();
     private Date fecDescargo;
-    private Date fecFallo;
+    private Date fecAcuerdo;
     private Date fec1;
     private Date fec2;
-
+    private String numAcuerdo;
     private String tipDescargo;
     private String estSolicitud;
     private String tipoUsu;
     private String activo;
+    private String direccion;
     private List<AfTipoDescargo> lstTipoDescargo = new ArrayList<>();
     private List<AfDescargos> lstDescargos = new ArrayList<>();
     private List<AfUnidadesAdministrativas> lstUnidadAdm = new ArrayList<>();
@@ -103,6 +104,7 @@ public class DescargoController implements Serializable {
     private boolean btnGuardar = false;
     private boolean btnDetalle = true;
     private boolean btnEnviar = true;
+    private boolean btnAct = true;
     private boolean btnImp = true;
     private boolean pnlDest = false;
     private boolean pnlTras = true;
@@ -112,6 +114,7 @@ public class DescargoController implements Serializable {
     private boolean actCtrl = false;
     private String tipoUnidad = "UA";
     private String observacion;
+    private String accionAutorizada;
     private String obsFallo;
     private Long idBien;
     private Long cat;
@@ -131,7 +134,7 @@ public class DescargoController implements Serializable {
 
     private DualListModel<VwBienes> bienes;
     List<VwBienes> bienesSource = new ArrayList<>();
-    //List<VwBienes> bienesTarget = new ArrayList<>();
+    List<VwBienes> bienesTarget = new ArrayList<>();
 
     @PostConstruct
     public void cargarUnidad() {
@@ -193,12 +196,13 @@ public class DescargoController implements Serializable {
             actTipo = true;
             actAF = true;
             actAd = true;
-            
+           //estado en solicitud 
             if (tras.getEstado() == 'S') {
                  btnGuardar = false;
                  btnEnviar = false;
                  btnImp = false;
                  actCtrl = true;
+                 //bienes mayores de 600
                 if (activo.equals("A")) {
                     if (tipoUsu.equals("I")) {
                         btnDesc = false;
@@ -209,7 +213,7 @@ public class DescargoController implements Serializable {
                     }
                 } else {
                     if (tipoUsu.equals("I") || tipoUsu.equals("D")) {
-                        btnDesc = true;
+                        btnDesc = false;
                         btnDetalle = true;
                     } else {
                         btnDesc = true;
@@ -226,14 +230,17 @@ public class DescargoController implements Serializable {
                  btnImp = false;
                 if (tras.getEstado() == 'D') {
                    btnDesc = true;
-                    actCtrl = true;
+                   actCtrl = true;
+                   if (tipoUsu.equals("D") && activo.equals("N")) {
+                       btnAct=false;
+                   }
                 } else {
-                     if (tras.getEstado() == 'P') {
+                     if (tras.getEstado() != 'P') {
                        actCtrl = true;
                         btnDesc = true;
                    } else {
                          
-                     actCtrl = false;
+                     actCtrl = true;
                     if (activo.equals("A")) {
                         if (tipoUsu.equals("I")) {
                             btnDesc = false;
@@ -258,6 +265,7 @@ public class DescargoController implements Serializable {
               btnEnviar = true;
               btnImp = false;
               actCtrl = false;
+               bienes = new DualListModel(bienesSource,bienesTarget );
         }
     
      
@@ -271,14 +279,48 @@ public class DescargoController implements Serializable {
         this.bienes = bienes;
     }
 
-    public Date getFecFallo() {
-        return fecFallo;
+    public boolean isBtnAct() {
+        return btnAct;
     }
 
-    public void setFecFallo(Date fecFallo) {
-        this.fecFallo = fecFallo;
+    public void setBtnAct(boolean btnAct) {
+        this.btnAct = btnAct;
     }
 
+   
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public String getAccionAutorizada() {
+        return accionAutorizada;
+    }
+
+    public void setAccionAutorizada(String accionAutorizada) {
+        this.accionAutorizada = accionAutorizada;
+    }
+
+    public Date getFecAcuerdo() {
+        return fecAcuerdo;
+    }
+
+    public void setFecAcuerdo(Date fecAcuerdo) {
+        this.fecAcuerdo = fecAcuerdo;
+    }
+
+    public String getNumAcuerdo() {
+        return numAcuerdo;
+    }
+
+    public void setNumAcuerdo(String numAcuerdo) {
+        this.numAcuerdo = numAcuerdo;
+    }
+
+   
     public void bienesId(SelectEvent event) {
         lstDescargos = bejb.getDescargoById(tras.getDescargoId());
     }
@@ -602,11 +644,7 @@ public class DescargoController implements Serializable {
     public void setLstDescargos(List<AfDescargos> lstDescargos) {
         this.lstDescargos = lstDescargos;
     }
-
-    /* public List<AfBienesDepreciables> completarBienes(String query) {
-        lstBienes = cejb.getBienesDescargo(unidadAdm, query,activo,  lstBientmp);
-        return lstBienes;
-    }*/
+   
     public void filtrarUnidadesAdm() {
         lstUnidadAdm = cejb.getUnidadAdm(unidadAF, tipoUnidad);
     }
@@ -635,7 +673,7 @@ public class DescargoController implements Serializable {
 
     public void buscarBienes() {
         String condicion;
-        condicion = "A.ID_ESTATUS_BIEN=1 AND A.ID_BIEN NOT IN (SELECT ID_BIEN FROM AF_DESCARGOS_DETALLE) AND A.CODIGO_UNIDAD in (select CODIGO_UNIDAD from AF_UNIDADES_ADMINISTRATIVAS ";
+        condicion = "A.ID_ESTATUS_BIEN=1 AND A.ID_BIEN NOT IN (SELECT ID_BIEN FROM AF_TRASLADOS T INNER JOIN AF_TRASLADOS_DETALLE TD ON TD.ID_TRASLADO=T.ID_TRASLADO WHERE T.ESTADO IN (0,2)) AND A.ID_BIEN NOT IN (SELECT ID_BIEN FROM AF_DESCARGOS_DETALLE) AND A.CODIGO_UNIDAD in (select CODIGO_UNIDAD from AF_UNIDADES_ADMINISTRATIVAS ";
 
         if (tipoUnidad.equals("0")) {
             condicion = condicion + ") and ";
@@ -689,6 +727,33 @@ public class DescargoController implements Serializable {
         UtilReport.generarReporte(jasperPrintList, "rptAF10");
     }
 
+    public void imprimirActaDescargo()throws IOException, JRException {
+        List<JasperPrint> jasperPrintList = new ArrayList();
+        HashMap param = new HashMap();
+     
+        //SimpleDateFormat formateador = new SimpleDateFormat("dd/mm/yyyy", new Locale("es"));    
+        Date fecRep = cejb.getFechaActual();
+
+        param.put("p_FecReporte",fecRep);
+        
+        param.put("p_FecAcuerdo",fecAcuerdo);
+        param.put("p_numAcuerdo",numAcuerdo);
+        
+        param.put("p_codigoDescargo", tras.getDescargoId().toString());
+        param.put("p_unidadAF", unidadAF);
+        param.put("p_unidadAdm", unidadAdm);
+
+        param.put("p_accion",accionAutorizada);
+        ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        param.put("p_RutaImg", ctx.getRealPath(PATH_IMAGENES));
+
+        JasperPrint jp = reb.getRpt(param, DescargoController.class.getClassLoader().getResourceAsStream(("reportes" + File.separator + "rep_actaDescargo.jasper")));
+
+        jasperPrintList.add(jp);
+
+        UtilReport.generarReporte(jasperPrintList, "rptActaDescargo");
+    }
+    
     public void imprimirBienesDescargo() throws IOException, JRException {
         HashMap param = new HashMap();
 
@@ -792,28 +857,6 @@ public class DescargoController implements Serializable {
 
         lstBienesDescargar = bejb.buscarBien(condicion);
     }
-//
-//    public void onTransfer(TransferEvent event) {
-//        StringBuilder builder = new StringBuilder();
-//        for (Object item : event.getItems()) {
-//            builder.append(((VwBienes) item).getCodigoInventario()).append("<br />");
-//        }
-//    }
-
-//    public void onSelect(SelectEvent event) {
-//        FacesContext context = FacesContext.getCurrentInstance();
-//        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Item Selected", event.getObject().toString()));
-//    }
-//
-//    public void onUnselect(UnselectEvent event) {
-//        FacesContext context = FacesContext.getCurrentInstance();
-//        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Item Unselected", event.getObject().toString()));
-//    }
-
-//    public void onReorder() {
-//        FacesContext context = FacesContext.getCurrentInstance();
-//        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "List Reordered", null));
-//    }
 
 public void guardarDescargo() {
       
@@ -868,7 +911,7 @@ public void guardarDescargo() {
         tras.setCodigoDescargo(numSolicitud);
         tras.setFechaDescargo(fecDescargo);
         tras.setNombreAutoriza(usuDao.getNombres() + " " + usuDao.getApellidos());
-        tras.setFechaFallo(fecFallo);
+        tras.setFechaFallo(fecDescargo);
         tras.setObservacionFallo(obsFallo);
 
         bejb.guardarDescargo(tras, usuDao.getLogin());
@@ -880,6 +923,9 @@ public void guardarDescargo() {
         JsfUtil.redireccionar("buscarDescargos.mined?faces-redirect=true");
     }
 
+    
+    
+    
     public void generarXls_reporteBienesDescargar() throws IOException {
         Workbook libro = new HSSFWorkbook();
         Sheet hoja = libro.createSheet("Reporte Listado Bienes");
