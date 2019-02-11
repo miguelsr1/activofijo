@@ -182,8 +182,9 @@ public class DescargoController implements Serializable {
 
         //    lstBientmp.add(0l);
         if (JsfUtil.getRequestParameter("idDescargo") != null) {
-            tras = bejb.getDescargos(new Long(JsfUtil.getRequestParameter("idDescargo")));
-            td = bejb.getDescargoDet(new Long(JsfUtil.getRequestParameter("idDescargo")));
+            idDescargo = Long.parseLong(JsfUtil.getRequestParameter("idDescargo"));
+            tras = bejb.getDescargos(idDescargo);
+            td = bejb.getDescargoDet(idDescargo);
             
             unidadAF = tras.getUnidadActivoFijo();
             unidadAdm = td.getCodigoUnidad();
@@ -664,6 +665,16 @@ public class DescargoController implements Serializable {
     public void trasladosId(SelectEvent event) {
         lstDescargos = bejb.getDescargoById(tras.getDescargoId());
     }
+    
+      public void descargoSeleccionado(SelectEvent event) {
+        tras = bejb.getDescargos(idDescargo);
+        numSolicitud = tras.getCodigoDescargo();
+        fec1 = tras.getFechaDescargo();
+        tipDescargo = tras.getIdTipoDescargo();
+
+        lstBienesDescargar = bejb.buscarBien(" a.descargo_id=" + idDescargo);
+
+    }
 
     public void abrir() {
         buscarBienes();
@@ -694,6 +705,8 @@ public class DescargoController implements Serializable {
                 condicion = condicion + " A.VALOR_ADQUISICION <600 AND";
             }
         }
+        if (idDescargo!=0) { condicion = condicion + " a.id_bien not in (select id_bien from af_descargos_detalle where descargo_id="+idDescargo+") and ";}  
+   
         condicion = condicion.substring(0, condicion.length() - 4);
 
         bienesSource = bejb.buscarBien(condicion);
@@ -701,16 +714,7 @@ public class DescargoController implements Serializable {
         bienes = new DualListModel(bienesSource, lstBienesDescargar);
     }
 
-    public void descargoSeleccionado(SelectEvent event) {
-        tras = bejb.getDescargos(idDescargo);
-        numSolicitud = tras.getCodigoDescargo();
-        fec1 = tras.getFechaDescargo();
-        tipDescargo = tras.getIdTipoDescargo();
-
-        lstBienesDescargar = bejb.buscarBien(" id_descargo=" + idDescargo);
-
-    }
-
+  
     public void imprimirDescargo() throws IOException, JRException {
         List<JasperPrint> jasperPrintList = new ArrayList();
         HashMap param = new HashMap();
