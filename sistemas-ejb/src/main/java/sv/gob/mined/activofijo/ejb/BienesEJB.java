@@ -874,214 +874,48 @@ public class BienesEJB {
         if (!condicion.equals("")) {
             condicion2 = " where " + condicion;
         }
-        sql = "select a.ID_BIEN,a.CODIGO_INVENTARIO,a.CATEGORIA,a.DESCRIPCION_BIEN,a.MARCA,a.FECHA_ADQUISICION,a.VALOR_ADQUISICION,a.MODELO, "
-                + "a.NUMERO_SERIE,a.ACTIVO_FIJO,a.ESTADO,a.UNIDAD_ACTIVO_FIJO,a.CODIGO_UNIDAD,a.ESTADO_REGISTRO,a.iD_CAT_BIEN,a.ID_TIPO_BIEN,a.CODIGO_SECCION, "
-                + "a.CODIGO_CALIDAD_BIEN,a.ID_ESTATUS_BIEN,a.ID_FUENTE,a.iD_PROYECTO,a.FECHA_CREACION,a.USUARIO_CREA,a.FUENTE,a.NOMBRE_PROYECTO,a.DOCUMENTO_ADQUISICION,"
-                + "a.PROVEEDOR,a.ID_FORMA_ADQUISICION,a.CALIDAD,a.ASIGNADO,a.ID_TRASLADO_DETALLE,a.ID_TRASLADO,a.ID_DETALLE_DESCARGO,a.DESCARGO_ID, "
-                + "a.TIPO_DESCARGO,a.ESTADO_DESCARGO,a.FECHA_DESCARGO,a.CODIGO_DESCARGO,a.MONTO_DEPRECIACION,a.TIPO_UNIDAD from Vw_Bienes a " + condicion2 + " order by A.codigo_inventario";
-        List<VwBienes> lstBienes = new ArrayList<>();
-        Query q = em.createNativeQuery(sql);
-        List lst = q.getResultList();
-        for (Object object : lst) {
-            Object[] datos = (Object[]) object;
-            VwBienes datPlan = new VwBienes();
-            datPlan.setIdBien(Long.parseLong(datos[0].toString()));
-            if (datos[1] != null) {
-                datPlan.setCodigoInventario(datos[1].toString());
-            } else {
-                datPlan.setCodigoInventario(null);
-            }
-            if (datos[2] != null) {
-                datPlan.setCategoria(datos[2].toString());
-            } else {
-                datPlan.setCategoria(null);
-            }
-            if (datos[3] != null) {
-                datPlan.setDescripcionBien(datos[3].toString());
-            } else {
-                datPlan.setDescripcionBien(null);
-            }
-            if (datos[4] != null) {
-                datPlan.setMarca(datos[4].toString());
-            } else {
-                datPlan.setMarca(null);
-            }
-            if (datos[5] != null) {
-                datPlan.setFechaAdquisicion((Date) datos[5]);
-            } else {
-                datPlan.setFechaAdquisicion(null);
-            }
-            if (datos[6] != null) {
-                datPlan.setValorAdquisicion((BigDecimal) datos[6]);
-            } else {
-                datPlan.setValorAdquisicion(null);
-            }
-            if (datos[7] != null) {
-                datPlan.setModelo(datos[7].toString());
-            } else {
-                datPlan.setModelo(null);
-            }
-            if (datos[8] != null) {
-                datPlan.setNumeroSerie(datos[8].toString());
-            } else {
-                datPlan.setNumeroSerie(null);
-            }
-            if (datos[9] != null) {
-                datPlan.setActivoFijo(datos[9].toString().charAt(0));
-            } else {
-                datPlan.setActivoFijo(null);
-            }
-            if (datos[10] != null) {
-                datPlan.setEstado(datos[10].toString());
-            } else {
-                datPlan.setEstado(null);
-            }
-            if (datos[11] != null) {
-                datPlan.setUnidadActivoFijo(datos[11].toString());
-            } else {
-                datPlan.setUnidadActivoFijo(null);
-            }
-            if (datos[12] != null) {
-                datPlan.setCodigoUnidad(datos[12].toString());
-            } else {
-                datPlan.setCodigoUnidad(null);
-            }
-            if (datos[13] != null) {
-                datPlan.setEstadoRegistro(datos[13].toString());
-            } else {
-                datPlan.setEstadoRegistro(null);
-            }
-            if (datos[14] != null) {
-                datPlan.setIdCatBien(Long.parseLong(datos[14].toString()));
-            } else {
-                datPlan.setIdCatBien(null);
-            }
-            if (datos[15] != null) {
-                datPlan.setCodigoTipoBien(datos[15].toString());
-            } else {
-                datPlan.setCodigoTipoBien(null);
-            }
-            if (datos[16] != null) {
-                datPlan.setCodigoSeccion(datos[16].toString());
-            } else {
-                datPlan.setCodigoSeccion(null);
-            }
-            if (datos[17] != null) {
-                datPlan.setCodigoCalidadBien(Long.parseLong(datos[17].toString()));
-            } else {
-                datPlan.setCodigoCalidadBien(null);
-            }
-            if (datos[18] != null) {
-                datPlan.setIdEstatusBien(Long.parseLong(datos[18].toString()));
-            } else {
-                datPlan.setIdEstatusBien(null);
-            }
-            if (datos[19] != null) {
-                datPlan.setIdFuente(Long.parseLong(datos[19].toString()));
-            } else {
-                datPlan.setIdFuente(null);
-            }
-            if (datos[20] != null) {
-                datPlan.setIdProyecto(Long.parseLong(datos[20].toString()));
-            } else {
-                datPlan.setIdProyecto(null);
-            }
-            if (datos[21] != null) {
-                datPlan.setFechaCreacion((Date) datos[21]);
-            } else {
-                datPlan.setFechaCreacion(null);
-            }
-            if (datos[22] != null) {
-                datPlan.setUsuarioCreacion(datos[22].toString());
-            } else {
-                datPlan.setUsuarioCreacion("");
-            }
-
-            if (datos[23] != null) {
-                datPlan.setFuente(datos[23].toString());
-            } else {
-                datPlan.setFuente("");
-            }
-            if (datos[24] != null) {
-                datPlan.setNombreProyecto(datos[24].toString());
-            } else {
-                datPlan.setNombreProyecto("");
-            }
-            if (datos[25] != null) {
-                datPlan.setDocumentoAdquisicion(datos[25].toString());
-            } else {
-                datPlan.setDocumentoAdquisicion("");
-            }
-            if (datos[26] != null) {
-                datPlan.setProveedor(datos[26].toString());
-            } else {
-                datPlan.setProveedor("");
-            }
-            if (datos[27] != null) {
-                datPlan.setIdFormaAdquisicion(Long.parseLong(datos[27].toString()));
-            } else {
-                datPlan.setIdFormaAdquisicion(null);
-            }
-            if (datos[28] != null) {
-                datPlan.setCalidad(datos[28].toString());
-            } else {
-                datPlan.setCalidad("");
-            }
-            if (datos[29] != null) {
-                datPlan.setAsignado(datos[29].toString());
-            } else {
-                datPlan.setAsignado("");
-            }
-            if (datos[30] != null) {
-                datPlan.setIdTrasladoDet(Long.parseLong(datos[30].toString()));
-            } else {
-                datPlan.setIdTrasladoDet(null);
-            }
-            if (datos[31] != null) {
-                datPlan.setIdTraslado(Long.parseLong(datos[31].toString()));
-            } else {
-                datPlan.setIdTraslado(null);
-            }
-            if (datos[32] != null) {
-                datPlan.setIdDetalleDescargo(Long.parseLong(datos[32].toString()));
-            } else {
-                datPlan.setIdDetalleDescargo(null);
-            }
-            if (datos[33] != null) {
-                datPlan.setDescargoId(Long.parseLong(datos[33].toString()));
-            } else {
-                datPlan.setDescargoId(null);
-            }
-            if (datos[34] != null) {
-                datPlan.setTipoDescargo(datos[34].toString().charAt(0));
-            } else {
-                datPlan.setTipoDescargo(null);
-            }
-            if (datos[35] != null) {
-                datPlan.setEstadoDescargo(datos[35].toString().charAt(0));
-            } else {
-                datPlan.setEstadoDescargo(null);
-            }
-            if (datos[36] != null) {
-                datPlan.setFechaDescargo((Date) datos[36]);
-            } else {
-                datPlan.setFechaDescargo(null);
-            }
-            if (datos[37] != null) {
-                datPlan.setCodigoDescargo(datos[37].toString());
-            } else {
-                datPlan.setCodigoDescargo(null);
-            }
-
-            if (datos[38] != null) {
-                datPlan.setMontoDepreciacion((BigDecimal) datos[38]);
-            } else {
-                datPlan.setMontoDepreciacion(null);
-            }
-
-            lstBienes.add(datPlan);
-        }
-
+        sql = "select a.ID_BIEN               as idBien,\n" +
+                "    a.CODIGO_INVENTARIO     as codigoInventario,\n" +
+                "    a.CATEGORIA             as categoria,\n" +
+                "    a.DESCRIPCION_BIEN      as descripcionBien,\n" +
+                "    a.MARCA                 as marca,\n" +
+                "    a.MODELO                as modelo, \n" +
+                "    a.NUMERO_SERIE          as numeroSerie,\n" +
+                "    a.ESTADO                as estado,\n" +
+                "    a.FECHA_ADQUISICION     as fechaAdquisicion,\n" +
+                "    a.VALOR_ADQUISICION     as valorAdquisicion,\n" +
+                "    a.ACTIVO_FIJO           as activoFijo,\n" +
+                "    a.UNIDAD_ACTIVO_FIJO    as unidadActivoFijo,\n" +
+                "    a.CODIGO_UNIDAD         as codigoUnidad,\n" +
+                "    a.ESTADO_REGISTRO       as estadoRegistro,\n" +
+                "    a.ID_CAT_BIEN           as idCatBien,\n" +
+                "    a.ID_TIPO_BIEN          as codigoTipoBien,\n" +
+                "    a.CODIGO_SECCION        as codigoSeccion, \n" +
+                "    a.CODIGO_CALIDAD_BIEN   as codigoCalidadBien,\n" +
+                "    a.ID_ESTATUS_BIEN       as idEstatusBien,\n" +
+                "    a.ID_FUENTE             as idFuente,\n" +
+                "    a.ID_PROYECTO           as idProyecto,\n" +
+                "    a.FECHA_CREACION        as fechaCreacion,\n" +
+                "    a.USUARIO_CREA          as usuarioCreacion,\n" +
+                "    a.FUENTE                as fuente,\n" +
+                "    a.NOMBRE_PROYECTO       as nombreProyecto,\n" +
+                "    a.DOCUMENTO_ADQUISICION as documentoAdquisicion,\n" +
+                "    a.PROVEEDOR             as proveedor,\n" +
+                "    a.ID_FORMA_ADQUISICION  as idFormaAdquisicion,\n" +
+                "    a.CALIDAD               as calidad,\n" +
+                "    a.ASIGNADO              as asignado,\n" +
+                "    a.ID_TRASLADO_DETALLE   as idTrasladoDet,\n" +
+                "    a.ID_TRASLADO           as idTraslado,\n" +
+                "    a.ID_DETALLE_DESCARGO   as idDetalleDescargo,\n" +
+                "    a.DESCARGO_ID           as descargoId, \n" +
+                "    a.TIPO_DESCARGO         as tipoDescargo,\n" +
+                "    a.ESTADO_DESCARGO       as estadoDescargo,\n" +
+                "    a.FECHA_DESCARGO        as fechaDescargo,\n" +
+                "    a.CODIGO_DESCARGO       as codigoDescargo,\n" +
+                "    a.MONTO_DEPRECIACION    as montoDepreciacion from Vw_Bienes a " + condicion2 + " order by A.codigo_inventario";
+        List<VwBienes> lstBienes = new ArrayList();
+        Query q = em.createNativeQuery(sql, VwBienes.class);
+        lstBienes = q.getResultList();
         return lstBienes;
     }
 

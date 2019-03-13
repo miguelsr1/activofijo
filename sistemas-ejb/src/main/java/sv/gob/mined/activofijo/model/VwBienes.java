@@ -8,22 +8,28 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Entity;
+import javax.persistence.EntityResult;
 import javax.persistence.Id;
+import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author JISTorres
  */
 @Entity
+@XmlRootElement
+@SqlResultSetMapping(name = "defaultVwBienes", entities = {
+    @EntityResult(entityClass = VwBienes.class)})
 public class VwBienes implements Serializable {
     @Id
     private Long idBien;
     private String codigoInventario;
     private String categoria;
     private String descripcionBien;
-    private String Marca;
+    private String marca;
     private String modelo;
     private String numeroSerie;
     private String estado;
@@ -118,11 +124,11 @@ public class VwBienes implements Serializable {
         this.desactivar = desactivar;
     }
     public String getMarca() {
-        return Marca;
+        return marca;
     }
 
     public void setMarca(String Marca) {
-        this.Marca = Marca;
+        this.marca = Marca;
     }
 
     public Date getFechaAdquisicion() {
